@@ -14,18 +14,41 @@
   
   <url>
     <loc>https://catcheroftime.github.io/categories/</loc>
-    <lastmod>2019-03-31T12:54:26+08:00</lastmod>
+    <lastmod>2019-06-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/categories/hugo/</loc>
+    <lastmod>2019-06-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/tags/hugo/</loc>
+    <lastmod>2019-06-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/blog/2019-06/hugo_blog-%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/</loc>
+    <lastmod>2019-06-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/tags/</loc>
+    <lastmod>2019-06-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/</loc>
+    <lastmod>2019-06-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://catcheroftime.github.io/tags/db/</loc>
-    <lastmod>2019-03-31T12:54:26+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://catcheroftime.github.io/tags/mongodb/</loc>
     <lastmod>2019-03-31T12:54:26+08:00</lastmod>
     <priority>0</priority>
   </url>
@@ -37,14 +60,14 @@
   </url>
   
   <url>
-    <loc>https://catcheroftime.github.io/blog/2019-03/mongodb4.0-linux-%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/</loc>
+    <loc>https://catcheroftime.github.io/tags/mongodb/</loc>
     <lastmod>2019-03-31T12:54:26+08:00</lastmod>
+    <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://catcheroftime.github.io/tags/</loc>
+    <loc>https://catcheroftime.github.io/blog/2019-03/mongodb4.0-linux-%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/</loc>
     <lastmod>2019-03-31T12:54:26+08:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -56,12 +79,6 @@
   <url>
     <loc>https://catcheroftime.github.io/blog/2019-03/python%E6%93%8D%E4%BD%9Cmongodb%E7%A4%BA%E4%BE%8B/</loc>
     <lastmod>2019-03-31T12:54:26+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://catcheroftime.github.io/</loc>
-    <lastmod>2019-03-31T12:54:26+08:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
