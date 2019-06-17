@@ -6,10 +6,19 @@
     <description>Recent content on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sat, 15 Jun 2019 15:51:00 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 18 Jun 2019 00:15:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>QSS&amp;CSS</title>
+      <link>https://catcheroftime.github.io/blog/2019-06/qsscss/</link>
+      <pubDate>Tue, 18 Jun 2019 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-06/qsscss/</guid>
+      <description>&lt;p&gt;主要是记录一下自己子在给客户端美化过程中遇到的一些问题， 以及一些对Qt一些常用控件写好的demo&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>MySQL 是怎样运行的-第二部分</title>
