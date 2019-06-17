@@ -6,10 +6,19 @@
     <description>Recent content in python on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sun, 31 Mar 2019 12:54:26 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 14 Jun 2019 11:12:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>python 操作 MySQL示例</title>
+      <link>https://catcheroftime.github.io/blog/2019-06/python-%E6%93%8D%E4%BD%9C-mysql%E7%A4%BA%E4%BE%8B/</link>
+      <pubDate>Fri, 14 Jun 2019 11:12:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-06/python-%E6%93%8D%E4%BD%9C-mysql%E7%A4%BA%E4%BE%8B/</guid>
+      <description>&lt;p&gt;使用python 简单操作mysql数据库,数据库的创建，表的创建，以及数据的增删改查&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>python操作Mongodb示例</title>

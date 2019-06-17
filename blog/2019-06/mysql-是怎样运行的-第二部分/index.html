@@ -1,0 +1,2062 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="时隔三天， 开始第二部分的总结了， 第二部分主要是介绍 InnoDB 的数据存储结构， 主要对应&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;上面的第五章和第六章">
+  
+  <meta property="og:title" content="MySQL 是怎样运行的-第二部分" />
+<meta property="og:description" content="时隔三天， 开始第二部分的总结了， 第二部分主要是介绍 InnoDB 的数据存储结构， 主要对应&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;上面的第五章和第六章" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2019-06/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86/" />
+<meta property="article:published_time" content="2019-06-15T15:51:00&#43;08:00"/>
+<meta property="article:modified_time" content="2019-06-15T15:51:00&#43;08:00"/>
+
+
+  <title>
+  
+       MySQL 是怎样运行的-第二部分 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2019-06/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/mysql"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> MySQL </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">MySQL 是怎样运行的-第二部分</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Jun 15, 2019</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>时隔三天， 开始第二部分的总结了， 第二部分主要是介绍 InnoDB 的数据存储结构， 主要对应<a href="https://juejin.im/book/5bffcbc9f265da614b11b731">&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;</a>上面的第五章和第六章</p>
+
+<p>首先需要知道一点， 数据在内存中的读写速度比磁盘上的读写速度快上好几个数量级， 所以当从表中获取记录时， 将磁盘上的数据读取到内存中， 当写入或者更新时，再将内存中的内容刷新到磁盘上。
+InnoDB 将数据划分为若干个页， 以页作为磁盘和内存之间交互的基本单位， 页的大小一般为16KB。</p>
+
+<h2 id="innodb-行格式">InnoDB 行格式</h2>
+
+<p>InnoDB 我们都知道是以一条记录为单位向表中插入数据， 这个记录在磁盘上的存储方式称为 <font color=red>行格式</font> 或者<font color=red>记录格式</font></p>
+
+<p>行格式目前有4种：</p>
+
+<ul>
+<li>Compact</li>
+<li>Redundant</li>
+<li>Dynamic</li>
+<li>Compressed</li>
+</ul>
+
+<h3 id="compact-格式">Compact 格式</h3>
+
+<p>首先简单看一下默认的格式示意图</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/compact.png" alt="Compact 格式示意图" /></p>
+
+<h4 id="变长字段长度列表">变长字段长度列表</h4>
+
+<p>并不是所有记录都有这个 变长字段长度列表 部分，比方说表中所有的列都不是变长的数据类型的话，这一部分就不需要有。</p>
+
+<p>变长字段存储需要记录2部分内容：真正的数据内容和占用的字节数。</p>
+
+<p>规则：把所有变长字段的真实数据占用的字节长度都存放在记录的开头部位，从而形成一个变长字段长度列表，各变长字段数据占用的字节数按照列的顺序<font color=red>逆序存放</font></p>
+
+<p>注意变长字段的出现的几种可能：</p>
+
+<ul>
+<li>字符集是定长的例如<code>ascii</code>字符集， 但是定义了例如<code>VARCHAR(M)</code>的变长类型</li>
+<li>字符集是变长的例如<code>utf8</code>字符集， 但是定义了例如<code>VARCHAR(M)</code>的变长类型</li>
+<li>字符集是变长的例如<code>utf8</code>字符集， 但是定义了例如<code>CHAR(M)</code>的定长类型，这种情况，数据字节长度存储的范围为10M~30M,默认占用10M个字节，当更新小于等于10M时不用重新分配新的空间， 可以在该记录出直接更新， 如果大于10M会重新分配一个新的记录空间，导致原有的记录空间成为所谓的碎片。</li>
+</ul>
+
+<p>因为统计的内容长度(十六进制)可能是1个字节(8位，内容长度255个字节)或者2个字节(内容长度大于255个字节)， 在读取的时候需要判断当前读取的字节结果是1个单独的字段长度还是半个字节长度，所以InnoDB在统计字符串有属于自己的规则</p>
+
+<ul>
+<li><font color=red>W</font>: 表示一个字符最多需要使用的字节数， 例如默认的 <code>utf8</code> 的 <code>W</code> 是3， <code>gbk</code> 字符集就是2</li>
+<li><font color=red>M</font>: 在定义变长类型例如  <code>VARCHAR(M)</code> 来说， <code>M</code> 表示最多存储的字符数</li>
+<li>所以这个类型允许存储的最大字节数就是 <font color=red>M*W</font></li>
+<li><font color=red>L</font>: 实际存储的字符串字节数</li>
+</ul>
+
+<p>具体规则如下：</p>
+
+<ul>
+<li>如果<font color=red>M×W &lt;= 255</font>，那么使用1个字节来表示真正字符串占用的字节数。</li>
+<li>如果<font color=red>M×W &gt; 255</font>，则分为两种情况：
+
+<ul>
+<li>如果<font color=red>L &lt;= 127</font>，则用1个字节来表示真正字符串占用的字节数。(1个字节首位为0)</li>
+<li>如果<font color=red>L &gt; 127</font>，则用2个字节来表示真正字符串占用的字节数。(手动设置2个字节中第一个字节首位为1)</li>
+</ul></li>
+</ul>
+
+<p>补充一下：1个页一般默认16KB，如果1个L特别大，一个页无法保存， 会把一部分数据放到溢出页，在变长字段长度列表处只存储留在本页面中的长度，所以使用两个字节也可以存放下来。。这一块我想表达的意思是，2个字节表示的最大值实际上存储不进1个页中， 所以首位可以手动设置为1。</p>
+
+<p>根据规则回头验证一下， 读取一个位置实际内容长度时，如果可变字段允许存储的最大字节数小于255字节，读取1个字节；如果大于255字节，第一个字节首位是0(即小于127)，读取1个字节， 反之读2个字节。</p>
+
+<p><font color=red>变长字段长度列表中只存储值为 非NULL 的列内容占用的长度，值为 NULL 的列的长度是不储存的</font></p>
+
+<h4 id="null值列表">NULL值列表</h4>
+
+<p>为了减少存储空间， 会统计所有空值的列。</p>
+
+<ul>
+<li>首先统计表中允许空值的列</li>
+<li>用1表示此列为空， 0表示非空。(二进制位按照列的顺序逆序排列)</li>
+<li>规定NULL值列表必须用整数个字节的位表示，不足整个字节， 高位补0</li>
+</ul>
+
+<h4 id="记录头信息">记录头信息</h4>
+
+<p>它是由固定的<font color=red>5个字节</font>组成。5个字节也就是40个二进制位</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/compact_headinfo.png" alt="Compact 记录头信息" /></p>
+
+<table>
+<thead>
+<tr>
+<th align="center">名称</th>
+<th align="center">大小（单位：bit）</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">预留位1</td>
+<td align="center">1</td>
+<td align="left">没有使用</td>
+</tr>
+
+<tr>
+<td align="center">预留位2</td>
+<td align="center">1</td>
+<td align="left">没有使用</td>
+</tr>
+
+<tr>
+<td align="center">delete_mask</td>
+<td align="center">1</td>
+<td align="left">标记该记录是否被删除</td>
+</tr>
+
+<tr>
+<td align="center">min_rec_mask</td>
+<td align="center">1</td>
+<td align="left">B+树的每层非叶子节点中的最小记录都会添加该标记</td>
+</tr>
+
+<tr>
+<td align="center">n_owned</td>
+<td align="center">4</td>
+<td align="left">表示当前记录拥有的记录数</td>
+</tr>
+
+<tr>
+<td align="center">heap_no</td>
+<td align="center">13</td>
+<td align="left">表示当前记录在记录堆的位置信息</td>
+</tr>
+
+<tr>
+<td align="center">record_type</td>
+<td align="center">3</td>
+<td align="left">表示当前记录的类型，0表示普通记录，1表示B+树非叶子节点记录，2表示最小记录，3表示最大记录</td>
+</tr>
+
+<tr>
+<td align="center">next_record</td>
+<td align="center">16</td>
+<td align="left">表示下一条记录的相对位置</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="记录的真实数据">记录的真实数据</h4>
+
+<p>Mysql为了处理自己业务方便以及统计的需要， 添加了一些额外的列又称隐藏列。</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/compact_realinfo.png" alt="隐藏列" /></p>
+
+<table>
+<thead>
+<tr>
+<th align="left">列名</th>
+<th align="center">是否必须</th>
+<th align="center">占用空间</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">row_id(DB_ROW_ID)</td>
+<td align="center">否</td>
+<td align="center">6字节</td>
+<td align="left">行ID，唯一标识一条记录</td>
+</tr>
+
+<tr>
+<td align="left">transaction_id(DB_TRX_ID)</td>
+<td align="center">是</td>
+<td align="center">6字节</td>
+<td align="left">事务ID</td>
+</tr>
+
+<tr>
+<td align="left">roll_pointer(DB_ROLL_PTR)</td>
+<td align="center">是</td>
+<td align="center">7字节</td>
+<td align="left">回滚指针</td>
+</tr>
+</tbody>
+</table>
+
+<p>在用户没有设置主键或者Unique键的情况下会添加此列</p>
+
+<p>存储真实数据时， 例如CHAR(10)，字符集选择<code>ascii</code>, 共占有10个字节， 如果输入少于10个字符， 剩余位置会用空格补满，仍然占用10个字节位置。</p>
+
+<h3 id="redundant-格式">Redundant 格式</h3>
+
+<p>首先简单看一下默认的格式示意图</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/Redundant.png" alt="Redundant格式" /></p>
+
+<p>相比与Compact格式， 在记录额外信息部分有 变长字段长度列表+NULL值列表+记录头信息 变成 字段长度偏移列表+记录头信息</p>
+
+<h4 id="redundant的记录的真实数据">Redundant的记录的真实数据</h4>
+
+<p>它与Compact的格式是一样的，也包括<code>DB_ROW_ID</code>,<code>DB_TRX_ID</code>,<code>DB_ROLL_PTR</code>三个额外的隐藏列信息</p>
+
+<h4 id="字段长度偏移列表">字段长度偏移列表</h4>
+
+<p>它需要将一条记录中<font color=red>所有列</font>的长度信息都按照<font color=red>逆序</font>存储到字段长度偏移列表， 但是它不是直接存储列的长度信息， 而是计算偏移， <font color=red>两个相邻数值的差值</font>来统计长度信息。</p>
+
+<p>在<code>Compact</code>行格式中提到，计算变长字段长度<code>CHAR(M)</code>，根据字符集是定长或者变长字符集有选择的加入变长字段长度列表中，
+而<code>Redundant</code>行格式， 在计算偏移时， 不区分字符集类型， 直接用一个字符需要的最多字节数和M的乘积作为占用的真实数据空间， 因此不会产生碎片。</p>
+
+<p>字段长度偏移列表统计的长度信息是包括隐藏列信息的。</p>
+
+<p>可以这样理解偏移长度,假设一条存储的记录如下：</p>
+
+<pre><code>25 24 1A 17 13 0C 06
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">DB_ROW_ID</th>
+<th align="left">DB_TRX_ID</th>
+<th align="left">DB_ROLL_PTR</th>
+<th align="left">列1</th>
+<th align="left">列2</th>
+<th align="left">列3</th>
+<th align="left">列4</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">正常顺序的偏移长度</td>
+<td align="left">06</td>
+<td align="left">0C</td>
+<td align="left">13</td>
+<td align="left">17</td>
+<td align="left">1A</td>
+<td align="left">24</td>
+<td align="left">25</td>
+</tr>
+
+<tr>
+<td align="left">每一列列的真实长度</td>
+<td align="left">6</td>
+<td align="left">6</td>
+<td align="left">7</td>
+<td align="left">4</td>
+<td align="left">3</td>
+<td align="left">10</td>
+<td align="left">1</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="redundant的记录头信息">Redundant的记录头信息</h4>
+
+<p>相对与Compact的5个字节， Redundant它是由固定的<font color=red>6个字节</font>组成。6个字节也就是48个二进制位</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">名称</th>
+<th align="center">大小（单位：bit）</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">预留位1</td>
+<td align="center">1</td>
+<td align="left">没有使用</td>
+</tr>
+
+<tr>
+<td align="center">预留位2</td>
+<td align="center">1</td>
+<td align="left">没有使用</td>
+</tr>
+
+<tr>
+<td align="center">delete_mask</td>
+<td align="center">1</td>
+<td align="left">标记该记录是否被删除</td>
+</tr>
+
+<tr>
+<td align="center">min_rec_mask</td>
+<td align="center">1</td>
+<td align="left">B+树的每层非叶子节点中的最小记录都会添加该标记</td>
+</tr>
+
+<tr>
+<td align="center">n_owned</td>
+<td align="center">4</td>
+<td align="left">表示当前记录拥有的记录数</td>
+</tr>
+
+<tr>
+<td align="center">heap_no</td>
+<td align="center">13</td>
+<td align="left">表示当前记录在记录堆的位置信息</td>
+</tr>
+
+<tr>
+<td align="center">n_field</td>
+<td align="center">10</td>
+<td align="left">表示记录中列的数量</td>
+</tr>
+
+<tr>
+<td align="center">1byte_offs_flag</td>
+<td align="center">1</td>
+<td align="left">标记字段长度偏移列表中每个列对应的偏移量是使用1字节还是2字节表示的</td>
+</tr>
+
+<tr>
+<td align="center">next_record</td>
+<td align="center">16</td>
+<td align="left">表示下一条记录的相对位置</td>
+</tr>
+</tbody>
+</table>
+
+<p>相对于Compact行格式，</p>
+
+<ul>
+<li>少了 <code>record_type</code> 字段<br /></li>
+<li>多了 <code>n_field</code>和 <code>1byte_offs_flag</code>2个字段</li>
+</ul>
+
+<h5 id="1byte-offs-flag-字段解析">1byte_offs_flag 字段解析</h5>
+
+<p>根据Redundant行格式记录的列真实数据占用的总大小来判断是使用1个字节表示还是2个字节表示</p>
+
+<ul>
+<li>当记录的真实数据占用的字节数不大于127（十六进制0x7F，二进制01111111）时，每个列对应的偏移量占用1个字节。</li>
+<li>当记录的真实数据占用的字节数大于127，但不大于32767（十六进制0x7FFF，二进制0111111111111111）时，每个列对应的偏移量占用2个字节</li>
+<li>当记录的真实数据大于32767时，本页中只保留前768个字节和20个字节的溢出页面地址（当然这20个字节中还记录了一些别的信息）。因为字段长度偏移列表处只需要记录每个列在本页面中的偏移就好了，所以每个列使用2个字节来存储偏移量就够了。</li>
+</ul>
+
+<p>只要整条记录的真实数据占用的存储空间大小大于127，即使第一个列的值占用存储空间小于127，需要使用2个字节来表示该列对应的偏移量，所以这种行格式已经有些过时。</p>
+
+<h5 id="null处理">NULL处理</h5>
+
+<p>在<code>1byte_offs_flag</code>中提到数据不大于127，或者在127-32767字节数之间，或者大于32767(本页只保存768个字节和28个字节的溢出页地址)， 可以看到首位偏移值的首位都是0，这样的设计是因为， 列对应的偏移量值的第一个比特位作为是否为<code>NULL</code>的依据,该比特位也可以被称之为<font color=red>NULL比特位</font>。</p>
+
+<p>也就是说在解析一条记录的某个列时，首先看一下该列对应的偏移量的NULL比特位是不是为1，如果为1，那么该列的值就是NULL，否则不是NULL。 首位是不参与差值计算。</p>
+
+<p>假设一条数据如下图</p>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">列1</th>
+<th align="left">列2</th>
+<th align="left">列3</th>
+<th align="left">列4</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">列类型</td>
+<td align="left">VARCHAR(10)</td>
+<td align="left">VARCHAR(10) NOT NULL</td>
+<td align="left">CHAR(10)</td>
+<td align="left">VARCHAR(10)</td>
+</tr>
+
+<tr>
+<td align="left">列数据</td>
+<td align="left">eeee</td>
+<td align="left">fff</td>
+<td align="left">NULL</td>
+<td align="left">NULL</td>
+</tr>
+</tbody>
+</table>
+
+<p>此时偏移长度的记录如下：</p>
+
+<pre><code>A4 A4 1A 17 13 0C 06
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">DB_ROW_ID</th>
+<th align="left">DB_TRX_ID</th>
+<th align="left">DB_ROLL_PTR</th>
+<th align="left">列1</th>
+<th align="left">列2</th>
+<th align="left">列3</th>
+<th align="left">列4</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">正常顺序的偏移长度</td>
+<td align="left">06</td>
+<td align="left">0C</td>
+<td align="left">13</td>
+<td align="left">17</td>
+<td align="left">1A</td>
+<td align="left">A4</td>
+<td align="left">A4</td>
+</tr>
+
+<tr>
+<td align="left">换算成二进制</td>
+<td align="left">00000110</td>
+<td align="left">00001100</td>
+<td align="left">00010011</td>
+<td align="left">00010111</td>
+<td align="left">00011010</td>
+<td align="left">10100100</td>
+<td align="left">10100100</td>
+</tr>
+
+<tr>
+<td align="left">换算成十进制(移除首位)</td>
+<td align="left">6</td>
+<td align="left">12</td>
+<td align="left">19</td>
+<td align="left">23</td>
+<td align="left">26</td>
+<td align="left">36</td>
+<td align="left">36</td>
+</tr>
+
+<tr>
+<td align="left">每一列列的真实长度</td>
+<td align="left">6</td>
+<td align="left">6</td>
+<td align="left">7</td>
+<td align="left">4</td>
+<td align="left">3</td>
+<td align="left">10</td>
+<td align="left">0</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="行溢出数据">行溢出数据</h3>
+
+<p>首先需要知道一点，在真实的存储过程中，存储一个<code>VARCHAR(M)</code>(<code>M</code>代表字符， 根据选用的字符集， 决定 M 个字符需要的总的总的字节数)类型的列，需要保存的额外数据：</p>
+
+<ul>
+<li>真实数据</li>
+<li>NULL值的标识， 如果该列有NOT NULL属性， 则没有这部分存储空间</li>
+<li>真实数据占用的字节长度信息</li>
+</ul>
+
+<p>以<code>Compact</code>为例，如果只有1列可以为空的表</p>
+
+<p>每条记录需要额外27个字节</p>
+
+<ul>
+<li>2个字节用于存储真实数据的长度</li>
+<li>1个字节用于存储列是否是NULL值</li>
+<li>5个字节大小的头信息</li>
+<li>6个字节的row_id列</li>
+<li>6个字节的transaction_id列</li>
+<li>7个字节的roll_pointer列</li>
+</ul>
+
+<p>因为1个页一般为16KB（16384个字节），一个<code>VARCHAR(M)</code>,最多存储65532个字节， 导致一个页放不下一条记录。</p>
+
+<p>对于<code>Compact</code>和<code>Reduntan</code>t行格式来说，如果某一列中的数据非常多的话，在本记录的真实数据处只会存储该列的<font color=red>前768个字节</font>的数据和一个<font color=red>20字节指向其他页的地址</font>，然后把剩下的数据存放到其他页中，这个过程也叫做<font color=red>行溢出</font>，存储超出768字节的那些页面也被称为<font color=red>溢出页</font>。</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/Compact_行溢出.png" alt="Compact_行溢出" /></p>
+
+<h3 id="dynamic和compressed-格式">Dynamic和Compressed 格式</h3>
+
+<p>在存储形式上和<code>Compact</code>差不多， 主要区别在于如何处理<code>行溢出</code>， 它们不会在记录的真实数据处存储字段真实数据的前768个字节，而是把所有的字节都存储到其他页面中，只在记录的真实数据处存储其他页面的地址</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/Dynamic_行溢出.png" alt="Dynamic_行溢出" /></p>
+
+<p><code>Compressed</code>行格式和<code>Dynamic</code>不同的一点是，<code>Compressed</code>行格式会采用压缩算法对页面进行压缩，以节省空间。</p>
+
+<h2 id="innodb数据页结构">InnoDB数据页结构</h2>
+
+<p><code>页</code>是 InnoDB 管理存储空间的基本单位， 一个页的大小一般是16KB。<br />
+这一部分主要介绍一种页的类型&ndash;索引(INDEX)页。</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/InnoDB数据页.png" alt="InnoDB数据页" /></p>
+
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>中文名</th>
+<th>占用空间大小</th>
+<th>简单描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>File Header</td>
+<td>文件头部</td>
+<td>38字节</td>
+<td>页的一些通用信息</td>
+</tr>
+
+<tr>
+<td>Page Header</td>
+<td>页面头部</td>
+<td>56字节</td>
+<td>数据页专有的一些信息</td>
+</tr>
+
+<tr>
+<td>Infimum + Supremum</td>
+<td>最小记录和最大记录</td>
+<td>26字节</td>
+<td>两个虚拟的行记录</td>
+</tr>
+
+<tr>
+<td>User Records</td>
+<td>用户记录</td>
+<td>不确定</td>
+<td>实际存储的行记录内容</td>
+</tr>
+
+<tr>
+<td>Free Space</td>
+<td>空闲空间</td>
+<td>不确定</td>
+<td>页中尚未使用的空间</td>
+</tr>
+
+<tr>
+<td>Page Directory</td>
+<td>页面目录</td>
+<td>不确定</td>
+<td>页中的某些记录的相对位置</td>
+</tr>
+
+<tr>
+<td>File Trailer</td>
+<td>文件尾部</td>
+<td>8字节</td>
+<td>校验页是否完整</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="file-header-文件头部">File Header(文件头部)</h3>
+
+<p>针对各种类型页的一些通用信息,占有固定的<font color=red>38个字节</font></p>
+
+<table>
+<thead>
+<tr>
+<th align="left">名称</th>
+<th align="center">占用空间大小</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">FIL_PAGE_SPACE_OR_CHKSUM</td>
+<td align="center">4字节</td>
+<td align="left">页的校验和（checksum值）</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_OFFSET</td>
+<td align="center">4字节</td>
+<td align="left">页号</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_PREV</td>
+<td align="center">4字节</td>
+<td align="left">上一个页的页号</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_NEXT</td>
+<td align="center">4字节</td>
+<td align="left">下一个页的页号</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_LSN</td>
+<td align="center">8字节</td>
+<td align="left">页面被最后修改时对应的日志序列位置（英文名是：Log Sequence Number）</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_TYPE</td>
+<td align="center">2字节</td>
+<td align="left">该页的类型</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_FILE_FLUSH_LSN</td>
+<td align="center">8字节</td>
+<td align="left">仅在系统表空间的一个页中定义，代表文件至少被刷新到了对应的LSN值</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_ARCH_LOG_NO_OR_SPACE_ID</td>
+<td align="center">4字节</td>
+<td align="left">页属于哪个表空间</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="fil-page-space-or-chksum">FIL_PAGE_SPACE_OR_CHKSUM</h4>
+
+<p>这个代表当前页面的校验和（checksum）。对于一个很长很长的字节串来说，我们会通过某种算法来计算一个比较短的值来代表这个很长的字节串，这个比较短的值就称为校验和</p>
+
+<h4 id="fil-page-offset">FIL_PAGE_OFFSET</h4>
+
+<p>每一个页都有一个单独的页号，就跟你的身份证号码一样，InnoDB通过页号来可以唯一定位一个页。</p>
+
+<h4 id="fil-page-type-页的类型">FIL_PAGE_TYPE(页的类型)</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">类型名称</th>
+<th align="center">十六进制</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">FIL_PAGE_TYPE_ALLOCATED</td>
+<td align="center">0x0000</td>
+<td align="left">最新分配，还没使用</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_UNDO_LOG</td>
+<td align="center">0x0002</td>
+<td align="left">Undo日志页</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_INODE</td>
+<td align="center">0x0003</td>
+<td align="left">段信息节点</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_IBUF_FREE_LIST</td>
+<td align="center">0x0004</td>
+<td align="left">Insert Buffer空闲列表</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_IBUF_BITMAP</td>
+<td align="center">0x0005</td>
+<td align="left">Insert Buffer位图</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_TYPE_SYS</td>
+<td align="center">0x0006</td>
+<td align="left">系统页</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_TYPE_TRX_SYS</td>
+<td align="center">0x0007</td>
+<td align="left">事务系统数据</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_TYPE_FSP_HDR</td>
+<td align="center">0x0008</td>
+<td align="left">表空间头部信息</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_TYPE_XDES</td>
+<td align="center">0x0009</td>
+<td align="left">扩展描述页</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_TYPE_BLOB</td>
+<td align="center">0x000A</td>
+<td align="left">BLOB页</td>
+</tr>
+
+<tr>
+<td align="left">FIL_PAGE_INDEX</td>
+<td align="center">0x45BF</td>
+<td align="left">索引页，也就是我们所说的数据页</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="fil-page-prev和fil-page-next">FIL_PAGE_PREV和FIL_PAGE_NEXT</h4>
+
+<p>所有的页 是以双链表的形式串联起来，需要注意的是，并不是所有类型的页都有上一个和下一个页的属性</p>
+
+<h3 id="page-header-页面头部">Page Header(页面头部)</h3>
+
+<p>一个数据页中存储的记录的状态信息,占有固定的<font color=red>56个字节</font></p>
+
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th align="center">占用空间大小</th>
+<th>描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>PAGE_N_DIR_SLOTS</td>
+<td align="center">2字节</td>
+<td>在页目录中的槽数量</td>
+</tr>
+
+<tr>
+<td>PAGE_HEAP_TOP</td>
+<td align="center">2字节</td>
+<td>还未使用的空间最小地址，也就是说从该地址之后就是Free Space</td>
+</tr>
+
+<tr>
+<td>PAGE_N_HEAP</td>
+<td align="center">2字节</td>
+<td>本页中的记录的数量（包括最小和最大记录以及标记为删除的记录）</td>
+</tr>
+
+<tr>
+<td>PAGE_FREE</td>
+<td align="center">2字节</td>
+<td>第一个已经标记为删除的记录地址（各个已删除的记录通过next_record也会组成一个单链表，这个单链表中的记录可以被重新利用）</td>
+</tr>
+
+<tr>
+<td>PAGE_GARBAGE</td>
+<td align="center">2字节</td>
+<td>已删除记录占用的字节数</td>
+</tr>
+
+<tr>
+<td>PAGE_LAST_INSERT</td>
+<td align="center">2字节</td>
+<td>最后插入记录的位置</td>
+</tr>
+
+<tr>
+<td>PAGE_DIRECTION</td>
+<td align="center">2字节</td>
+<td>记录插入的方向</td>
+</tr>
+
+<tr>
+<td>PAGE_N_DIRECTION</td>
+<td align="center">2字节</td>
+<td>一个方向连续插入的记录数量</td>
+</tr>
+
+<tr>
+<td>PAGE_N_RECS</td>
+<td align="center">2字节</td>
+<td>该页中记录的数量（不包括最小和最大记录以及被标记为删除的记录）</td>
+</tr>
+
+<tr>
+<td>PAGE_MAX_TRX_ID</td>
+<td align="center">8字节</td>
+<td>修改当前页的最大事务ID，该值仅在二级索引中定义</td>
+</tr>
+
+<tr>
+<td>PAGE_LEVEL</td>
+<td align="center">2字节</td>
+<td>当前页在B+树中所处的层级</td>
+</tr>
+
+<tr>
+<td>PAGE_INDEX_ID</td>
+<td align="center">8字节</td>
+<td>索引ID，表示当前页属于哪个索引</td>
+</tr>
+
+<tr>
+<td>PAGE_BTR_SEG_LEAF</td>
+<td align="center">10字节</td>
+<td>B+树叶子段的头部信息，仅在B+树的Root页定义</td>
+</tr>
+
+<tr>
+<td>PAGE_BTR_SEG_TOP</td>
+<td align="center">10字节</td>
+<td>B+树非叶子段的头部信息，仅在B+树的Root页定义</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="infimum和supremum">Infimum和Supremum</h3>
+
+<p>两个虚拟的伪记录，分别表示页中的最小和最大记录，占固定的26个字节。这一部分会在 <code>User Record</code> 中详细介绍</p>
+
+<h3 id="user-records">User Records</h3>
+
+<p>真实存储我们插入的记录的部分，大小不固定。它每插入一条数据， 会从 <code>Free Space</code> 中申请一个记录大小的空间划分过来，当 <code>Free Space</code> 没有空间时， 就需要申请一个新的 <code>页</code>。</p>
+
+<p>插入数据时， 假设使用 <code>Compact行格式</code>， 所有的记录在 <code>User Records</code> 中靠 <a href="#%E8%AE%B0%E5%BD%95%E5%A4%B4%E4%BF%A1%E6%81%AF"><code>记录头信息</code></a> 串联起来</p>
+
+<p>Infimum 和 Supremum 都是由5个字节的 <code>记录头信息</code> 和8个字节大小的固定部分组成</p>
+
+<ul>
+<li><code>Infimum</code> 的 <code>记录头信息</code> 中的 <code>heap_no</code> 为0， <code>record_type</code> 为2 (最小记录)</li>
+<li><code>Supremum</code> 的 <code>记录头信息</code> 中的 <code>heap_no</code> 为1， <code>record_type</code> 为3 (最大记录)</li>
+</ul>
+
+<p>后面插入的记录 <code>heap_no</code> 从<font color=red>2</font>开始， <code>record_type</code> 为 0 (普通记录)</p>
+
+<h4 id="记录头信息中的-next-record">记录头信息中的 next_record</h4>
+
+<p>它表示<font color=red>从当前记录的真实数据到下一条记录的真实数据的地址偏移量</font>。比方说第一条记录的next_record值为32，意味着从第一条记录的真实数据的地址处向后找32个字节便是下一条记录的<font color=red>真实数据</font>。<br />
+<code>下一条记录</code> 指得并不是按照我们插入顺序的下一条记录，而是 <font color=red>按照主键值由小到大的顺序的下一条记录</font>。</p>
+
+<ul>
+<li>规定 <code>Infimum</code> 记录（也就是最小记录） 的下一条记录就是本页中主键值最小的用户记录</li>
+<li>而本页中主键值最大的用户记录的下一条记录就是 <code>Supremum</code> 记录（也就是最大记录）</li>
+</ul>
+
+<p>其实可以这样理解， <code>User Records</code>中的数据按照主键从小到大形成单链表， <code>Infimum</code> 记录是表头， <code>Supremum</code> 记录是最后一个节点</p>
+
+<p><font color=red>注意： <code>next_record</code> 指针指向的是记录头信息和真实数据之间的位置， 向左读取就是记录头信息， 向右读取就是真实数据。</font><br />
+变长字段长度列表和NULL列表中信息是逆序， 这样可以使记录中位置靠前的字段和它们对应的字段长度信息在内存中的距离更近，可能会提高高速缓存的命中率。？？？</p>
+
+<h3 id="free-space">Free Space</h3>
+
+<p>页中尚未使用的部分，大小不确定。</p>
+
+<h3 id="page-directory-页目录">Page Directory(页目录)</h3>
+
+<ul>
+<li>将所有正常的记录（包括最大和最小记录，不包括标记为已删除的记录）划分为几个组。</li>
+<li>每个组的最后一条记录（也就是组内最大的那条记录）的头信息中的n_owned属性表示该记录拥有多少条记录，也就是该组内共有几条记录。</li>
+<li>将每个组的最后一条记录的地址偏移量单独提取出来按顺序存储到靠近页的尾部的地方，这个地方就是所谓的Page Directory，也就是页目录（此时应该返回头看看页面各个部分的图）。页面目录中的这些地址偏移量被称为槽（英文名：Slot），所以这个页面目录就是由槽组成的。</li>
+</ul>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/page_directory.png" alt="page_directory.png" /></p>
+
+<p>记录头信息中 <code>n_owned</code> 只有槽统计分组中的数量。 而分组中的记录条数是有规定的：对于最小记录所在的分组只能有 1 条记录，最大记录所在的分组拥有的记录条数只能在 1~8 条之间，剩下的分组中记录的条数范围只能在是 4~8 条之间</p>
+
+<p>页中的某些记录相对位置，也就是各个槽在页面中的地址偏移量，大小不固定，插入的记录越多，这个部分占用的空间越多。</p>
+
+<h3 id="file-trailer">File Trailer</h3>
+
+<p>这部分由<font color=red>8个字节</font>组成，主要为保证从内存中同步到磁盘的页的完整性， 需要检测一个页是否完整。</p>
+
+<ul>
+<li>前4个字节代表页的校验和<br />
+和 <code>File Header</code> 中的校验和相对应。当头部的校验和 <code>File Trailer</code> 中的校验和不一致，则意味着同步中间出了错。</li>
+<li>后4个字节代表页面被最后修改时对应的日志序列位置（LSN）<br />
+在页的首部和尾部都会存储页中数据的校验和和页面最后修改时对应的 <code>LSN</code> 值，如果首部和尾部的校验和和 <code>LSN</code> 值校验不成功的话，就说明同步过程出现了问题。</li>
+</ul>
+
+<h2 id="总结">总结</h2>
+
+<p>各个 <code>数据页</code> 可以组成一个 <code>双向链表</code>，而每个 <code>数据页</code> 中的记录会按照主键值从小到大的顺序组成一个 <code>单向链表</code>，每个 <code>数据页</code> 都会为存储在它里边儿的记录生成一个 <code>页目录</code>，在通过主键查找某条记录的时候可以在 <code>页目录</code> 中使用 <code>二分法</code> 快速定位到对应的 <code>槽</code>，然后再遍历该 <code>槽</code> 对应分组中的记录即可快速找到指定的记录</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/mysql" role="button">MySQL </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2019-06/python-%E6%93%8D%E4%BD%9C-mysql%E7%A4%BA%E4%BE%8B/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>python 操作 MySQL示例</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#innodb-%e8%a1%8c%e6%a0%bc%e5%bc%8f">
+												 InnoDB 行格式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#compact-%e6%a0%bc%e5%bc%8f">
+												 Compact 格式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8f%98%e9%95%bf%e5%ad%97%e6%ae%b5%e9%95%bf%e5%ba%a6%e5%88%97%e8%a1%a8">
+												 变长字段长度列表
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#null%e5%80%bc%e5%88%97%e8%a1%a8">
+												 NULL值列表
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%ae%b0%e5%bd%95%e5%a4%b4%e4%bf%a1%e6%81%af">
+												 记录头信息
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%ae%b0%e5%bd%95%e7%9a%84%e7%9c%9f%e5%ae%9e%e6%95%b0%e6%8d%ae">
+												 记录的真实数据
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#redundant-%e6%a0%bc%e5%bc%8f">
+												 Redundant 格式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#redundant%e7%9a%84%e8%ae%b0%e5%bd%95%e7%9a%84%e7%9c%9f%e5%ae%9e%e6%95%b0%e6%8d%ae">
+												 Redundant的记录的真实数据
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ad%97%e6%ae%b5%e9%95%bf%e5%ba%a6%e5%81%8f%e7%a7%bb%e5%88%97%e8%a1%a8">
+												 字段长度偏移列表
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#redundant%e7%9a%84%e8%ae%b0%e5%bd%95%e5%a4%b4%e4%bf%a1%e6%81%af">
+												 Redundant的记录头信息
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%a1%8c%e6%ba%a2%e5%87%ba%e6%95%b0%e6%8d%ae">
+												 行溢出数据
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#dynamic%e5%92%8ccompressed-%e6%a0%bc%e5%bc%8f">
+												 Dynamic和Compressed 格式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#innodb%e6%95%b0%e6%8d%ae%e9%a1%b5%e7%bb%93%e6%9e%84">
+												 InnoDB数据页结构
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#file-header-%e6%96%87%e4%bb%b6%e5%a4%b4%e9%83%a8">
+												 File Header(文件头部)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#fil-page-space-or-chksum">
+												 FIL_PAGE_SPACE_OR_CHKSUM
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#fil-page-offset">
+												 FIL_PAGE_OFFSET
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#fil-page-type-%e9%a1%b5%e7%9a%84%e7%b1%bb%e5%9e%8b">
+												 FIL_PAGE_TYPE(页的类型)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#fil-page-prev%e5%92%8cfil-page-next">
+												 FIL_PAGE_PREV和FIL_PAGE_NEXT
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#page-header-%e9%a1%b5%e9%9d%a2%e5%a4%b4%e9%83%a8">
+												 Page Header(页面头部)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#infimum%e5%92%8csupremum">
+												 Infimum和Supremum
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#user-records">
+												 User Records
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%ae%b0%e5%bd%95%e5%a4%b4%e4%bf%a1%e6%81%af%e4%b8%ad%e7%9a%84-next-record">
+												 记录头信息中的 next_record
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#free-space">
+												 Free Space
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#page-directory-%e9%a1%b5%e7%9b%ae%e5%bd%95">
+												 Page Directory(页目录)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#file-trailer">
+												 File Trailer
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2019 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

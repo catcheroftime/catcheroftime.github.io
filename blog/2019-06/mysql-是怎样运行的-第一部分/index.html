@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="因为想整体了解 MySQL 整体的运行原理和设计原则， 认真读了一下在掘金上面的发布的小测&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;, 在已经囫囵吞枣的读完一遍之后，想在读第二遍的时候， 顺便整理一下属于自己的理解和文档。">
+  
+  <meta property="og:title" content="MySQL 是怎样运行的-第一部分" />
+<meta property="og:description" content="因为想整体了解 MySQL 整体的运行原理和设计原则， 认真读了一下在掘金上面的发布的小测&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;, 在已经囫囵吞枣的读完一遍之后，想在读第二遍的时候， 顺便整理一下属于自己的理解和文档。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2019-06/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86/" />
+<meta property="article:published_time" content="2019-06-12T22:00:00&#43;08:00"/>
+<meta property="article:modified_time" content="2019-06-12T22:00:00&#43;08:00"/>
+
+
+  <title>
+  
+       MySQL 是怎样运行的-第一部分 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2019-06/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/mysql"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> MySQL </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">MySQL 是怎样运行的-第一部分</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Jun 12, 2019</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>因为想整体了解 MySQL 整体的运行原理和设计原则， 认真读了一下在掘金上面的发布的小测<a href="https://juejin.im/book/5bffcbc9f265da614b11b731">&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;</a>, 在已经囫囵吞枣的读完一遍之后，想在读第二遍的时候， 顺便整理一下属于自己的理解和文档。</p>
+
+<p>给自己定一个小目标， 1个月内整理完自己的文档。2019-06-12开始，打个卡记录一下。</p>
+
+<h2 id="简单介绍一下整体的逻辑">简单介绍一下整体的逻辑</h2>
+
+<p>第一部分: MySQL 最基础的部分， MySQL 客户端和服务端的配置信息， 以及字符集方面的知识。<br />
+第二部分: InnoDB 的数据结构<br />
+第三部分: B+ 树索引及其使用<br />
+第四部分: 数据在文件结构中的格式<br />
+第五部分: 单表查询，多表查询， 以及访问方式的选择<br />
+第六部分: MySQL 优化问题<br />
+第七部分: Buffet Pool<br />
+第八部分: 事务 redo,undo 具体流程<br />
+第九部分: 锁</p>
+
+<h2 id="第一部分">第一部分</h2>
+
+<h3 id="客户端及服务端部署及启动">客户端及服务端部署及启动</h3>
+
+<p>Mysql 客户端通过提供用户名密码登录后，连接服务器程序， 发送增删改查的请求， 然后服务器响应这些请求， 从而操作它维护的数据。</p>
+
+<p>MySQL 服务器进程默认为 <font color=red>mysqld</font><br />
+MySQL 客户端进程默认为 <font color=red>mysql</font></p>
+
+<p>下面介绍Linux下服务端以及客户端安装启动的一些说明</p>
+
+<ol>
+<li><p>安装mysql-server</p>
+
+<pre><code>sudo apt-get install mysql-server
+</code></pre></li>
+</ol>
+
+<p>Linux 下 MySQL 服务安装路径</p>
+
+<ul>
+<li><p>usr/bin ： MySQL 的运行路径</p>
+
+<pre><code> ├── mysql
+ ├── mysql.server -&gt; ../support-files/mysql.server
+ ├── mysqladmin
+ ├── mysqlbinlog
+ ├── mysqlcheck
+ ├── mysqld
+ ├── mysqld_multi
+ ├── mysqld_safe
+ ├── mysqldump
+ ├── mysqlimport
+ ├── mysqlpump
+ ... (省略其他文件)
+</code></pre></li>
+
+<li><p>var/lib/mysql ： MySQL 数据库文件的存放路径</p></li>
+
+<li><p>usr/lib/mysql ： MySQL 的安装路径</p></li>
+
+<li><p>etc/mysql/my.cnf : MySQL 的配置文件</p></li>
+</ul>
+
+<ol>
+<li><p>查看是否安装成功并启动</p>
+
+<pre><code>netstat -tap | grep mysql
+</code></pre></li>
+
+<li><p>MySQL 在安装完成后自动启动，root账号密码为系统root密码</p>
+
+<pre><code>mysqladmin --version        查看mysql版本
+sudo service mysql status   查看mysql状态
+sudo service mysql start    启动mysql服务
+sudo service mysql stop     停止mysql
+</code></pre></li>
+
+<li><p>开启 MySQL 远程访问,修改 MySQL 配置文件：</p>
+
+<pre><code>vi  /etc/mysql/mysql.conf.d/mysqld.cnf
+</code></pre>
+
+<p>把其中bind-address = 127.0.0.1注释掉</p></li>
+
+<li><p>使用root登录 MySQL</p>
+
+<pre><code>mysql -h主机名 -u用户名 -p密码
+</code></pre>
+
+<p>各个参数意义如下:</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">参数名</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">-h</td>
+<td align="left">表示服务器进程所在计算机的域名或者IP地址，连接本机可省略或填localhost或者127.0.0.1</td>
+</tr>
+
+<tr>
+<td align="center">-u</td>
+<td align="left">表示用户名</td>
+</tr>
+
+<tr>
+<td align="center">-p</td>
+<td align="left">表示密码</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>注意</strong></p>
+
+<ul>
+<li>连接服务器最好不要在一行命令中输入密码。 输入<code>mysql -hlocalhost -rroot -p</code>点击回车后会提示输入密码</li>
+<li>参数摆放顺序随意</li>
+</ul></li>
+</ol>
+
+<h3 id="客户端与服务器连接的过程">客户端与服务器连接的过程</h3>
+
+<p>CS通信过程本质就是一个进程间通信的过程， MySQL支持三种通信方式</p>
+
+<ul>
+<li>TCP/IP<br />
+MySQL 采用TCP作为CS之间的网络通信协议，服务器启动默认申请3306端口号， 客户端通过<font color=red>IP地址+端口号</font>来与服务端连接。 端口号可以通过启动服务或者客户端登录时通过<code>-P</code>指明端口号</li>
+<li>命名管道和共享内存<br />
+windows下独有的方式</li>
+<li>Unix域套接字文件<br />
+如果我们的服务器进程和客户端进程都运行在同一台操作系统为类Unix的机器上的话，我们可以使用Unix域套接字文件来进行进程间通信</li>
+</ul>
+
+<p>个人感觉实际运用过程中基本全是TCP/IP这种形式实现通信。</p>
+
+<h3 id="服务器处理客户端请求">服务器处理客户端请求</h3>
+
+<p>在客户端发送一个请求，到服务端处理的大致流程如下图</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/2.png" alt="CS消息处理流程" /></p>
+
+<ul>
+<li><p>连接管理<br />
+通过上面介绍的三种方式之一将客户端和服务端建立起连接</p></li>
+
+<li><p>解析和优化<br />
+对文本信息经过解析，预处理以及sql语句语法的优化</p>
+
+<ul>
+<li>查询缓存，MySQL 在处理查询请求后会将刚处理过的请求和结果缓存起来，在下一次再有一模一样的请求过来的时候，直接返回缓存中的结果，如果缓存没命中，就需要进入正式的查询阶段了<br /></li>
+<li>语法解析 判断请求的语法是否正确，解析需要查询的表，以及各种查询条件等</li>
+<li>查询优化 对请求的语句进行优化，选择成本最低的执行计划</li>
+</ul></li>
+
+<li><p>存储引擎<br />
+MySQL服务器把数据的存储和提取操作都封装到了一个叫存储引擎的模块里，在通过上面步骤之后，根据执行计划调用存储引擎提供的API去访问真实的数据表, 获取数据返回客户端</p></li>
+</ul>
+
+<p>存储引擎很多， 但是常用的只有 InnoDB(默认存储引擎), MyISAM 和 Memory</p>
+
+<p>简单了解一下 InnoDB 和 MyISAM 之间的区别 <a href="https://my.oschina.net/junn/blog/183341">https://my.oschina.net/junn/blog/183341</a></p>
+
+<h3 id="字符集">字符集</h3>
+
+<p>字符集是用来描述某个字符范围的编码规则，常用的字符集</p>
+
+<ul>
+<li><strong>ASCII</strong><br />
+共收录128个字符，包括空格标点符号数字大小写字母和一些不可见字符<br />
+<font color=red>1个字节编码</font></li>
+<li><strong>ISO 8859-1(latin1)</strong><br />
+共收录256个字符，是在ASCII字符集的基础上又扩充了128个西欧常用字符(包括德法两国的字母)<br />
+<font color=red>1个字节编码</font></li>
+<li><strong>GB2312</strong><br />
+收录了汉字以及拉丁字母、希腊字母、日文平假名及片假名字母、俄语西里尔字母。其中收录汉字6763个，其他文字符号682个。同时这种字符集又兼容ASCII字符集<br />
+变长编码方式：
+
+<ul>
+<li>如果该字符在ASCII字符集中，则采用<font color=red>1字节</font>编码。</li>
+<li>否则采用<font color=red>2字节</font>编码。</li>
+</ul></li>
+<li><strong>GBK</strong><br />
+GBK字符集只是在收录字符范围上对GB2312字符集作了扩充，编码方式上兼容GB2312。</li>
+<li><strong>utf8</strong><br />
+收录地球上能想到的所有字符，而且还在不断扩充。这种字符集兼容ASCII字符集<br />
+变长编码方式，编码一个字符需要使用<font color=red>1～4个字节</font><br />
+utf16使用2个或4个字节编码一个字符，utf32使用4个字节编码一个字符,都属于Unicode字符集</li>
+</ul>
+
+<h3 id="mysql-中的字符集和排序规则">MySQL 中的字符集和排序规则</h3>
+
+<h4 id="mysql中的utf8和utf8mb4">MySQL中的utf8和utf8mb4</h4>
+
+<p>utf8mb3：只使用1～3个字节表示字符。MySQL中utf8是utf8mb3的别名<br />
+utf8mb4：正宗的utf8字符集，使用1～4个字节表示字符。</p>
+
+<h4 id="字符集及比较规则">字符集及比较规则</h4>
+
+<p>MySQL 常用字符集如下表</p>
+
+<table>
+<thead>
+<tr>
+<th>字符集名称</th>
+<th align="center">Maxlen</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>ascii</td>
+<td align="center">1</td>
+</tr>
+
+<tr>
+<td>latin1</td>
+<td align="center">1</td>
+</tr>
+
+<tr>
+<td>gb2312</td>
+<td align="center">2</td>
+</tr>
+
+<tr>
+<td>gbk</td>
+<td align="center">2</td>
+</tr>
+
+<tr>
+<td>utf8</td>
+<td align="center">3</td>
+</tr>
+
+<tr>
+<td>utf8mb4</td>
+<td align="center">4</td>
+</tr>
+</tbody>
+</table>
+
+<p>MySQL 比较规则 实质就是排序规则，对字符串的排序方法</p>
+
+<ul>
+<li>比较规则名称以与其关联的字符集的名称开头</li>
+<li>后边紧跟着该比较规则主要作用于哪种语言，比如utf8_spanish_ci是以西班牙语的规则比较，utf8_general_ci是一种通用的比较规则。</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+<th align="center">后缀</th>
+<th align="left">英文释义</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">_ai</td>
+<td align="left">accent insensitive</td>
+<td align="left">不区分重音</td>
+</tr>
+
+<tr>
+<td align="center">_as</td>
+<td align="left">accent sensitive</td>
+<td align="left">区分重音</td>
+</tr>
+
+<tr>
+<td align="center">_ci</td>
+<td align="left">case insensitive</td>
+<td align="left">不区分大小写</td>
+</tr>
+
+<tr>
+<td align="center">_cs</td>
+<td align="left">case sensitive</td>
+<td align="left">区分大小写</td>
+</tr>
+
+<tr>
+<td align="center">_bin</td>
+<td align="left">binary</td>
+<td align="left">以二进制方式比较</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="字符集和比较规则应用">字符集和比较规则应用</h4>
+
+<p>MySQL有4个级别的字符集和比较规则，分别是：</p>
+
+<ul>
+<li>服务器级别 (系统变量character_set_server, collation_server)</li>
+<li>数据库级别 （只读系统变量character_set_database， collation_database）</li>
+<li>表级别</li>
+<li>列级别<br />
+同一个表中的不同的列也可以有不同的字符集和比较规则</li>
+</ul>
+
+<p><font color=red>创建和修改的语句中没有指明字符集和比较规则，默认使用上级的字符集和比较规则最为自己的字符集和比较规则</font></p>
+
+<ul>
+<li>只修改字符集，则比较规则将变为修改后的字符集默认的比较规则。</li>
+<li>只修改比较规则，则字符集将变为修改后的比较规则对应的字符集。</li>
+</ul>
+
+<h4 id="客户端和服务端通信中的字符集">客户端和服务端通信中的字符集</h4>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/1.png" alt="字符集在通信中转换" /></p>
+
+<table>
+<thead>
+<tr>
+<th align="left">系统变量</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">character_set_client</td>
+<td align="left">服务器解码请求时使用的字符集</td>
+</tr>
+
+<tr>
+<td align="left">character_set_connection</td>
+<td align="left">服务器处理请求时会把请求字符串从character_set_client转为character_set_connection</td>
+</tr>
+
+<tr>
+<td align="left">character_set_results</td>
+<td align="left">服务器向客户端返回数据时使用的字符集</td>
+</tr>
+</tbody>
+</table>
+
+<ul>
+<li>客户端使用自己的字符集对请求编码， 发送给服务端</li>
+<li>服务端使用 character_set_client 解码，在使用 character_set_connection 转换成MySQL使用的格式</li>
+<li>根据表中列自己的格式转换格式， 读取数据</li>
+<li>将结果用 character_set_results 编码返回客户端</li>
+<li>客户端使用自己的字符集解码数据</li>
+</ul>
+
+<p>如果客户端自己的字符集和character_set_client，character_set_results不同， 可能就会出现乱码的情况
+一般情况下要使用保持这三个变量的值和客户端使用的字符集相同。</p>
+
+<pre><code>SET character_set_client = 字符集名;
+SET character_set_connection = 字符集名;
+SET character_set_results = 字符集名;
+</code></pre>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/mysql" role="button">MySQL </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2019-06/hugo_blog-%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Hugo_blog 配置说明</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2019-06/mysql-%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>MySQL 零碎知识</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%ae%80%e5%8d%95%e4%bb%8b%e7%bb%8d%e4%b8%80%e4%b8%8b%e6%95%b4%e4%bd%93%e7%9a%84%e9%80%bb%e8%be%91">
+												 简单介绍一下整体的逻辑
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%ac%ac%e4%b8%80%e9%83%a8%e5%88%86">
+												 第一部分
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%a2%e6%88%b7%e7%ab%af%e5%8f%8a%e6%9c%8d%e5%8a%a1%e7%ab%af%e9%83%a8%e7%bd%b2%e5%8f%8a%e5%90%af%e5%8a%a8">
+												 客户端及服务端部署及启动
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%a2%e6%88%b7%e7%ab%af%e4%b8%8e%e6%9c%8d%e5%8a%a1%e5%99%a8%e8%bf%9e%e6%8e%a5%e7%9a%84%e8%bf%87%e7%a8%8b">
+												 客户端与服务器连接的过程
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9c%8d%e5%8a%a1%e5%99%a8%e5%a4%84%e7%90%86%e5%ae%a2%e6%88%b7%e7%ab%af%e8%af%b7%e6%b1%82">
+												 服务器处理客户端请求
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ad%97%e7%ac%a6%e9%9b%86">
+												 字符集
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#mysql-%e4%b8%ad%e7%9a%84%e5%ad%97%e7%ac%a6%e9%9b%86%e5%92%8c%e6%8e%92%e5%ba%8f%e8%a7%84%e5%88%99">
+												 MySQL 中的字符集和排序规则
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#mysql%e4%b8%ad%e7%9a%84utf8%e5%92%8cutf8mb4">
+												 MySQL中的utf8和utf8mb4
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ad%97%e7%ac%a6%e9%9b%86%e5%8f%8a%e6%af%94%e8%be%83%e8%a7%84%e5%88%99">
+												 字符集及比较规则
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ad%97%e7%ac%a6%e9%9b%86%e5%92%8c%e6%af%94%e8%be%83%e8%a7%84%e5%88%99%e5%ba%94%e7%94%a8">
+												 字符集和比较规则应用
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%a2%e6%88%b7%e7%ab%af%e5%92%8c%e6%9c%8d%e5%8a%a1%e7%ab%af%e9%80%9a%e4%bf%a1%e4%b8%ad%e7%9a%84%e5%ad%97%e7%ac%a6%e9%9b%86">
+												 客户端和服务端通信中的字符集
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2019 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
