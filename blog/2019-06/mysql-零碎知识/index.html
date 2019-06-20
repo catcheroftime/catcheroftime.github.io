@@ -330,6 +330,15 @@
 SHOW COLLATION [LIKE 匹配的模式];
 </code></pre>
 
+<h2 id="创建和删除索引语句">创建和删除索引语句</h2>
+
+<pre><code>ALTER TABLE 表名 ADD [INDEX|KEY] 索引名 (需要被索引的单个列或多个列);
+// ALTER TABLE index_demo ADD INDEX idx_c1_c2 (c1,c2)
+
+ALTER TABLE 表名 DROP [INDEX|KEY] 索引名;
+// ALTER TABLE index_demo DROP INDEX idx_c1_c2;
+</code></pre>
+
           </div>
 
           
@@ -444,6 +453,28 @@ SHOW COLLATION [LIKE 匹配的模式];
 										<li class="nav-item">
 						 					<a class="nav-link" href="#%e5%ad%97%e7%ac%a6%e9%9b%86-%e6%af%94%e8%be%83%e8%a7%84%e5%88%99%e7%9a%84%e6%9f%a5%e7%9c%8b">
 												 字符集、比较规则的查看
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%9b%e5%bb%ba%e5%92%8c%e5%88%a0%e9%99%a4%e7%b4%a2%e5%bc%95%e8%af%ad%e5%8f%a5">
+												 创建和删除索引语句
 											</a>
 										</li>
 						 
