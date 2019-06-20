@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="败给时间">
-  <meta name="description" content="查看 MySQL 系统环境变量 SHOW [GLOBAL|SESSION] VARIABLES [LIKE 匹配的模式]; // LIKE表达式后边可以跟通配符来进行模糊查询 []为可填写参数 例如 SHOW VARIABLES LIKE &#39;default_storage_engine&#39;; SHOW VARIABLES like &#39;max_connections&#39;; SHOW VARIABLES LIKE &#39;default%&#39;; 服务器程序使用的默认存储引擎就是InnoDB，允许同时连接的客户端数量最多为151 系统变量可以根据作用范围分为2种 GLOBAL：全局变量，影响服务器的整体操作。 SESSION：会话变量，影响某个客户端连接的操作。（注：SESSION有个别名叫LOCAL） 设置系统变量 通过">
+  <meta name="description" content="这个文档主要统计一下不常用到的 SQL 语句和一些知识点， 更新ing">
   
   <meta property="og:title" content="MySQL 零碎知识" />
-<meta property="og:description" content="查看 MySQL 系统环境变量 SHOW [GLOBAL|SESSION] VARIABLES [LIKE 匹配的模式]; // LIKE表达式后边可以跟通配符来进行模糊查询 []为可填写参数 例如 SHOW VARIABLES LIKE &#39;default_storage_engine&#39;; SHOW VARIABLES like &#39;max_connections&#39;; SHOW VARIABLES LIKE &#39;default%&#39;; 服务器程序使用的默认存储引擎就是InnoDB，允许同时连接的客户端数量最多为151 系统变量可以根据作用范围分为2种 GLOBAL：全局变量，影响服务器的整体操作。 SESSION：会话变量，影响某个客户端连接的操作。（注：SESSION有个别名叫LOCAL） 设置系统变量 通过" />
+<meta property="og:description" content="这个文档主要统计一下不常用到的 SQL 语句和一些知识点， 更新ing" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-06/mysql-%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86/" />
 <meta property="article:published_time" content="2019-06-13T16:00:00&#43;08:00"/>
@@ -284,7 +284,7 @@
 
 
           <div class="post-content markdown">
-            
+            <p>这个文档主要统计一下不常用到的 <code>SQL</code> 语句和一些知识点， 更新ing</p>
 
 <h2 id="查看-mysql-系统环境变量">查看 MySQL 系统环境变量</h2>
 
@@ -338,7 +338,6 @@ SHOW COLLATION [LIKE 匹配的模式];
 ALTER TABLE 表名 DROP [INDEX|KEY] 索引名;
 // ALTER TABLE index_demo DROP INDEX idx_c1_c2;
 </code></pre>
-
           </div>
 
           
