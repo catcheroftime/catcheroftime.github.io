@@ -754,7 +754,7 @@ InnoDB 将数据划分为若干个页， 以页作为磁盘和内存之间交互
 
 <p>因为1个页一般为16KB（16384个字节），一个<code>VARCHAR(M)</code>,最多存储65532个字节， 导致一个页放不下一条记录。</p>
 
-<p>对于<code>Compact</code>和<code>Reduntan</code>t行格式来说，如果某一列中的数据非常多的话，在本记录的真实数据处只会存储该列的<font color=red>前768个字节</font>的数据和一个<font color=red>20字节指向其他页的地址</font>，然后把剩下的数据存放到其他页中，这个过程也叫做<font color=red>行溢出</font>，存储超出768字节的那些页面也被称为<font color=red>溢出页</font>。</p>
+<p>对于<code>Compact</code>和<code>Reduntant</code>行格式来说，如果某一列中的数据非常多的话，在本记录的真实数据处只会存储该列的<font color=red>前768个字节</font>的数据和一个<font color=red>20字节指向其他页的地址</font>，然后把剩下的数据存放到其他页中，这个过程也叫做<font color=red>行溢出</font>，存储超出768字节的那些页面也被称为<font color=red>溢出页</font>。</p>
 
 <p><img src="https://catcheroftime.github.io/images/blog/mysql/Compact_行溢出.png" alt="Compact_行溢出" /></p>
 

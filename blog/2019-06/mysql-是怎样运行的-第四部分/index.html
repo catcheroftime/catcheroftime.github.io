@@ -631,7 +631,7 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 
 <h3 id="从组的层面观察">从组的层面观察</h3>
 
-<h4 id="第一个组的第一个页">第一个组的第一个页</h4>
+<h4 id="第一个组的第一个页-fsp-hdr-16kb">第一个组的第一个页 (FSP_HDR 16KB)</h4>
 
 <p>第一个组的第一个页面(表空间的第一个页面，页号为0), 主要存储了表空间的一些整体属性以及第一个组内256个区的对应的XDES Entry结构</p>
 
@@ -769,15 +769,238 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 </tbody>
 </table>
 
-<h4 id="第二个组的第一个页">第二个组的第一个页</h4>
+<h4 id="第二个组的第一个页-xdes-16kb">第二个组的第一个页 (XDES 16KB)</h4>
 
 <p><img src="https://catcheroftime.github.io/images/blog/mysql/第二组第一页.png" alt="第二组第一页" /></p>
 
 <p>简单总结一下和第一个组第一个页的区别 : 除了少了 <code>File Space Header</code> 部分之外，也就是除了少了记录表空间整体属性的部分之外，其余的部分是一样一样的</p>
 
-<h4 id="inode-类型">INODE 类型</h4>
+<h4 id="第一个组的第二个页-ibuf-bitmap-16kb">第一个组的第二个页 (IBUF_BITMAP 16KB)</h4>
+
+<p>太复杂</p>
+
+<h4 id="第一个组的第三个页-inode类型-16kb">第一个组的第三个页 (INODE类型 16KB)</h4>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/第一组第三个页.png" alt="第一组第三个页" /></p>
+
+<p>这个页主要管理索引的段信息， 前面提到段的结构 <code>INODE Entry</code>， 这一部分主要就是存储 <code>INODE Entry</code> 结构</p>
+
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>中文名</th>
+<th>占用空间大小</th>
+<th>简单描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>File Header</td>
+<td>文件头部</td>
+<td>38字节</td>
+<td>页的一些通用信息</td>
+</tr>
+
+<tr>
+<td>List Node for INODE Page List</td>
+<td>通用链表节点</td>
+<td>12字节</td>
+<td>存储上一个INODE页面和下一个INODE页面的指针</td>
+</tr>
+
+<tr>
+<td>INODE Entry</td>
+<td>段描述信息</td>
+<td>16320字节</td>
+<td>一个页面里可以存储<code>85</code>个这样的结构</td>
+</tr>
+
+<tr>
+<td>Empty Space</td>
+<td>尚未使用空间</td>
+<td>6字节</td>
+<td>用于页结构的填充，没啥实际意义</td>
+</tr>
+
+<tr>
+<td>File Trailer</td>
+<td>文件尾部</td>
+<td>8字节</td>
+<td>校验页是否完整</td>
+</tr>
+</tbody>
+</table>
+
+<p>由于这个页最多只能存储85个段信息， 超过之后， 为了方便管理， 将所有的 <code>INODE</code> 类型的页串联成2个不同的链表</p>
+
+<ul>
+<li><code>SEG_INODES_FULL</code>链表：该链表中的INODE类型的页面中已经没有空闲空间来存储额外的INODE Entry结构了。</li>
+<li><code>SEG_INODES_FREE</code>链表：该链表中的INODE类型的页面中还有空闲空间来存储额外的INODE Entry结构了。</li>
+</ul>
+
+<p>而第一个组的第一个页中保存链表的基节点信息.</p>
+
+<p>既然保存了段的信息, 现在需要知道哪些页归属于那个段, 所以在 <a href="https://catcheroftime.github.io/blog/2019-06/mysql-是怎样运行的-第二部分/#/page-header-页面头部">页面头部</a> 中存在2个字段
+<code>PAGE_BTR_SEG_LEAF</code> 和 <code>PAGE_BTR_SEG_TOP</code> , 都是10个字节, 具体结构内容如下 (这个结构又称为 <code>Segment Header 结构</code>)</p>
+
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>占用字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Space ID of the INODE Entry</td>
+<td>4</td>
+<td>INODE Entry结构所在的表空间ID</td>
+</tr>
+
+<tr>
+<td>Page Number of the INODE Entry</td>
+<td>4</td>
+<td>INODE Entry结构所在的页面页号</td>
+</tr>
+
+<tr>
+<td>Byte Offset of the INODE Ent</td>
+<td>2</td>
+<td>INODE Entry结构在该页面中的偏移量</td>
+</tr>
+</tbody>
+</table>
 
 <h2 id="系统表空间">系统表空间</h2>
+
+<p>这是小册微信交流群里的一个大佬整理的一个系统表的全局图</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/系统表总览.png" alt="系统表总览" /></p>
+
+<p>相比于独立表表空间, 第一个组的3~7的页面时系统表空间独有的. 另外系统表空间的extent 1和extent 2这两个区，也就是页号从64~191这128个页面被称为Doublewrite buffer，也就是双写缓冲区</p>
+
+<table>
+<thead>
+<tr>
+<th>页号</th>
+<th>页面类型</th>
+<th>英文描述</th>
+<th>描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>3</td>
+<td>SYS</td>
+<td>Insert Buffer Header</td>
+<td>存储Insert Buffer的头部信息</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>INDEX</td>
+<td>Insert Buffer Root</td>
+<td>存储Insert Buffer的根页面</td>
+</tr>
+
+<tr>
+<td>5</td>
+<td>TRX_SYS</td>
+<td>Transction System</td>
+<td>事务系统的相关信息</td>
+</tr>
+
+<tr>
+<td>6</td>
+<td>SYS</td>
+<td>First Rollback Segment</td>
+<td>第一个回滚段的页面</td>
+</tr>
+
+<tr>
+<td>7</td>
+<td>SYS</td>
+<td>Data Dictionary Header</td>
+<td>数据字典头部信息</td>
+</tr>
+</tbody>
+</table>
+
+<p>MySQL除了保存用户的数据外, 为了更好的管理我们这些用户数据而不得已引入的一些额外数据，这些数据也称为 <code>元数据</code></p>
+
+<ul>
+<li>表相关信息 列的类型, 索引, 引擎啊,排序方式等等</li>
+<li>表与表之间的关系, 外键</li>
+<li>等等等</li>
+</ul>
+
+<p>InnoDB存储引擎特意定义了一些列的内部系统表（internal system table）来记录这些这些<code>元数据</code>, 这些系统表也被称为<code>数据字典</code>，它们都是以B+树的形式保存在系统表空间的某些页面中</p>
+
+<table>
+<thead>
+<tr>
+<th>表名</th>
+<th>描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>SYS_TABLES</td>
+<td>整个InnoDB存储引擎中所有的表的信息</td>
+</tr>
+
+<tr>
+<td>SYS_COLUMNS</td>
+<td>整个InnoDB存储引擎中所有的列的信息</td>
+</tr>
+
+<tr>
+<td>SYS_INDEXES</td>
+<td>整个InnoDB存储引擎中所有的索引的信息</td>
+</tr>
+
+<tr>
+<td>SYS_FIELDS</td>
+<td>整个InnoDB存储引擎中所有的索引对应的列的信息</td>
+</tr>
+
+<tr>
+<td>SYS_FOREIGN</td>
+<td>整个InnoDB存储引擎中所有的外键的信息</td>
+</tr>
+
+<tr>
+<td>SYS_FOREIGN_COLS</td>
+<td>整个InnoDB存储引擎中所有的外键对应列的信息</td>
+</tr>
+
+<tr>
+<td>SYS_TABLESPACES</td>
+<td>整个InnoDB存储引擎中所有的表空间信息</td>
+</tr>
+
+<tr>
+<td>SYS_DATAFILES</td>
+<td>整个InnoDB存储引擎中所有的表空间对应文件系统的文件路径信息</td>
+</tr>
+
+<tr>
+<td>SYS_VIRTUAL</td>
+<td>整个InnoDB存储引擎中所有的虚拟生成列的信息</td>
+</tr>
+</tbody>
+</table>
+
+<p>这些表的详细介绍, 大家去看原文, 我不想总结了(抄了)</p>
+
+<p>因为这些表都是InnoDB 内部系统表, 不能直接访问, MySQL在 <code>information_schema</code> 系统数据库中提供了一些以 <code>innodb_sys</code>开头的表,
+这些以 <code>INNODB_SYS</code> 开头的表并不是真正的内部系统表,而是在存储引擎启动时读取这些以 <code>SYS</code> 开头的系统表，然后填充到这些以 <code>INNODB_SYS</code> 开头的表中,以 <code>INNODB_SYS</code> 开头的表和以 <code>SYS</code> 开头的表中的字段并不完全一样.</p>
           </div>
 
           
@@ -1259,8 +1482,8 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e7%ac%ac%e4%b8%80%e4%b8%aa%e7%bb%84%e7%9a%84%e7%ac%ac%e4%b8%80%e4%b8%aa%e9%a1%b5">
-												 第一个组的第一个页
+						 					<a class="nav-link" href="#%e7%ac%ac%e4%b8%80%e4%b8%aa%e7%bb%84%e7%9a%84%e7%ac%ac%e4%b8%80%e4%b8%aa%e9%a1%b5-fsp-hdr-16kb">
+												 第一个组的第一个页 (FSP_HDR 16KB)
 											</a>
 										</li>
 						 
@@ -1289,8 +1512,8 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e7%ac%ac%e4%ba%8c%e4%b8%aa%e7%bb%84%e7%9a%84%e7%ac%ac%e4%b8%80%e4%b8%aa%e9%a1%b5">
-												 第二个组的第一个页
+						 					<a class="nav-link" href="#%e7%ac%ac%e4%ba%8c%e4%b8%aa%e7%bb%84%e7%9a%84%e7%ac%ac%e4%b8%80%e4%b8%aa%e9%a1%b5-xdes-16kb">
+												 第二个组的第一个页 (XDES 16KB)
 											</a>
 										</li>
 						 
@@ -1319,8 +1542,38 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#inode-%e7%b1%bb%e5%9e%8b">
-												 INODE 类型
+						 					<a class="nav-link" href="#%e7%ac%ac%e4%b8%80%e4%b8%aa%e7%bb%84%e7%9a%84%e7%ac%ac%e4%ba%8c%e4%b8%aa%e9%a1%b5-ibuf-bitmap-16kb">
+												 第一个组的第二个页 (IBUF_BITMAP 16KB)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%ac%ac%e4%b8%80%e4%b8%aa%e7%bb%84%e7%9a%84%e7%ac%ac%e4%b8%89%e4%b8%aa%e9%a1%b5-inode%e7%b1%bb%e5%9e%8b-16kb">
+												 第一个组的第三个页 (INODE类型 16KB)
 											</a>
 										</li>
 						 
