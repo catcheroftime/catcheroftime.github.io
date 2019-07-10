@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="败给时间">
-  <meta name="description" content="时隔10多天，才开始第五部分的总结，这部分主要跟着大佬的脚步&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;，学习MySQL单表查询，多表查询，以及访问方式的选择。">
+  <meta name="description" content="时隔10多天，才开始第五部分的总结，这部分主要跟着大佬的脚步&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;，学习MySQL单表查询，多表查询，以及访问方式的选择， 这一部分主要是Mysql内部的查询选择">
   
   <meta property="og:title" content="MySQL 是怎样运行的-第五部分" />
-<meta property="og:description" content="时隔10多天，才开始第五部分的总结，这部分主要跟着大佬的脚步&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;，学习MySQL单表查询，多表查询，以及访问方式的选择。" />
+<meta property="og:description" content="时隔10多天，才开始第五部分的总结，这部分主要跟着大佬的脚步&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;，学习MySQL单表查询，多表查询，以及访问方式的选择， 这一部分主要是Mysql内部的查询选择" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-07/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86/" />
 <meta property="article:published_time" content="2019-07-02T15:08:00&#43;08:00"/>
@@ -284,7 +284,7 @@
 
 
           <div class="post-content markdown">
-            <p>时隔10多天，才开始第五部分的总结，这部分主要跟着大佬的脚步<a href="https://juejin.im/book/5bffcbc9f265da614b11b731">&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;</a>，学习MySQL单表查询，多表查询，以及访问方式的选择。</p>
+            <p>时隔10多天，才开始第五部分的总结，这部分主要跟着大佬的脚步<a href="https://juejin.im/book/5bffcbc9f265da614b11b731">&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;</a>，学习MySQL单表查询，多表查询，以及访问方式的选择， 这一部分主要是Mysql内部的查询选择</p>
 
 <h2 id="单表访问方法">单表访问方法</h2>
 
@@ -337,6 +337,77 @@
 <h4 id="明确range访问方法使用的范围区间">明确range访问方法使用的范围区间</h4>
 
 <p>对于<code>B+</code>树索引来说，只要索引列和常数使用<code>=</code>、<code>&lt;=&gt;</code>、<code>IN</code>、<code>NOT IN</code>、<code>IS NULL</code>、<code>IS NOT NULL</code>、<code>&gt;</code>、<code>&lt;</code>、<code>&gt;=</code>、<code>&lt;=</code>、<code>BETWEEN</code>、<code>!=</code>（不等于也可以写成<code>&lt;&gt;</code>）或者<code>LIKE</code>操作符连接起来，就可以产生一个所谓的<code>区间</code>。</p>
+
+<h4 id="索引合并">索引合并</h4>
+
+<p>MySQL在一般情况下执行一个查询时最多只会用到单个二级索引，但在游一些特殊情况下也可能在一个查询中使用到多个二级索引。简单点理解就是通过多个索引先把满足条件的数据在索引页中筛选出来后， 在根据主键进行回表操作</p>
+
+<ul>
+<li>Intersection合并 (交集合并)<br />
+一般分为2种情况
+
+<ul>
+<li>二级索引列是等值匹配的情况，对于联合索引来说，在联合索引中的每个列都必须等值匹配，不能出现只匹配部分列的情况。</li>
+<li>主键列可以是范围匹配（二级索引的用户记录是由索引列 + 主键构成的）<br />
+二级索引等值匹配， 主键索引范围
+<br /></li>
+</ul></li>
+</ul>
+
+<p>以搜索条件中出现2个索引的等值匹配为例， 如果2个搜索条件都是二级索引<br />
+  只读取一个二级索引的成本：<br />
+  - 按照某个搜索条件读取一个二级索引
+  - 根据从该二级索引得到的主键值进行回表操作，然后再过滤其他的搜索条件</p>
+
+<p>读取多个二级索引之后取交集成本：
+  - 按照不同的搜索条件分别读取不同的二级索引
+  - 将从多个二级索引得到的主键值取交集，然后进行回表操作</p>
+
+<p>由于读取二级索引的操作是顺序I/O, 但是回表操作时随机I/O， 所以如果只读取一个二级索引时需要回表的记录数特别多，而读取多个二级索引之后取交集的记录数非常少，当节省的因为回表而造成的性能损耗比访问多个二级索引带来的性能损耗更高时，读取多个二级索引后取交集比只读取一个二级索引的成本更低。
+- Union合并(并集合并)<br />
+  - 二级索引列是等值匹配的情况，对于联合索引来说，在联合索引中的每个列都必须等值匹配，不能出现只出现匹配部分列的情况。
+  - 主键列可以是范围匹配
+  - 使用Intersection索引合并的搜索条件
+- Sort-Union合并<br />
+  先按照二级索引记录的主键值进行排序，之后按照Union索引合并方式执行的方式称之为Sort-Union索引合并</p>
+
+<h2 id="多表查询">多表查询</h2>
+
+<h3 id="连接原理">连接原理</h3>
+
+<p><code>连接</code> 的本质就是把各个连接表中的记录都取出来依次匹配的组合加入结果集并返回给用户, 像这样的结果集就可以称之为<code>笛卡尔积</code></p>
+
+<h3 id="连接过程">连接过程</h3>
+
+<blockquote>
+<p>两表连接查询中，驱动表只需要访问一次，被驱动表可能被访问多次。</p>
+</blockquote>
+
+<p>步骤1：选取驱动表，使用与驱动表相关的过滤条件，选取代价最低的单表访问方法来执行对驱动表的单表查询。</p>
+
+<p>步骤2：对上一步骤中查询驱动表得到的结果集中每一条记录，都分别到被驱动表中查找匹配的记录。</p>
+
+<h3 id="内连接和外连接">内连接和外连接</h3>
+
+<blockquote>
+<p>驱动表中的记录即使在被驱动表中没有匹配的记录，也仍然需要加入到结果集的是外连接， 反之为内连接。</p>
+</blockquote>
+
+<p>左连接又可以根据选取的驱动表不同，分为左外连接（选取左侧的表为驱动表）， 右外连接（选取右侧的表为驱动表）。</p>
+
+<p>对于内连接来说，驱动表和被驱动表是可以互换的，并不会影响最后的查询结果<br />
+对于外连接来说，左外连接和右外连接的驱动表和被驱动表不能轻易互换。</p>
+
+<h2 id="连接的查询算法">连接的查询算法</h2>
+
+<ul>
+<li>嵌套循环连接<br />
+驱动表只访问一次，但被驱动表却可能被多次访问，访问次数取决于对驱动表执行单表查询后的结果集中的记录条数的连接执行方式称之为嵌套循环连接</li>
+<li>使用索引加快连接速度
+扫描被驱动表时可以通过索引加快速度</li>
+<li>基于块的嵌套循环连接
+查询驱动表的得到的结果集存放在一个名为 <code>join buffer</code>(连接查询前申请的一块固定大小的内存) 的地方, 开始扫描被驱动表时，每一条被驱动表的记录一次性和join buffer中的多条驱动表记录做匹配，避免一次访问的驱动表的数据只和1条驱动表的得到的结果比对, 所以这样可以显著减少被驱动表的I/O代价。</li>
+</ul>
           </div>
 
           
@@ -376,10 +447,10 @@
             
             <div class="col-md-6 text-right" >
               
-                <a href=https://catcheroftime.github.io/blog/2019-07/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E4%B8%83%E9%83%A8%E5%88%86/ class="post-meta">
+                <a href=https://catcheroftime.github.io/blog/2019-07/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E5%85%AD%E9%83%A8%E5%88%86/ class="post-meta">
                   <div class="pt-2 pb-5 flex-reverse">
                     <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>MySQL 是怎样运行的-第七部分</span>
+                    <span>MySQL 是怎样运行的-第六部分</span>
                   </div>
                 </a>
               
@@ -695,6 +766,158 @@
 									</ul>
 								
 									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%b4%a2%e5%bc%95%e5%90%88%e5%b9%b6">
+												 索引合并
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a4%9a%e8%a1%a8%e6%9f%a5%e8%af%a2">
+												 多表查询
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%bf%9e%e6%8e%a5%e5%8e%9f%e7%90%86">
+												 连接原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%bf%9e%e6%8e%a5%e8%bf%87%e7%a8%8b">
+												 连接过程
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%86%85%e8%bf%9e%e6%8e%a5%e5%92%8c%e5%a4%96%e8%bf%9e%e6%8e%a5">
+												 内连接和外连接
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%bf%9e%e6%8e%a5%e7%9a%84%e6%9f%a5%e8%af%a2%e7%ae%97%e6%b3%95">
+												 连接的查询算法
+											</a>
+										</li>
+						 
+								
 								
 									</ul>
 								
