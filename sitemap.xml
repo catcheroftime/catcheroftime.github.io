@@ -50,6 +50,29 @@
   </url>
   
   <url>
+    <loc>https://catcheroftime.github.io/categories/qt/</loc>
+    <lastmod>2019-07-15T00:15:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/tags/qt/</loc>
+    <lastmod>2019-07-15T00:15:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/blog/2019-07/qt-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</loc>
+    <lastmod>2019-07-15T00:15:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6/</loc>
+    <lastmod>2019-07-15T00:15:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://catcheroftime.github.io/categories/mysql/</loc>
     <lastmod>2019-07-04T00:15:00+08:00</lastmod>
     <priority>0</priority>
@@ -89,18 +112,6 @@
   <url>
     <loc>https://catcheroftime.github.io/blog/2019-06/qsscss/</loc>
     <lastmod>2019-06-18T00:15:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://catcheroftime.github.io/categories/qt/</loc>
-    <lastmod>2019-06-18T00:15:00+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://catcheroftime.github.io/tags/qt/</loc>
-    <lastmod>2019-06-18T00:15:00+08:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
