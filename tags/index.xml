@@ -6,10 +6,37 @@
     <description>Recent content in Tags on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Thu, 04 Jul 2019 00:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 15 Jul 2019 16:02:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>opencv库</title>
+      <link>https://catcheroftime.github.io/tags/opencv%E5%BA%93/</link>
+      <pubDate>Mon, 15 Jul 2019 16:02:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/opencv%E5%BA%93/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>python</title>
+      <link>https://catcheroftime.github.io/tags/python/</link>
+      <pubDate>Mon, 15 Jul 2019 16:02:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/python/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>requests库</title>
+      <link>https://catcheroftime.github.io/tags/requests%E5%BA%93/</link>
+      <pubDate>Mon, 15 Jul 2019 16:02:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/requests%E5%BA%93/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>MySQL</title>
@@ -26,15 +53,6 @@
       <pubDate>Tue, 18 Jun 2019 00:15:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/tags/qt/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>python</title>
-      <link>https://catcheroftime.github.io/tags/python/</link>
-      <pubDate>Fri, 14 Jun 2019 11:12:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/python/</guid>
       <description></description>
     </item>
     
