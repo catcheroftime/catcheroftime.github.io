@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="通过前面一节提到的 Qt 自定义插件的开发，开发出一个类似于统计一天不同时间段的插件，这种插件在摄像头的计划中能很频繁看到，例如0点到9点做录像任务， 9点到下午5点做行为检测任务， 晚上10点到12点继续做录像计划这种场景。而这篇文章主要记录一下自己开发过程中的一些思路和简单的代码解释，以及目前还存在问题。">
+  
+  <meta property="og:title" content="Qt-时间轴1插件开发" />
+<meta property="og:description" content="通过前面一节提到的 Qt 自定义插件的开发，开发出一个类似于统计一天不同时间段的插件，这种插件在摄像头的计划中能很频繁看到，例如0点到9点做录像任务， 9点到下午5点做行为检测任务， 晚上10点到12点继续做录像计划这种场景。而这篇文章主要记录一下自己开发过程中的一些思路和简单的代码解释，以及目前还存在问题。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2019-07/qt-%E6%97%B6%E9%97%B4%E8%BD%B41%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" />
+<meta property="article:published_time" content="2019-07-17T20:45:00&#43;08:00"/>
+<meta property="article:modified_time" content="2019-07-17T20:45:00&#43;08:00"/>
+
+
+  <title>
+  
+       Qt-时间轴1插件开发 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2019-07/qt-%E6%97%B6%E9%97%B4%E8%BD%B41%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/qt"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Qt </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">Qt-时间轴1插件开发</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Jul 17, 2019</li>
+    
+
+    
+  </ul>
+  
+    <div class="view">
+      <img src="https://catcheroftime.github.io/images/blog/qt_plugin/timecell_overview.png" />
+    </div>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>通过前面一节提到的 Qt 自定义插件的开发，开发出一个类似于统计一天不同时间段的插件，这种插件在摄像头的计划中能很频繁看到，例如0点到9点做录像任务， 9点到下午5点做行为检测任务， 晚上10点到12点继续做录像计划这种场景。而这篇文章主要记录一下自己开发过程中的一些思路和简单的代码解释，以及目前还存在问题。</p>
+
+<h2 id="思路逻辑">思路逻辑</h2>
+
+<h3 id="明确需求">明确需求</h3>
+
+<ol>
+<li>一天24小时，精确范围到分钟的时间轴</li>
+<li>支持在时间轴上通过鼠标点击、移动和释放生成时间段，或者支持输入起始时间生成时间段</li>
+<li>对已有的时间段在时间轴上移动,不同时间段不能重合</li>
+<li>对已有时间段通过拖拽，拉伸或者编辑改变其时间范围</li>
+<li>删除已有时间段</li>
+<li>提供时间段统计输出的接口</li>
+</ol>
+
+<h3 id="简单的逻辑">简单的逻辑</h3>
+
+<h4 id="时间精度问题">时间精度问题</h4>
+
+<p>时间轴上时间段显示的范围是00：00-23：59，以录像为例，00：00-23：59时间段代表全天录像，录像时间从开始时间到结束时间向后1分钟。 不录象，不用创建时间段。<br />
+接下来是时间精度的问题，一天1440（60*24）分钟，精确到分钟， 在屏幕上展示的时候， 如果1个像素代表1分钟，至少需要1440个像素，可是实际上一般不会存在1440px宽度的插件，在开发过程中，我会选择720宽度。</p>
+
+<h4 id="时间轴绘图">时间轴绘图</h4>
+
+<p>Qt 中的 <code>paintEvent(QPaintEvent *)</code> 支持画图，在此函数中，绘制时间轴刻度</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline_demo1.png" alt="时间轴" /></p>
+
+<p><code>widget_graduation</code> 是容纳时间轴刻度的 <code>QWidget</code>,在它上面直接画刻度<br />
+<code>widget_timeaxis</code> 是容纳时间段的 <code>QWdiget</code>, 仅仅设置一个渐变色的样式， 和widget_graduation布局为垂直布局</p>
+
+<pre><code>ui-&gt;widget_timeaxis-&gt;setStyleSheet(&quot;background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 rgb(120,120,120),stop:1 rgb(140,140,140));&quot;)
+int start_position = ui-&gt;widget_graduation-&gt;pos().x();
+int height = ui-&gt;widget_graduation-&gt;pos().y() + ui-&gt;widget_graduation-&gt;height()-1;
+int width = ui-&gt;widget_graduation-&gt;width();
+
+QPainter painter(this);
+QPen hor_pen(Qt::black, 2);
+painter.setPen(hor_pen);
+// 首先绘制一条水平线
+painter.drawLine(start_position,height,width+start_position,height);
+
+QPen ver_pen(Qt::black, 1);
+painter.setPen(ver_pen);
+QFont font(&quot;宋体&quot;, 8);
+painter.setFont(font);
+
+// 绘制刻度
+int scale = ui-&gt;widget_graduation-&gt;width() / 24;
+for (int i = 0; i&lt;=24 ; ++i ) {
+    int x = i * scale;
+    painter.drawLine(x+start_position, height - 5, x+start_position , height);
+
+    int remainder = i%2 ;
+    if (remainder == 0)
+        painter.drawText(x+start_position-3,height - 8, QString::number(i));
+}
+</code></pre>
+
+<h4 id="时间段的对象选择">时间段的对象选择</h4>
+
+<p>时间段需要支持事件的捕捉，所以我选择用 <code>QWidget</code>,不同类型的事件，比如之前举例录像任务，行为检测任务等等，可以通过给 <code>QWidget</code> 设置不同的样式进行区分，每一个 <code>QWidget</code> 在移动和创建的过程中需要统计它能使用的最大和最小范围，避免出现和其他时间段重合的问题。</p>
+
+<p>Qt 其实就是事件驱动的框架， 它提供了很多事件的接口， 可以重新实现这些事件接口，来实现创建、移动、拉伸时间段的功能</p>
+
+<p>常见的事件接口有以下几个：</p>
+
+<pre><code>// 鼠标移动事件
+void mouseMoveEvent(QMouseEvent *e);
+
+// 鼠标点击事件
+// 其中通过e-&gt;type()判断是左击还是右击事件或者其他
+// 因为需要有删除时间段的操作，所以我的设计是左击为正常操作， 右击是删除操作  
+void mousePressEvent(QMouseEvent *e);   
+
+// 鼠标释放事件    
+void mouseReleaseEvent(QMouseEvent *e); 
+</code></pre>
+
+<p>其实真正开发时候我并没有用这几个接口，我是直接使用了 <code>eventFilter</code>接口</p>
+
+<pre><code>bool eventFilter(QObject *target, QEvent *event);
+</code></pre>
+
+<p>主要是因为，我在插件类中需要监听其中的 <code>QWidget</code>（时间段）的事件，并对 <code>QWidget</code>做一些自己业务上的处理。</p>
+
+<h2 id="代码逻辑">代码逻辑</h2>
+
+<h3 id="创建新的时间段">创建新的时间段</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/create_timecell.gif" alt="创建" /></p>
+
+<p>创建时间段的鼠标操作过程分为3步</p>
+
+<ul>
+<li>鼠标点击到一个位置，创建一个新的时间段</li>
+<li>鼠标移动， 时间段跟随鼠标变化</li>
+<li>鼠标释放时，确定时间段的时间范围</li>
+</ul>
+
+<p>其中有几个需要重视的点</p>
+
+<ul>
+<li>点击一个位置后，需要计算创建的新的时间段的时间范围，需要存储一些事件段的基本信息，比如这个时间段的起始位置，以及能取到的最大和最小的范围</li>
+<li>创建的过程鼠标可以向左或者向右移动，最后生成的大小， 需要根据最后的鼠标的位置算出 <code>QWidget</code>的长度。然后将 <code>QWidget</code> 移动到指定的位置
+
+<ul>
+<li>鼠标落地在点击位置的右边，此时 <code>QWidget</code>的长度是 鼠标落点位置-起始位置，<code>QWidget</code>移动到的位置为 起始位置</li>
+<li>鼠标落点在点击位置的左边，此时 <code>QWidget</code>的长度是 起始位置-鼠标落点位置，<code>QWidget</code>移动到的位置为 鼠标落点位置</li>
+</ul></li>
+</ul>
+
+<p>上面提到 <code>widget_timeaxis</code> 是容纳时间段的 <code>QWdiget</code>的，<code>widget_graduation</code> 是容纳时间轴刻度的<br />
+直接粘贴一下代码了，代码中有详细的描述</p>
+
+<pre><code>// 存储了QWidget的一些基本信息
+// 当前起始位置，时间段的宽度(基本没用),能移动的最小最大值，QWidget的颜色
+struct WidgetInfo
+{
+    int currentposition;
+    int width;
+    int minlength;
+    int maxlength;
+    QString color;
+};
+
+bool TimelinePlugin::eventFilter(QObject *target, QEvent *event)
+{
+    // 鼠标停留位置是上方绘制的时间条时， 返回
+    QWidget *object = dynamic_cast&lt;QWidget *&gt;(target);
+    if (object == ui-&gt;widget_graduation)
+        return false;
+
+    // 鼠标停留位置是时间轴空白位置， 需要生成新的 timecell
+    if (object == ui-&gt;widget_timeaxis) {
+        // 鼠标点击时， 记录timecell的开始位置， 准备生成新的timecell
+        if (event-&gt;type() == QMouseEvent::MouseButtonPress) {
+            QMouseEvent *mouse_press = static_cast&lt;QMouseEvent *&gt;(event);
+            if (mouse_press-&gt;button() == Qt::LeftButton) {
+                // m_pTimeSelector 这个是显示时间段的时间的一个UI，在创建过程中暂时隐藏了
+                m_pTimeSelector-&gt;hide();
+                // 时间段存在上限
+                if (m_listTimeCell.count() &gt;= TIMECELL_ACCOUNT) {
+                    m_pCurrentWidget = nullptr;
+                    return true;
+                }
+                // m_widgetStartposition 记录点击的其实位置
+                m_widgetStartposition = mouse_press-&gt;pos().x();
+                WidgetInfo info;
+                // getCanMoveRange 函数是计算当前位置下，创建时间段的有效的最大最小值，直接写入WidgetInfo中
+                getCanMoveRange(NULL, m_widgetStartposition, info);
+                QWidget *new_timecell = new QWidget(ui-&gt;widget_timeaxis);
+                new_timecell-&gt;resize(0, this-&gt;height());
+                new_timecell-&gt;show();
+                QString background = QString(&quot;background-color:&quot;) +m_createWidgetColor;
+                new_timecell-&gt;setStyleSheet(background);
+                new_timecell-&gt;installEventFilter(this);
+                new_timecell-&gt;setMouseTracking(true);
+
+                info.color = m_createWidgetColor;
+                // 点击之后， 需要用 m_pCurrentWidget 记录当前生成的时间段
+                m_pCurrentWidget = new_timecell;
+                // m_listTimeCell 记录所有的时间段
+                m_listTimeCell.append(new_timecell);
+                // m_mapWidgetInfos 记录时间段和它对应信息
+                m_mapWidgetInfos[new_timecell] = info;
+                // 这里其实有点重复，m_listTimeCell 和 m_mapWidgetInfos都记录了时间段
+            }
+        }
+        // 鼠标移动过程中, 需要改变m_pCurrentWidget的大小以及位置
+        if (event-&gt;type() == QMouseEvent::MouseMove) {
+            QMouseEvent * mousemove = static_cast&lt;QMouseEvent *&gt; (event);
+            int widget_end_postion = mousemove-&gt;pos().x();
+
+            if (m_pCurrentWidget != nullptr) {
+                WidgetInfo info = m_mapWidgetInfos.value(m_pCurrentWidget);
+                // 鼠标移动过程中的位置， 需要在新生成时间段的有效范围内
+                if (info.maxlength &gt;= widget_end_postion &amp;&amp; info.minlength &lt;= widget_end_postion) {
+                    int width =  widget_end_postion - m_widgetStartposition;
+                    // 由于鼠标相对于其实位置， 可能向左或者向右移动， width大小正负都有可能
+                    m_pCurrentWidget-&gt;resize( qAbs(width), this-&gt;height());
+                    // timecell 的位置需要重新设置， 计算一下新的起始位置
+                    int new_startpostion = width&gt;0?m_widgetStartposition:widget_end_postion;
+
+                    info.currentposition = new_startpostion;
+                    m_mapWidgetInfos[m_pCurrentWidget] = info;
+                    m_pCurrentWidget-&gt;move(new_startpostion, 0);
+                    m_pCurrentWidget-&gt;show();
+                }
+            }
+        }
+        // 鼠标释放时， 代表新的timecell生成完毕
+        if (event-&gt;type() == QMouseEvent::MouseButtonRelease ) {
+            QMouseEvent * mouse_release = static_cast&lt;QMouseEvent *&gt; (event);
+            if (mouse_release-&gt;button() == Qt::LeftButton) {
+                if (m_pCurrentWidget) {
+                    WidgetInfo info = m_mapWidgetInfos.value(m_pCurrentWidget);
+                    info.currentposition = m_pCurrentWidget-&gt;pos().x();
+                    info.width = m_pCurrentWidget-&gt;width();
+                    m_mapWidgetInfos[m_pCurrentWidget] = info;
+                }
+
+                // 如果m_pCurrentWidget的宽度过小， 认为生成的timecell无效， 删除new的widget, 清除记录
+                if (m_pCurrentWidget &amp;&amp; m_pCurrentWidget-&gt;width() &lt;= MIN_DISTANCE) {
+                    delete  m_pCurrentWidget;
+                    m_listTimeCell.removeAll(m_pCurrentWidget);
+                    m_mapWidgetInfos.remove(m_pCurrentWidget);
+                }
+                m_pCurrentWidget = nullptr;
+            }
+        }
+    }
+}
+</code></pre>
+
+<h3 id="移动时间段">移动时间段</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/move.gif" alt="移动" /></p>
+
+<p>移动时间段时，鼠标的操作过程</p>
+
+<ul>
+<li>鼠标点击一个时间段， 此时需要记录一个鼠标点击的位置全局位置</li>
+<li>鼠标移动， 时间段跟随鼠标一起移动</li>
+<li>鼠标释放， 结束移动</li>
+</ul>
+
+<p>移动时间段，需要注意的几个细节</p>
+
+<ul>
+<li>记录鼠标点击的全局位置，移动过程中的全局位置，那么时间段移动的位置计算是 移动过程中全局位置-鼠标点击时的全局位置+时间段的初始位置(这个信息记录在对应的时间段的WidgetInfo)</li>
+<li>鼠标在移动过程中需要改变鼠标的形状
+
+<ul>
+<li>在时间段最左测一定像素或者最右边的一定像素，鼠标形状改成 <code>拖拽拉伸 Qt::SizeHorCursor</code> 的样式</li>
+<li>未点击状态时，鼠标移动到中间位置时， 鼠标形状为 <code>手 Qt::OpenHandCursor</code> 的形状</li>
+<li>点击状态(按住)时， 鼠标形状变成 <code>抓住 Qt::ClosedHandCursor</code> 的形状</li>
+</ul></li>
+</ul>
+
+<h3 id="改变时间范围">改变时间范围</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/change_timecell.gif" alt="改变timecell" /></p>
+
+<p>改变时间段时，鼠标的操作过程</p>
+
+<ul>
+<li>鼠标移动到时间段， 最左侧或者最右侧一定像素的时候，鼠标变成 <code>拖拽拉伸 Qt::SizeHorCursor</code> 的形状，此时点击按住</li>
+<li>鼠标移动， 时间段跟随鼠标位置改变大小</li>
+<li>鼠标释放， 事件结束</li>
+</ul>
+
+<p>改变事件范围，需要注意的几个细节</p>
+
+<ul>
+<li>对于鼠标最左侧和最右侧，需要区分一下
+
+<ul>
+<li>鼠标在时间段左侧点击时，鼠标移动的范围是：时间段最左侧可移动的最小值和时间段右边位置(时间段原来起点+宽度)， 此时时间段移动的位置是： 鼠标的位置； 时间段的长度是：时间段右边的位置-鼠标的位置</li>
+<li>鼠标在时间段右边点击时，鼠标移动的范围时：时间段原来的起点和时间段最右侧可移动的最大值， 此时时间段移动的位置是： 时间段原来起点； 时间段的长度是：鼠标的位置-时间段原来起点</li>
+</ul></li>
+<li>此时改变时间范围的鼠标移动需要和移动时间段的鼠标移动进行区分</li>
+</ul>
+
+<p>这一部分和移动时间段的代码比较多，这里不粘贴了，想了解的可以去github上直接看工程，链接在blog最后</p>
+
+<h3 id="手动添加和删除">手动添加和删除</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/create_remove.gif" alt="添加和删除" /></p>
+
+<p>删除操作，比较简单，之前自己定的实现时， 鼠标右键时删除， 这个很容易实现</p>
+
+<p>手动添加的意思这里是， 提供一个写入时间段的接口</p>
+
+<pre><code>struct TimecellDetail
+{
+    QTime start_time;
+    QTime end_time;
+    QString color;
+};
+
+void setTimeCell(const TimecellDetail &amp;detail);
+QList&lt;TimecellDetail&gt; getTimeCell();
+</code></pre>
+
+<p>不过这里需要做一些判断</p>
+
+<ul>
+<li>第一步判断输入的开始时间和结束时间转换成距离是否合法</li>
+<li>第二部判断输入的时间是否和其他已有的时间段有冲突</li>
+<li>都合理之后直接创建新的时间段</li>
+</ul>
+
+<p>其实上面的所有操作都需要在 <code>时间段</code> 可移动的范围内移动或者拉伸</p>
+
+<h2 id="尚未解决的问题与扩展">尚未解决的问题与扩展</h2>
+
+<h3 id="尚未解决的问题">尚未解决的问题</h3>
+
+<ul>
+<li>目前在通过起始位置和时间段宽度计算时，存在一些小问题，正常计算的时候会算出24：00, 然而<code>QTimeEdit</code>插件的范围是 <code>00：00-23：59</code>, 目前的解决方案是当算出是 24：00时， 直接写成23：59展示</li>
+<li>关于跟随时间轴一起移动的下方显示数据的小UI也存在问题，目前此UI的父对象不是插件，是初始化的时候插件的父对象传入的，当时间段滑动到最右侧时，此UI会远远超出时间轴的位置，需要插件父对象预留一些位置，防止被遮盖。 如图<br />
+<img src="https://catcheroftime.github.io/images/blog/qt_plugin/timcell_error1.png" alt="timcell_error1.png" />
+<img src="https://catcheroftime.github.io/images/blog/qt_plugin/timcell_error2.png" alt="timcell_error2.png" /></li>
+<li>鼠标快速移动的时候，有的时候时间段跟不上鼠标一起移动或者拉伸，这个目前没有想到好的解决办法</li>
+</ul>
+
+<h3 id="可扩展">可扩展</h3>
+
+<ul>
+<li>Demo中只实现了一天的时间轴， 可以重新封装一下， 变成一周的时间轴插件，在此基础上还可以有一些其他比较实用的开发
+
+<ul>
+<li>一键删除所有时间段</li>
+<li>复制其中一天的配置到其他天，根据已有的接口已经和容易实现</li>
+</ul></li>
+<li><code>WidgetInfo</code> 和 <code>TimecellDetail</code> 结构体中 <code>QString color</code> 可以根据实际情况做一个映射表，比如红色是报警， 黄色是警告之类的， 时间段中也可以存其他的信息，用作一些额外新的记录</li>
+<li>目前对时间段编辑只有开始时间和结束时间，也可以添加一些额外信息的编辑，比如这里的颜色信息</li>
+</ul>
+
+<h2 id="代码地址">代码地址</h2>
+
+<p>虽然我知道根本没人看， 但是还是求 <code>Star</code></p>
+
+<p>github 地址 ：<a href="https://github.com/catcheroftime/TimelinePlugin">https://github.com/catcheroftime/TimelinePlugin</a></p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt" role="button">Qt </a></li>
+      
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E6%97%B6%E9%97%B4%E8%BD%B4" role="button">时间轴 </a></li>
+      
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6" role="button">自定义插件 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2019-07/python-request%E5%BA%93opencv%E5%BA%93%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>python-request库opencv库简单使用说明</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%9d%e8%b7%af%e9%80%bb%e8%be%91">
+												 思路逻辑
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%98%8e%e7%a1%ae%e9%9c%80%e6%b1%82">
+												 明确需求
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%ae%80%e5%8d%95%e7%9a%84%e9%80%bb%e8%be%91">
+												 简单的逻辑
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%97%b6%e9%97%b4%e7%b2%be%e5%ba%a6%e9%97%ae%e9%a2%98">
+												 时间精度问题
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%97%b6%e9%97%b4%e8%bd%b4%e7%bb%98%e5%9b%be">
+												 时间轴绘图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%97%b6%e9%97%b4%e6%ae%b5%e7%9a%84%e5%af%b9%e8%b1%a1%e9%80%89%e6%8b%a9">
+												 时间段的对象选择
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bb%a3%e7%a0%81%e9%80%bb%e8%be%91">
+												 代码逻辑
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%9b%e5%bb%ba%e6%96%b0%e7%9a%84%e6%97%b6%e9%97%b4%e6%ae%b5">
+												 创建新的时间段
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%a7%bb%e5%8a%a8%e6%97%b6%e9%97%b4%e6%ae%b5">
+												 移动时间段
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%94%b9%e5%8f%98%e6%97%b6%e9%97%b4%e8%8c%83%e5%9b%b4">
+												 改变时间范围
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%89%8b%e5%8a%a8%e6%b7%bb%e5%8a%a0%e5%92%8c%e5%88%a0%e9%99%a4">
+												 手动添加和删除
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b0%9a%e6%9c%aa%e8%a7%a3%e5%86%b3%e7%9a%84%e9%97%ae%e9%a2%98%e4%b8%8e%e6%89%a9%e5%b1%95">
+												 尚未解决的问题与扩展
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b0%9a%e6%9c%aa%e8%a7%a3%e5%86%b3%e7%9a%84%e9%97%ae%e9%a2%98">
+												 尚未解决的问题
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8f%af%e6%89%a9%e5%b1%95">
+												 可扩展
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bb%a3%e7%a0%81%e5%9c%b0%e5%9d%80">
+												 代码地址
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2019 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

@@ -6,10 +6,19 @@
     <description>Recent content on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Mon, 15 Jul 2019 16:02:00 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 17 Jul 2019 20:45:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Qt-时间轴1插件开发</title>
+      <link>https://catcheroftime.github.io/blog/2019-07/qt-%E6%97%B6%E9%97%B4%E8%BD%B41%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</link>
+      <pubDate>Wed, 17 Jul 2019 20:45:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-07/qt-%E6%97%B6%E9%97%B4%E8%BD%B41%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</guid>
+      <description>&lt;p&gt;通过前面一节提到的 Qt 自定义插件的开发，开发出一个类似于统计一天不同时间段的插件，这种插件在摄像头的计划中能很频繁看到，例如0点到9点做录像任务， 9点到下午5点做行为检测任务， 晚上10点到12点继续做录像计划这种场景。而这篇文章主要记录一下自己开发过程中的一些思路和简单的代码解释，以及目前还存在问题。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>python-request库opencv库简单使用说明</title>
