@@ -6,10 +6,20 @@
     <description>Recent content in 时间轴 on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 17 Jul 2019 20:45:00 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 28 Jul 2019 18:15:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/%E6%97%B6%E9%97%B4%E8%BD%B4/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Qt-时间轴2插件开发</title>
+      <link>https://catcheroftime.github.io/blog/2019-07/qt-%E6%97%B6%E9%97%B4%E8%BD%B42%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</link>
+      <pubDate>Sun, 28 Jul 2019 18:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-07/qt-%E6%97%B6%E9%97%B4%E8%BD%B42%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</guid>
+      <description>&lt;p&gt;这篇文章介绍的自定义插件比较简单，主要都是通过绘图完成的。
+特点如下： 1. 精度是可以放缩  2. 时间轴时间连续  3. 可以通过鼠标左右滑动改变时间轴显示时间。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Qt-时间轴1插件开发</title>
