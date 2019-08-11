@@ -280,7 +280,7 @@
   </ul>
   
     <div class="view">
-      <img src="https://catcheroftime.github.io/images/blog/qt_plugin/timecell_overview.png" />
+      <img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/timecell_overview.png" />
     </div>
   
 
@@ -314,7 +314,7 @@
 
 <p>Qt 中的 <code>paintEvent(QPaintEvent *)</code> 支持画图，在此函数中，绘制时间轴刻度</p>
 
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline_demo1.png" alt="时间轴" /></p>
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/timeline_demo1.png" alt="时间轴" /></p>
 
 <p><code>widget_graduation</code> 是容纳时间轴刻度的 <code>QWidget</code>,在它上面直接画刻度<br />
 <code>widget_timeaxis</code> 是容纳时间段的 <code>QWdiget</code>, 仅仅设置一个渐变色的样式， 和widget_graduation布局为垂直布局</p>
@@ -378,7 +378,7 @@ void mouseReleaseEvent(QMouseEvent *e);
 
 <h3 id="创建新的时间段">创建新的时间段</h3>
 
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/create_timecell.gif" alt="创建" /></p>
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/create_timecell.gif" alt="创建" /></p>
 
 <p>创建时间段的鼠标操作过程分为3步</p>
 
@@ -505,7 +505,7 @@ bool TimelinePlugin::eventFilter(QObject *target, QEvent *event)
 
 <h3 id="移动时间段">移动时间段</h3>
 
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/move.gif" alt="移动" /></p>
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/move.gif" alt="移动" /></p>
 
 <p>移动时间段时，鼠标的操作过程</p>
 
@@ -530,7 +530,7 @@ bool TimelinePlugin::eventFilter(QObject *target, QEvent *event)
 
 <h3 id="改变时间范围">改变时间范围</h3>
 
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/change_timecell.gif" alt="改变timecell" /></p>
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/change_timecell.gif" alt="改变timecell" /></p>
 
 <p>改变时间段时，鼠标的操作过程</p>
 
@@ -556,7 +556,7 @@ bool TimelinePlugin::eventFilter(QObject *target, QEvent *event)
 
 <h3 id="手动添加和删除">手动添加和删除</h3>
 
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/create_remove.gif" alt="添加和删除" /></p>
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/create_remove.gif" alt="添加和删除" /></p>
 
 <p>删除操作，比较简单，之前自己定的实现时， 鼠标右键时删除， 这个很容易实现</p>
 
@@ -590,8 +590,8 @@ QList&lt;TimecellDetail&gt; getTimeCell();
 <ul>
 <li>目前在通过起始位置和时间段宽度计算时，存在一些小问题，正常计算的时候会算出24：00, 然而<code>QTimeEdit</code>插件的范围是 <code>00：00-23：59</code>, 目前的解决方案是当算出是 24：00时， 直接写成23：59展示</li>
 <li>关于跟随时间轴一起移动的下方显示数据的小UI也存在问题，目前此UI的父对象不是插件，是初始化的时候插件的父对象传入的，当时间段滑动到最右侧时，此UI会远远超出时间轴的位置，需要插件父对象预留一些位置，防止被遮盖。 如图<br />
-<img src="https://catcheroftime.github.io/images/blog/qt_plugin/timcell_error1.png" alt="timcell_error1.png" />
-<img src="https://catcheroftime.github.io/images/blog/qt_plugin/timcell_error2.png" alt="timcell_error2.png" /></li>
+<img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/timcell_error1.png" alt="timcell_error1.png" />
+<img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/timcell_error2.png" alt="timcell_error2.png" /></li>
 <li>鼠标快速移动的时候，有的时候时间段跟不上鼠标一起移动或者拉伸，这个目前没有想到好的解决办法</li>
 </ul>
 

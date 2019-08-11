@@ -292,7 +292,7 @@
 <p>查询成本=I/O成本+CPU成本</p>
 </blockquote>
 
-<p>MySQL规定读取一个页面花费的成本默认是1.0，读取以及检测一条记录是否符合搜索条件的成本默认是0.2。1.0、0.2这些数字称之为成本常数，这两个成本常数我们最常用到。</p>
+<p>MySQL规定读取一个页面花费的成本默认是1.0，读取以及检测一条记录是否符合搜索条件的成本默认是0.2。1.0、0.2这些数字称之为成本常数，这两个成本常数常用到。</p>
 
 <pre><code>SELECT * FROM mysql.server_cost;  //一条语句在server层中执行的成本常数就存储在了server_cost表
 SELECT * FROM mysql.engine_cost;  //依赖于存储引擎的一些操作对应的成本常数就存储在了engine_cost表中
@@ -326,6 +326,21 @@ FLUSH OPTIMIZER_COSTS;            //重新加载表值
 <li>对比各种执行方案的代价，找出成本最低的那一个</li>
 </ul>
 
+<h3 id="表统计信息">表统计信息</h3>
+
+<ul>
+<li><p><code>InnoDB</code> 以表为单位来收集统计数据，这些统计数据可以是基于磁盘的永久性统计数据，也可以是基于内存的非永久性统计数据。</p></li>
+
+<li><p><code>innodb_stats_persistent</code> 控制着使用永久性统计数据还是非永久性统计数据；<br />
+<code>innodb_stats_persistent_sample_pages</code> 控制着永久性统计数据的采样页面数量；<br />
+<code>innodb_stats_transient_sample_pages</code> 控制着非永久性统计数据的采样页面数量；<br />
+<code>innodb_stats_auto_recalc</code> 控制着是否自动重新计算统计数据。</p></li>
+
+<li><p>我们可以针对某个具体的表，在创建和修改表时通过指定 <code>STATS_PERSISTENT</code> 、<code>STATS_AUTO_RECALC</code> 、<code>STATS_SAMPLE_PAGES</code> 的值来控制相关统计数据属性。</p></li>
+
+<li><p><code>innodb_stats_method</code> 决定着在统计某个索引列不重复值的数量时如何对待NULL值。</p></li>
+</ul>
+
 <h3 id="两表连接的成本分析">两表连接的成本分析</h3>
 
 <p>连接查询的成本计算公式是这样的：</p>
@@ -349,7 +364,191 @@ FLUSH OPTIMIZER_COSTS;            //重新加载表值
 
 <h3 id="多表连接的成本分析">多表连接的成本分析</h3>
 
+<p>多表查询主要设计到多表之间有多少种连接顺序</p>
+
+<p><code>n</code> 表查询时， 一共有 <code>n!</code> 种连接方式， <code>MySQL</code>查询优化器，会计算所有的连接顺序成本，但是当连接顺序的可能过于多的时候，同时也有一些其他的方法，去优化在查询优化器处需要的时间</p>
+
+<ul>
+<li>提前结束某种顺序的成本评估
+维护一个全部变量，这个变量代表当前允许的连接成本，当计算某种连接顺序时，该成本超过这个变量，就不会继续分析了</li>
+<li>系统变量 <code>optimizer_search_depth</code><br />
+(如果连接表的个数小于该值，那么就继续穷举分析每一种连接顺序的成本，否则只对与optimizer_search_depth值相同数量的表进行穷举分析)</li>
+<li>根据某些规则压根不考虑某些连接顺序
+定义 <code>启发式规则</code>（就是根据以往经验指定的一些规则）, 不满足这些规则的连接顺序不分析，而系统变量 <code>optimizer_prune_level</code> 就是控制是否使用这些启发式规则</li>
+</ul>
+
 <h2 id="基于规则的优化">基于规则的优化</h2>
+
+<h3 id="条件化简">条件化简</h3>
+
+<ul>
+<li>移除不必要的括号</li>
+<li>常量的传递</li>
+<li>等值传递</li>
+<li>移除没用的条件</li>
+<li>表达式计算</li>
+<li>HAVING子句和WHERE子句的合并</li>
+<li>常量表检测
+
+<ul>
+<li>查询表中一条记录没有，或者只有一条数据</li>
+<li>使用主键等值匹配或者唯一二级索引等值匹配作为搜索条件来查询某个表<br />
+这2种方式查询表称为常量表，优化器会线执行常量表查询， 然后把查询总涉及表的条件全部替换成常数，然后在继续分析表的查询成本</li>
+</ul></li>
+</ul>
+
+<h3 id="外连接消除">外连接消除</h3>
+
+<p><code>内连接</code> 的驱动表和被驱动表的位置可以互相交换， 但是 <code>左外连接</code> 和 <code>右外连接</code> 的驱动表和被驱动表是固定。所以 <code>内连接</code> 可以通过优化表的连接顺序来降低整体的查询成本</p>
+
+<p>对于 <code>外连接</code>，在被驱动表的 <code>WHERE</code> 子句中添加 列不为 <code>NULL</code> 值的条件，外连接和内连接是否可以互相转换， 这样查询优化器可以通过评估表的不同链接顺序成本，选出成本最低的那种连接顺序来执行查询</p>
+
+<h3 id="子查询优化">子查询优化</h3>
+
+<h4 id="子查询语法">子查询语法</h4>
+
+<ul>
+<li><code>SELECT</code> 子句</li>
+<li><code>FROM</code> 子句</li>
+<li><code>WHERE</code> 或 <code>ON</code> 子句</li>
+<li><code>ORDER BY</code> 子句</li>
+<li><code>GROUP BY</code> 子句</li>
+</ul>
+
+<h4 id="按返回的结果集区分子查询">按返回的结果集区分子查询</h4>
+
+<ul>
+<li>标量子查询 (只返回一个单一值的子查询)</li>
+<li>行子查询 (返回一条记录的子查询，这条记录需要包含多个列，如果只包含一个列就是标量子查询)</li>
+<li>列子查询 (查询出一个列的数据，这个列需要包含多条数据)</li>
+<li>表子查询 (查询结果包含多条记录， 又包含多个列)</li>
+</ul>
+
+<h4 id="按与外层查询关系来区分子查询">按与外层查询关系来区分子查询</h4>
+
+<ul>
+<li>不相关子查询 (子查询可以单独运行，不依赖于外层查询值)</li>
+<li>相关子查询 (子查询的执行需要依赖于外层查询的值)</li>
+</ul>
+
+<h4 id="子查询语法注意事项">子查询语法注意事项</h4>
+
+<ul>
+<li>子查询必须用小括号扩起来</li>
+<li>在 <code>SELECT</code> 子句中的子查询必须是标量子查询</li>
+<li>在想要得到标量子查询或者行子查询，但又不能保证子查询的结果集只有一条记录时，应该使用 <code>LIMIT 1</code> 语句来限制记录数量。</li>
+<li>对于 <code>[NOT] IN/ANY/SOME/ALL</code> 子查询来说，子查询中不允许有 <code>LIMIT</code> 语句。</li>
+<li>子查询结果其实相当于一个集合， 所以 <code>ORDER BY</code>(排序) <code>DISTINCT</code>(去重) 等都是冗余的</li>
+<li>不允许在一条语句中增删改某个表的记录时同时还对该表进行子查询。</li>
+</ul>
+
+<h3 id="子查询的实际逻辑">子查询的实际逻辑</h3>
+
+<h4 id="标量子查询-行子查询">标量子查询、行子查询</h4>
+
+<ul>
+<li>不相关子查询
+
+<ul>
+<li>先单独执行子查询</li>
+<li>根据子查询得到的结果当作外层查询的参数在执行外层查询</li>
+</ul></li>
+<li>相关子查询
+
+<ul>
+<li>先从外层查询中获取一条记录</li>
+<li>从外层查询的记录中找出子查询中涉及的值，执行子查询</li>
+<li>根据子查询的查询结果来检测外层查询 <code>WHERE</code> 子句条件是否成立，如果成立，就把外层查询的那条记录加入到结果集，否则丢弃</li>
+<li>在执行第一步，直到外层查询结束</li>
+</ul></li>
+</ul>
+
+<h4 id="in子查询优化">IN子查询优化</h4>
+
+<pre><code>select * from s1 where key in (select col2 from s2 where col1 = '2' )
+</code></pre>
+
+<p>不直接将不相关子查询的结果集当作外层查询的参数，而是将该结果集写入一个临时表里， 这个过程叫 <code>物化(Materialize)</code>，临时表称为 <code>物化表</code></p>
+
+<ul>
+<li>该临时表的列就是子查询结果集中的列</li>
+<li>写入临时表的记录会被去重，让临时表变得更小</li>
+<li>一般情况下子查询结果集不会大的离谱，所以会为它建立基于内存的使用 <code>Memory</code> 存储引擎的临时表，而且会为该表建立哈希索引。如果子查询的结果集非常大，临时表会转而使用基于磁盘的存储引擎来保存结果集中的记录，索引类型也对应转变为B+树索引。</li>
+</ul>
+
+<p>之后将临时表和s1可以类似于内连接的形式，通过查询优化器计算成本，并选取查询方式。但是它和实际的内连接是有区别的， 这里引入 <code>半连接(semi-join)</code><br />
+对于s1表的某条记录来说，我们只关心在s2表中是否存在与之匹配的记录是否存在，而不关心具体有多少条记录与之匹配，最终的结果集中只保留s1表的记录。</p>
+
+<p>大佬的总结，具体可以细节可以自己购买查看</p>
+
+<ul>
+<li><p>如果IN子查询符合转换为semi-join的条件，查询优化器会优先把该子查询转换为semi-join，然后再考虑下边5种执行半连接的策略中哪个成本最低：</p>
+
+<ul>
+<li>Table pullout（子查询中的表上拉）</li>
+<li>DuplicateWeedout（重复值消除）</li>
+<li>LooseScan（松散索引扫描）</li>
+<li>Materialization (物化)</li>
+<li>FirstMatch （首次匹配）</li>
+</ul></li>
+</ul>
+
+<p>选择成本最低的那种执行策略来执行子查询。</p>
+
+<ul>
+<li><p>如果IN子查询不符合转换为semi-join的条件，那么查询优化器会从下边两种策略中找出一种成本更低的方式执行子查询：</p>
+
+<ul>
+<li>先将子查询物化之后再执行查询</li>
+<li>执行IN to EXISTS转换。</li>
+</ul></li>
+</ul>
+
+<h4 id="any-all子查询优化">ANY/ALL子查询优化</h4>
+
+<table>
+<thead>
+<tr>
+<th>原始表达式</th>
+<th>转换为</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>&lt; ANY (SELECT inner_expr &hellip;)</td>
+<td>&lt; (SELECT MAX(inner_expr) &hellip;)</td>
+</tr>
+
+<tr>
+<td>&gt; ANY (SELECT inner_expr &hellip;)</td>
+<td>&gt; (SELECT MIN(inner_expr) &hellip;)</td>
+</tr>
+
+<tr>
+<td>&lt; ALL (SELECT inner_expr &hellip;)</td>
+<td>&lt; (SELECT MIN(inner_expr) &hellip;)</td>
+</tr>
+
+<tr>
+<td>&gt; ALL (SELECT inner_expr &hellip;)</td>
+<td>&gt; (SELECT MAX(inner_expr) &hellip;)</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="not-exists子查询的执行">[NOT] EXISTS子查询的执行</h4>
+
+<ul>
+<li>不相关子查询<br />
+先执行子查询，得到 <code>TRUE</code> 或者 <code>FALSE</code>，然后重写查询语句</li>
+<li>相关子查询<br />
+标量子查询、行子查询中的相关查询</li>
+</ul>
+
+<h4 id="对于派生表的优化">对于派生表的优化</h4>
+
+<p>MySQL在执行带有派生表的时候，优先尝试把派生表和外层查询合并掉，如果不行的话，再把派生表物化掉执行查询。</p>
 
 <h2 id="查询优化的指南">查询优化的指南</h2>
           </div>
@@ -492,6 +691,32 @@ FLUSH OPTIMIZER_COSTS;            //重新加载表值
 								
 
 										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%a1%a8%e7%bb%9f%e8%ae%a1%e4%bf%a1%e6%81%af">
+												 表统计信息
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
 						 					<a class="nav-link" href="#%e4%b8%a4%e8%a1%a8%e8%bf%9e%e6%8e%a5%e7%9a%84%e6%88%90%e6%9c%ac%e5%88%86%e6%9e%90">
 												 两表连接的成本分析
 											</a>
@@ -548,6 +773,380 @@ FLUSH OPTIMIZER_COSTS;            //重新加载表值
 										</li>
 						 
 								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9d%a1%e4%bb%b6%e5%8c%96%e7%ae%80">
+												 条件化简
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a4%96%e8%bf%9e%e6%8e%a5%e6%b6%88%e9%99%a4">
+												 外连接消除
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ad%90%e6%9f%a5%e8%af%a2%e4%bc%98%e5%8c%96">
+												 子查询优化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ad%90%e6%9f%a5%e8%af%a2%e8%af%ad%e6%b3%95">
+												 子查询语法
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8c%89%e8%bf%94%e5%9b%9e%e7%9a%84%e7%bb%93%e6%9e%9c%e9%9b%86%e5%8c%ba%e5%88%86%e5%ad%90%e6%9f%a5%e8%af%a2">
+												 按返回的结果集区分子查询
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8c%89%e4%b8%8e%e5%a4%96%e5%b1%82%e6%9f%a5%e8%af%a2%e5%85%b3%e7%b3%bb%e6%9d%a5%e5%8c%ba%e5%88%86%e5%ad%90%e6%9f%a5%e8%af%a2">
+												 按与外层查询关系来区分子查询
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ad%90%e6%9f%a5%e8%af%a2%e8%af%ad%e6%b3%95%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a1%b9">
+												 子查询语法注意事项
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ad%90%e6%9f%a5%e8%af%a2%e7%9a%84%e5%ae%9e%e9%99%85%e9%80%bb%e8%be%91">
+												 子查询的实际逻辑
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%a0%87%e9%87%8f%e5%ad%90%e6%9f%a5%e8%af%a2-%e8%a1%8c%e5%ad%90%e6%9f%a5%e8%af%a2">
+												 标量子查询、行子查询
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#in%e5%ad%90%e6%9f%a5%e8%af%a2%e4%bc%98%e5%8c%96">
+												 IN子查询优化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#any-all%e5%ad%90%e6%9f%a5%e8%af%a2%e4%bc%98%e5%8c%96">
+												 ANY/ALL子查询优化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#not-exists%e5%ad%90%e6%9f%a5%e8%af%a2%e7%9a%84%e6%89%a7%e8%a1%8c">
+												 [NOT] EXISTS子查询的执行
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%af%b9%e4%ba%8e%e6%b4%be%e7%94%9f%e8%a1%a8%e7%9a%84%e4%bc%98%e5%8c%96">
+												 对于派生表的优化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
 								
 									</ul>
 								

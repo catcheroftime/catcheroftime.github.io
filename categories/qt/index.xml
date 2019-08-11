@@ -6,10 +6,19 @@
     <description>Recent content in Qt on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sun, 28 Jul 2019 18:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 10 Aug 2019 15:50:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/categories/qt/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Qt-进度条插件开发</title>
+      <link>https://catcheroftime.github.io/blog/2019-08/qt-%E8%BF%9B%E5%BA%A6%E6%9D%A1%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</link>
+      <pubDate>Sat, 10 Aug 2019 15:50:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-08/qt-%E8%BF%9B%E5%BA%A6%E6%9D%A1%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</guid>
+      <description>&lt;p&gt;在 &lt;a href=&#34;https://www.cnblogs.com/feiyangqingyun/p/6128288.html&#34;&gt;飞扬青云&lt;/a&gt; 大佬的博客下,意外看到一款水波纹的进度条,整体看上去很美观,感觉适用的场景也很多 (1. 单纯的进度条显示 2. 当前状态的展示,例如CPU,内存之类使用的占比)，所以自己也尝试开发了一下.&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Qt-时间轴2插件开发</title>
