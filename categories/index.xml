@@ -6,15 +6,33 @@
     <description>Recent content in Categories on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sat, 10 Aug 2019 15:50:00 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 12 Oct 2019 11:02:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Dev Book</title>
+      <link>https://catcheroftime.github.io/categories/dev-book/</link>
+      <pubDate>Sat, 12 Oct 2019 11:02:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/categories/dev-book/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Qt源码阅读</title>
+      <link>https://catcheroftime.github.io/categories/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</link>
+      <pubDate>Wed, 02 Oct 2019 11:50:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/categories/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Qt</title>
       <link>https://catcheroftime.github.io/categories/qt/</link>
-      <pubDate>Sat, 10 Aug 2019 15:50:00 +0800</pubDate>
+      <pubDate>Thu, 05 Sep 2019 15:50:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/categories/qt/</guid>
       <description></description>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>UI设计 on 一个懒散的程序猿</title>
+    <link>https://catcheroftime.github.io/tags/ui%E8%AE%BE%E8%AE%A1/</link>
+    <description>Recent content in UI设计 on 一个懒散的程序猿</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Thu, 05 Sep 2019 15:50:00 +0800</lastBuildDate>
+    
+	<atom:link href="https://catcheroftime.github.io/tags/ui%E8%AE%BE%E8%AE%A1/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Qt-UI设计界面(大纲)</title>
+      <link>https://catcheroftime.github.io/blog/2019-09/qt-ui%E8%AE%BE%E8%AE%A1%E7%95%8C%E9%9D%A2%E5%A4%A7%E7%BA%B2/</link>
+      <pubDate>Thu, 05 Sep 2019 15:50:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-09/qt-ui%E8%AE%BE%E8%AE%A1%E7%95%8C%E9%9D%A2%E5%A4%A7%E7%BA%B2/</guid>
+      <description>&lt;p&gt;最近突发奇想，想自己整理一份详细的QT开发过程中踩过的坑，也给自己查缺补漏一下。这一部分主要是总结UI &lt;code&gt;设计&lt;/code&gt; 下的所有可视化的按钮和控件， 在介绍默认的控件的同时也会相应总结类的常用使用方法。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

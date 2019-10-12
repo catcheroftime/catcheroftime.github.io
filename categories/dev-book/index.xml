@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Dev Book on 一个懒散的程序猿</title>
+    <link>https://catcheroftime.github.io/categories/dev-book/</link>
+    <description>Recent content in Dev Book on 一个懒散的程序猿</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Sat, 12 Oct 2019 11:02:00 +0800</lastBuildDate>
+    
+	<atom:link href="https://catcheroftime.github.io/categories/dev-book/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>程序员的自我修养-链接装载与库</title>
+      <link>https://catcheroftime.github.io/blog/2019-10/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB-%E9%93%BE%E6%8E%A5%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/</link>
+      <pubDate>Sat, 12 Oct 2019 11:02:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-10/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB-%E9%93%BE%E6%8E%A5%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/</guid>
+      <description>&lt;p&gt;每次在用 &lt;code&gt;QT&lt;/code&gt; 点击编译总是很好奇编译器具体对我的代码做了哪些操作，同时也好奇动态库，静态库等在程序运行中是怎么被程序调用的，于是学习一波 《程序员的自我修养-链接装载与库》，通过这篇博客打卡&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
