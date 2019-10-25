@@ -6,10 +6,19 @@
     <description>Recent content in Qt源码阅读 on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 02 Oct 2019 11:50:00 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 25 Oct 2019 15:56:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>QT-D指针Q指针</title>
+      <link>https://catcheroftime.github.io/blog/2019-10/qt-d%E6%8C%87%E9%92%88q%E6%8C%87%E9%92%88/</link>
+      <pubDate>Fri, 25 Oct 2019 15:56:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-10/qt-d%E6%8C%87%E9%92%88q%E6%8C%87%E9%92%88/</guid>
+      <description>&lt;p&gt;在查看 &lt;code&gt;QT&lt;/code&gt; 源码的过程中，QT 无处不在的 &lt;code&gt;Q_D&lt;/code&gt;, &lt;code&gt;Q_Q&lt;/code&gt; 宏，在看源码过程中可能需要先理解，才能更好的继续下去&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>二进制兼容性问题C&#43;&#43;策略</title>

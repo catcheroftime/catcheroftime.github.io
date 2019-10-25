@@ -6,10 +6,37 @@
     <description>Recent content in Tags on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sat, 12 Oct 2019 11:02:00 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 25 Oct 2019 15:56:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>D指针</title>
+      <link>https://catcheroftime.github.io/tags/d%E6%8C%87%E9%92%88/</link>
+      <pubDate>Fri, 25 Oct 2019 15:56:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/d%E6%8C%87%E9%92%88/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Qt</title>
+      <link>https://catcheroftime.github.io/tags/qt/</link>
+      <pubDate>Fri, 25 Oct 2019 15:56:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/qt/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Qt源码阅读</title>
+      <link>https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</link>
+      <pubDate>Fri, 25 Oct 2019 15:56:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Dev Book</title>
@@ -26,24 +53,6 @@
       <pubDate>Sat, 12 Oct 2019 11:02:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/tags/%E9%93%BE%E6%8E%A5%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Qt</title>
-      <link>https://catcheroftime.github.io/tags/qt/</link>
-      <pubDate>Wed, 02 Oct 2019 11:50:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/qt/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Qt源码阅读</title>
-      <link>https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</link>
-      <pubDate>Wed, 02 Oct 2019 11:50:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</guid>
       <description></description>
     </item>
     

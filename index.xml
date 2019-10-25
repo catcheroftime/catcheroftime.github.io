@@ -6,10 +6,19 @@
     <description>Recent content on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sat, 12 Oct 2019 11:02:00 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 25 Oct 2019 15:56:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>QT-D指针Q指针</title>
+      <link>https://catcheroftime.github.io/blog/2019-10/qt-d%E6%8C%87%E9%92%88q%E6%8C%87%E9%92%88/</link>
+      <pubDate>Fri, 25 Oct 2019 15:56:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-10/qt-d%E6%8C%87%E9%92%88q%E6%8C%87%E9%92%88/</guid>
+      <description>&lt;p&gt;在查看 &lt;code&gt;QT&lt;/code&gt; 源码的过程中，QT 无处不在的 &lt;code&gt;Q_D&lt;/code&gt;, &lt;code&gt;Q_Q&lt;/code&gt; 宏，在看源码过程中可能需要先理解，才能更好的继续下去&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>程序员的自我修养-链接装载与库</title>
@@ -203,6 +212,15 @@
       
       <guid>https://catcheroftime.github.io/blog/2019-03/python%E6%93%8D%E4%BD%9Cmongodb%E7%A4%BA%E4%BE%8B/</guid>
       <description>&lt;p&gt;使用python 简单操作mongodb数据库&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://catcheroftime.github.io/blog/1-01/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/1-01/</guid>
+      <description></description>
     </item>
     
   </channel>

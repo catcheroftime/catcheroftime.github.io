@@ -4,13 +4,48 @@
   
   <url>
     <loc>https://catcheroftime.github.io/categories/</loc>
-    <lastmod>2019-10-12T11:02:00+08:00</lastmod>
+    <lastmod>2019-10-25T15:56:00+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://catcheroftime.github.io/categories/dev-book/</loc>
-    <lastmod>2019-10-12T11:02:00+08:00</lastmod>
+    <loc>https://catcheroftime.github.io/tags/d%E6%8C%87%E9%92%88/</loc>
+    <lastmod>2019-10-25T15:56:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/blog/2019-10/qt-d%E6%8C%87%E9%92%88q%E6%8C%87%E9%92%88/</loc>
+    <lastmod>2019-10-25T15:56:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/tags/qt/</loc>
+    <lastmod>2019-10-25T15:56:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</loc>
+    <lastmod>2019-10-25T15:56:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/categories/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</loc>
+    <lastmod>2019-10-25T15:56:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/tags/</loc>
+    <lastmod>2019-10-25T15:56:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/</loc>
+    <lastmod>2019-10-25T15:56:00+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -21,13 +56,7 @@
   </url>
   
   <url>
-    <loc>https://catcheroftime.github.io/tags/</loc>
-    <lastmod>2019-10-12T11:02:00+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://catcheroftime.github.io/</loc>
+    <loc>https://catcheroftime.github.io/categories/dev-book/</loc>
     <lastmod>2019-10-12T11:02:00+08:00</lastmod>
     <priority>0</priority>
   </url>
@@ -40,24 +69,6 @@
   <url>
     <loc>https://catcheroftime.github.io/tags/%E9%93%BE%E6%8E%A5%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/</loc>
     <lastmod>2019-10-12T11:02:00+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://catcheroftime.github.io/tags/qt/</loc>
-    <lastmod>2019-10-02T11:50:00+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://catcheroftime.github.io/categories/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</loc>
-    <lastmod>2019-10-02T11:50:00+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</loc>
-    <lastmod>2019-10-02T11:50:00+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -135,13 +146,13 @@
   </url>
   
   <url>
-    <loc>https://catcheroftime.github.io/categories/python/</loc>
+    <loc>https://catcheroftime.github.io/tags/python/</loc>
     <lastmod>2019-07-15T16:02:00+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://catcheroftime.github.io/tags/python/</loc>
+    <loc>https://catcheroftime.github.io/categories/python/</loc>
     <lastmod>2019-07-15T16:02:00+08:00</lastmod>
     <priority>0</priority>
   </url>
@@ -163,13 +174,13 @@
   </url>
   
   <url>
-    <loc>https://catcheroftime.github.io/categories/mysql/</loc>
+    <loc>https://catcheroftime.github.io/tags/mysql/</loc>
     <lastmod>2019-07-04T00:15:00+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://catcheroftime.github.io/tags/mysql/</loc>
+    <loc>https://catcheroftime.github.io/categories/mysql/</loc>
     <lastmod>2019-07-04T00:15:00+08:00</lastmod>
     <priority>0</priority>
   </url>
@@ -225,13 +236,13 @@
   </url>
   
   <url>
-    <loc>https://catcheroftime.github.io/categories/hugo/</loc>
+    <loc>https://catcheroftime.github.io/tags/hugo/</loc>
     <lastmod>2019-06-10T12:54:26+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://catcheroftime.github.io/tags/hugo/</loc>
+    <loc>https://catcheroftime.github.io/categories/hugo/</loc>
     <lastmod>2019-06-10T12:54:26+08:00</lastmod>
     <priority>0</priority>
   </url>
@@ -258,13 +269,13 @@
   </url>
   
   <url>
-    <loc>https://catcheroftime.github.io/categories/mongodb/</loc>
+    <loc>https://catcheroftime.github.io/tags/mongodb/</loc>
     <lastmod>2019-03-31T12:54:26+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://catcheroftime.github.io/tags/mongodb/</loc>
+    <loc>https://catcheroftime.github.io/categories/mongodb/</loc>
     <lastmod>2019-03-31T12:54:26+08:00</lastmod>
     <priority>0</priority>
   </url>
@@ -277,6 +288,11 @@
   <url>
     <loc>https://catcheroftime.github.io/blog/2019-03/python%E6%93%8D%E4%BD%9Cmongodb%E7%A4%BA%E4%BE%8B/</loc>
     <lastmod>2019-03-31T12:54:26+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://catcheroftime.github.io/blog/1-01/</loc>
+    <priority>0</priority>
   </url>
   
   <url>
