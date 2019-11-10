@@ -6,10 +6,19 @@
     <description>Recent content on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Tue, 29 Oct 2019 18:22:00 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 05 Nov 2019 19:35:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>阴阳师自动挂机脚本-python</title>
+      <link>https://catcheroftime.github.io/blog/2019-11/%E9%98%B4%E9%98%B3%E5%B8%88%E8%87%AA%E5%8A%A8%E6%8C%82%E6%9C%BA%E8%84%9A%E6%9C%AC-python/</link>
+      <pubDate>Tue, 05 Nov 2019 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-11/%E9%98%B4%E9%98%B3%E5%B8%88%E8%87%AA%E5%8A%A8%E6%8C%82%E6%9C%BA%E8%84%9A%E6%9C%AC-python/</guid>
+      <description>&lt;p&gt;阴阳师每次出现大型活动类似于肝绘卷或者超鬼王之类的，每次的手动简直太伤头发了，太伤肝了，而且每次都是重复性的动作，点击开始，时间一到或者怪一死，进入结算界面之后然后点击结束，一个循环就就结束了，然后重新开始，手动既无聊又累，所有广大玩家想出了很多解放双手的点子，我也不例外，下面简单介绍我是如何用 &lt;code&gt;python&lt;/code&gt; 实现简单的挂机脚本,先说一下脚本应用的场景，在电脑上运行的阴阳师也就是PC版，在电脑上使用手机模拟器也可以&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>shell 使用总结</title>
