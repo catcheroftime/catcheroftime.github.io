@@ -292,17 +292,17 @@
 
 <p>我这里安装的是64位版本，按照默认的方式安装</p>
 
-<p><img src="https://github.com/catcheroftime/ThirdPkg/blob/master/MingwCompileFFmpeg/image/msys2.png" alt="msys2安装" /></p>
+<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2.png" alt="msys2安装" /></p>
 
 <p>安装完成之后，可以简单看一下安装路径下的文件层次结构</p>
 
-<p><img src="https://github.com/catcheroftime/ThirdPkg/blob/master/MingwCompileFFmpeg/image/msys2_filelevel.png" alt="msys2文件层次" /></p>
+<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2_filelevel.png" alt="msys2文件层次" /></p>
 
 <h3 id="更新字符集-不太重要">更新字符集(不太重要)</h3>
 
 <p>打开安装目录下的 <code>msys2_shell.cmd</code> 文件, 在弹窗的标题栏上，右击选择 <code>Options...</code> , 选择 <code>Text</code> , 更改显示中文的字符集为 <code>GBK</code> ，避免乱码.如下图</p>
 
-<p><img src="https://github.com/catcheroftime/ThirdPkg/blob/master/MingwCompileFFmpeg/image/msys2_updatetext.png" alt="msys2更新字符集" /></p>
+<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2_updatetext.png" alt="msys2更新字符集" /></p>
 
 <h3 id="配置镜像源">配置镜像源</h3>
 
@@ -310,7 +310,7 @@
 
 <p>以我的为例， 我将 <code>msys2</code> 安装在 <code>C:\msys64</code> , 管理镜像源的文件在路径 <code>C:\msys64\etc\pacman.d</code> 文件夹下,如下图，将文件地址更改为国内的中科大镜像</p>
 
-<p><img src="https://github.com/catcheroftime/ThirdPkg/blob/master/MingwCompileFFmpeg/image/msys2_downpath.png" alt="msys2安装" /></p>
+<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2_downpath.png" alt="msys2安装" /></p>
 
 <p>分别更新 mirrorlist.mingw32 文件</p>
 
@@ -360,7 +360,7 @@ pacman -S diffutils
 
 <p>打开安装目录下的 <code>msys2_shell.cmd</code> 文件, 首先查看已经提供的 GCC 版本选择</p>
 
-<p><img src="https://github.com/catcheroftime/ThirdPkg/blob/master/MingwCompileFFmpeg/image/msys2_installgcc.png" alt="msys2_mingw安装" /></p>
+<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2_installgcc.png" alt="msys2_mingw安装" /></p>
 
 <p>如图， 可以看到2个版本的 <code>gcc</code> , 32位和64位， 根据实际的需要选择安装， 我这里安装的是32位</p>
 
