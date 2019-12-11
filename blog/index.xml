@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>windows下通过msys2&#43;mingw编译ffmpeg</title>
+      <link>https://catcheroftime.github.io/blog/2019-12/windows%E4%B8%8B%E9%80%9A%E8%BF%87msys2-mingw%E7%BC%96%E8%AF%91ffmpeg/</link>
+      <pubDate>Wed, 11 Dec 2019 17:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-12/windows%E4%B8%8B%E9%80%9A%E8%BF%87msys2-mingw%E7%BC%96%E8%AF%91ffmpeg/</guid>
+      <description>&lt;p&gt;在使用 &lt;code&gt;ffmpeg&lt;/code&gt; 过程中，如果是直接使用 &lt;code&gt;ffmpeg&lt;/code&gt; 的库，可以直接在官方下载动态库或者静态库使用，但是当需要根据实际情况修改一些 &lt;code&gt;ffmpeg&lt;/code&gt; 的代码，这时候避免不掉的是编译 &lt;code&gt;ffmpeg&lt;/code&gt; 的源码，下面是我亲测可用的编译过程的整理&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>阴阳师自动挂机脚本-python</title>
       <link>https://catcheroftime.github.io/blog/2019-11/%E9%98%B4%E9%98%B3%E5%B8%88%E8%87%AA%E5%8A%A8%E6%8C%82%E6%9C%BA%E8%84%9A%E6%9C%AC-python/</link>
       <pubDate>Tue, 05 Nov 2019 19:35:00 +0800</pubDate>
