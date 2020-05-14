@@ -6,10 +6,28 @@
     <description>Recent content in Qt on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Thu, 05 Sep 2019 15:50:00 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 02 Apr 2020 15:50:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/categories/qt/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title> QT 中文问题和路径中空格问题</title>
+      <link>https://catcheroftime.github.io/blog/2020-04/qt-%E4%B8%AD%E6%96%87%E9%97%AE%E9%A2%98%E5%92%8C%E8%B7%AF%E5%BE%84%E4%B8%AD%E7%A9%BA%E6%A0%BC%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Thu, 02 Apr 2020 15:50:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-04/qt-%E4%B8%AD%E6%96%87%E9%97%AE%E9%A2%98%E5%92%8C%E8%B7%AF%E5%BE%84%E4%B8%AD%E7%A9%BA%E6%A0%BC%E9%97%AE%E9%A2%98/</guid>
+      <description>&lt;p&gt;记录在使用 QT 开发过程中碰到的关于 QSetting 编写配置文件读写中文的问题，QProcess command 路径中存在中文的问题，以及使用 QString 转 std::string 时，原QString携带中文的问题&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Qt-图片裁切</title>
+      <link>https://catcheroftime.github.io/blog/2020-01/qt-%E5%9B%BE%E7%89%87%E8%A3%81%E5%88%87/</link>
+      <pubDate>Mon, 06 Jan 2020 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-01/qt-%E5%9B%BE%E7%89%87%E8%A3%81%E5%88%87/</guid>
+      <description>&lt;p&gt;在上传头像过程中，经常会需要将图片裁切成指定的大小，给定一个指定大小的裁切框，调整裁切框位置裁切出理想的图片，今天在这里实现一个简单的图片裁切的应用, 这一次不是用 &lt;code&gt;自定义插件&lt;/code&gt; 的形式实现的，而是通过 &lt;code&gt;提升为&lt;/code&gt;，刚好比较一下二者的区别&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Qt-UI设计界面(大纲)</title>
@@ -23,7 +41,7 @@
     <item>
       <title>Qt-进度条插件开发</title>
       <link>https://catcheroftime.github.io/blog/2019-08/qt-%E8%BF%9B%E5%BA%A6%E6%9D%A1%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</link>
-      <pubDate>Sat, 10 Aug 2019 15:50:00 +0800</pubDate>
+      <pubDate>Sat, 10 Aug 2019 20:45:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/blog/2019-08/qt-%E8%BF%9B%E5%BA%A6%E6%9D%A1%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</guid>
       <description>&lt;p&gt;在 &lt;a href=&#34;https://www.cnblogs.com/feiyangqingyun/p/6128288.html&#34;&gt;飞扬青云&lt;/a&gt; 大佬的博客下,意外看到一款水波纹的进度条,整体看上去很美观,感觉适用的场景也很多 (1. 单纯的进度条显示 2. 当前状态的展示,例如CPU,内存之类使用的占比)，所以自己也尝试开发了一下.&lt;/p&gt;</description>

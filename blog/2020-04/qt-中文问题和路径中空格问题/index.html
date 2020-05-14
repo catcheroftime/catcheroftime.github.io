@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="记录在使用 QT 开发过程中碰到的关于 QSetting 编写配置文件读写中文的问题，QProcess command 路径中存在中文的问题，以及使用 QString 转 std::string 时，原QString携带中文的问题">
+  
+  <meta property="og:title" content=" QT 中文问题和路径中空格问题" />
+<meta property="og:description" content="记录在使用 QT 开发过程中碰到的关于 QSetting 编写配置文件读写中文的问题，QProcess command 路径中存在中文的问题，以及使用 QString 转 std::string 时，原QString携带中文的问题" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-04/qt-%E4%B8%AD%E6%96%87%E9%97%AE%E9%A2%98%E5%92%8C%E8%B7%AF%E5%BE%84%E4%B8%AD%E7%A9%BA%E6%A0%BC%E9%97%AE%E9%A2%98/" />
+<meta property="article:published_time" content="2020-04-02T15:50:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-04-02T15:50:00&#43;08:00"/>
+
+
+  <title>
+  
+        QT 中文问题和路径中空格问题 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-04/qt-%E4%B8%AD%E6%96%87%E9%97%AE%E9%A2%98%E5%92%8C%E8%B7%AF%E5%BE%84%E4%B8%AD%E7%A9%BA%E6%A0%BC%E9%97%AE%E9%A2%98/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/qt"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Qt </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading"> QT 中文问题和路径中空格问题</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Apr 2, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>记录在使用 QT 开发过程中碰到的关于 QSetting 编写配置文件读写中文的问题，QProcess command 路径中存在中文的问题，以及使用 QString 转 std::string 时，原QString携带中文的问题</p>
+
+<h2 id="qprocess-startdetached-或者-start-command路径中空格问题">QProcess::startDetached() 或者 start() command路径中空格问题</h2>
+
+<p>在开发过程中遇到一个重启客户端的问题失败的问题</p>
+
+<p>错误示例：</p>
+
+<pre><code>QString filepath = qApp-&gt;applicationFilePath();
+QProcess::startDetached(filepath);
+</code></pre>
+
+<p>当路径中没有空格是没有问题，但是当程序安装在 ‪<code>D:\Program Files</code> 路径下,这一段代码就会失效</p>
+
+<p>更正</p>
+
+<pre><code>QString infilepath = qApp-&gt;applicationFilePath();
+infilepath = infilepath.replace(&quot;/&quot;,&quot;\\&quot;);
+QString filepath = &quot;\&quot;&quot; + infilepath + &quot;\&quot;&quot;;
+QProcess::startDetached(filepath);
+</code></pre>
+
+<p>为了找到空格具体影响的原因，需要看一下 <code>QProcess::startDetached(const QString &amp;command)</code> 这个函数的源码</p>
+
+<pre><code>bool QProcess::startDetached(const QString &amp;command)
+{
+    QStringList args = parseCombinedArgString(command);
+    if (args.isEmpty())
+        return false;
+
+    const QString prog = args.takeFirst();
+
+    return QProcessPrivate::startDetached(prog, args);
+}
+</code></pre>
+
+<p>从这里可以看出，解析 command 可能出现问题, 因为一个 cmd 命名可以分为2部分，一部分为 prog 应用程序部分，另一部分是 args 参数，所以接下来主要是看 <code>static QStringList parseCombinedArgString(const QString &amp;program)</code> 这个函数</p>
+
+<pre><code>static QStringList parseCombinedArgString(const QString &amp;program)
+{
+    QStringList args;
+    QString tmp;
+    int quoteCount = 0;
+    bool inQuote = false;
+
+    // handle quoting. tokens can be surrounded by double quotes
+    // &quot;hello world&quot;. three consecutive double quotes represent
+    // the quote character itself.
+    for (int i = 0; i &lt; program.size(); ++i) {
+        if (program.at(i) == QLatin1Char('&quot;')) {
+            ++quoteCount;
+            if (quoteCount == 3) {
+                // third consecutive quote
+                quoteCount = 0;
+                tmp += program.at(i);
+            }
+            continue;
+        }
+        if (quoteCount) {
+            if (quoteCount == 1)
+                inQuote = !inQuote;
+            quoteCount = 0;
+        }
+        if (!inQuote &amp;&amp; program.at(i).isSpace()) {
+            if (!tmp.isEmpty()) {
+                args += tmp;
+                tmp.clear();
+            }
+        } else {
+            tmp += program.at(i);
+        }
+    }
+    if (!tmp.isEmpty())
+        args += tmp;
+
+    return args;
+}
+</code></pre>
+
+<p>从这一段代码可以看出，先判断 <code>&quot;</code> 双引号，双引号不会存入tmp，(当三个双引号连续，会写入tmp 一个)， 并且以 <code>program.at(i).isSpace()</code> 空格来判断 args 的结尾</p>
+
+<p>按照上面代码的规则<br />
+以 <code>QString filepath = &quot;D:\\Program Files\\1.exe&quot;;</code> 路径为例<br />
+最后解析的结果为 <code>D:\Program</code> 和 <code>Files\1.exe</code> 2部分</p>
+
+<p>所以这里有个很简单的解决方案，就是改成 <code>QString filepath = &quot;\&quot;D:\\Program Files\\1.exe\&quot;&quot;;</code></p>
+
+<p>如果携带参数的话 可以用空格将所有参数隔开， <code>QString filepath = &quot;\&quot;D:\\Program Files\\1.exe\&quot; -help&quot;;</code></p>
+
+<p>关于路径中 &ldquo;\&rdquo; 和 &ldquo;/&rdquo; 的差异我的理解是：</p>
+
+<ul>
+<li>Windows下使用的是反斜杠 &ldquo;\&rdquo;,</li>
+<li>Linux下使用的是正斜杠 &ldquo;/&rdquo;</li>
+</ul>
+
+<p>但是在QT里，我用获取路径的函数等得到的 QString 路径用的都是 &ldquo;/&rdquo; 正斜杠，可能是因为 &ldquo;\&rdquo; 反斜杠是转义字符，所以得到的路径我一般</p>
+
+<ul>
+<li>先使用replace(&ldquo;/&rdquo;,&rdquo;\\&rdquo;)转一下路径中的正斜杠</li>
+
+<li><p>然后用双引号包一下就可以解决这个问题了</p>
+
+<p>QString infilepath = qApp-&gt;applicationFilePath();
+  infilepath = infilepath.replace(&ldquo;/&rdquo;,&rdquo;\&rdquo;);
+  QString filepath = &ldquo;\&ldquo;&rdquo; + infilepath + &ldquo;\&ldquo;&rdquo;;
+  QProcess::startDetached(filepath);</p></li>
+</ul>
+
+<p>最后总结一下</p>
+
+<pre><code>static bool startDetached(const QString &amp;command);
+void start(const QString &amp;command, OpenMode mode = ReadWrite);
+</code></pre>
+
+<p>在使用这2个需要解析指令和参数的函数时，需要注意指令部分需要使用双引号包起来</p>
+
+<h2 id="qsetting-读写中文的问题">QSetting 读写中文的问题</h2>
+
+<p>读取和设置的时候都需要设置编码格式，<code>settings.setIniCodec(QTextCodec::codecForName(&quot;GB2312&quot;));</code></p>
+
+<pre><code>// 设置
+void setValueForSettings(const QString &amp;target, const QVariant &amp;value)
+{
+    QString strFileName = QCoreApplication::applicationDirPath() + &quot;/config.ini&quot; ;
+    QSettings settings(strFileName, QSettings::IniFormat);
+    settings.setIniCodec(QTextCodec::codecForName(&quot;GB2312&quot;));
+    settings.setValue(target, value);
+}
+
+// 读取
+QVariant getValueFromSettings(const QString &amp;target)
+{
+    QString strFileName = QCoreApplication::applicationDirPath() +&quot;/config.ini&quot; ;
+    QSettings settings(strFileName, QSettings::IniFormat);
+    settings.setIniCodec(QTextCodec::codecForName(&quot;GB2312&quot;));
+    QVariant value = settings.value(target);
+    return value;
+}
+</code></pre>
+
+<h2 id="中文路径问题">中文路径问题</h2>
+
+<p>在使用一些 C 的函数时例如 std::fstream 的 open 时，直接使用 QT 的 toStdString() 函数将 QString 类型转成 std::string 时，只要路径中存在中文，转换出来的新的 std::string 实际上是乱码， C 函数并不能正确使用，这主要是因为 toStdString() 函数本身调用的是 Utf8 的编码， 所以想正确转换， 需要使用 <code>QTextCodec</code> 类，声明转码器为 <code>GBK</code> 或者 <code>GB2312</code></p>
+
+<pre><code>#include &lt;QTextCodec&gt;
+
+QTextCodec *code = QTextCodec::codecForName(&quot;GB2312&quot;);//解决中文路径问题
+std::string name = code-&gt;fromUnicode(dir).data();
+</code></pre>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98" role="button">Qt常见问题 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-03/c-11%E6%96%B0%E7%89%B9%E6%80%A7%E6%95%B4%E7%90%86/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>C&#43;&#43;11新特性整理</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#qprocess-startdetached-%e6%88%96%e8%80%85-start-command%e8%b7%af%e5%be%84%e4%b8%ad%e7%a9%ba%e6%a0%bc%e9%97%ae%e9%a2%98">
+												 QProcess::startDetached() 或者 start() command路径中空格问题
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#qsetting-%e8%af%bb%e5%86%99%e4%b8%ad%e6%96%87%e7%9a%84%e9%97%ae%e9%a2%98">
+												 QSetting 读写中文的问题
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%ad%e6%96%87%e8%b7%af%e5%be%84%e9%97%ae%e9%a2%98">
+												 中文路径问题
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

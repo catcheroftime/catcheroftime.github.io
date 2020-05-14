@@ -326,7 +326,7 @@
 
 <p>链接的过程主要包括 地址和空间分配，符号决议，重定位等步骤</p>
 
-<p>比如：我们在程序模块 <code>main.c</code> 中使用另一个模块 <code>func.c</code> 中的函数 <code>foo()</code>, 我们在 <code>main.c</code> 模块中每一处调用 <code>foo</code> 的时候必须确切知道 <code>foo</code> 这个函数的地址， 但是由于每个模块都是单独编译的，在编译器编译 <code>main.c</code> 的时候它并不知道 <code>foo</code> 函数的地址， 暂时把这些调用 `foo 的指令的目标地址搁置，等待最后连接的时候由链接器去将这些指令的目标地址修正。 这个地址修正的过程叫做<strong>重定位</strong>， 每个要被修正的地方叫一个<strong>重定位入口</strong></p>
+<p>比如：我们在程序模块 <code>main.c</code> 中使用另一个模块 <code>func.c</code> 中的函数 <code>foo()</code>, 我们在 <code>main.c</code> 模块中每一处调用 <code>foo</code> 的时候必须确切知道 <code>foo</code> 这个函数的地址， 但是由于每个模块都是单独编译的，在编译器编译 <code>main.c</code> 的时候它并不知道 <code>foo</code> 函数的地址， 暂时把这些调用 <code>foo</code> 的指令的目标地址搁置，等待最后连接的时候由链接器去将这些指令的目标地址修正。 这个地址修正的过程叫做<strong>重定位</strong>， 每个要被修正的地方叫一个<strong>重定位入口</strong></p>
 
 <p>学习时间：2019-10-15</p>
 
@@ -1322,7 +1322,7 @@ int main()                           // main 强符号
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2019 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
   </div>
   
 

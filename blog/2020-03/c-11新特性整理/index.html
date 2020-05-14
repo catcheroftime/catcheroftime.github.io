@@ -1,0 +1,1926 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="简单整理了 C&#43;&#43;11 的新特性">
+  
+  <meta property="og:title" content="C&#43;&#43;11新特性整理" />
+<meta property="og:description" content="简单整理了 C&#43;&#43;11 的新特性" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-03/c-11%E6%96%B0%E7%89%B9%E6%80%A7%E6%95%B4%E7%90%86/" />
+<meta property="article:published_time" content="2020-03-10T18:22:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-03-10T18:22:00&#43;08:00"/>
+
+
+  <title>
+  
+       C&#43;&#43;11新特性整理 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-03/c-11%E6%96%B0%E7%89%B9%E6%80%A7%E6%95%B4%E7%90%86/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/c&#43;&#43;"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> C&#43;&#43; </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">C&#43;&#43;11新特性整理</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Mar 10, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>简单整理了 C++11 的新特性</p>
+
+<h2 id="long-long-类型">long long 类型</h2>
+
+<p>算数类型中引入 long long 类型<br />
+算数类型指： <strong>整型</strong> (包括字符和布尔类型) 和 <strong>浮点型</strong></p>
+
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>含义</th>
+<th>最小长度</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>bool</td>
+<td>布尔类型</td>
+<td>未定义</td>
+</tr>
+
+<tr>
+<td>char</td>
+<td>字符</td>
+<td>8 位</td>
+</tr>
+
+<tr>
+<td>char16_t</td>
+<td>Unicode 字符</td>
+<td>16 位</td>
+</tr>
+
+<tr>
+<td>char32_t</td>
+<td>Unicode 字符</td>
+<td>32 位</td>
+</tr>
+
+<tr>
+<td>double</td>
+<td>双精度浮点数</td>
+<td>10 位有效数字</td>
+</tr>
+
+<tr>
+<td>float</td>
+<td>单精度浮点数</td>
+<td>6 位有效数字</td>
+</tr>
+
+<tr>
+<td>int</td>
+<td>整型</td>
+<td>16 位</td>
+</tr>
+
+<tr>
+<td>long</td>
+<td>长整型</td>
+<td>32 位</td>
+</tr>
+
+<tr>
+<td>long double</td>
+<td>扩展精度浮点数</td>
+<td>10 位有效数字</td>
+</tr>
+
+<tr>
+<td>long long</td>
+<td>长整型</td>
+<td>64 位</td>
+</tr>
+
+<tr>
+<td>short</td>
+<td>短整型</td>
+<td>16 位</td>
+</tr>
+
+<tr>
+<td>wchar_t</td>
+<td>宽字符</td>
+<td>16 位</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="nullptr-常量">nullptr 常量</h2>
+
+<p><strong>空指针</strong>(null pointer) 值为 0 的指针，空指针合法但是不指向任何对象， nullptr 是一种特殊类型的字面值，它可以被转成任意其他的指针类型</p>
+
+<pre><code>int *p1 = nullptr;
+int *p2 = 0;
+int *p3 = NULL;     // NULL 这个变量在头文件 cstdlib 中定义，它的值就是0
+</code></pre>
+
+<p>关于 nullptr 相对于 NULL 的优势，可以看一下这篇文章 <a href="https://zhuanlan.zhihu.com/p/79883965">为什么建议你用nullptr而不是NULL</a></p>
+
+<h2 id="初始化">初始化</h2>
+
+<p>初始化分为2种： 拷贝初始化和直接初始化</p>
+
+<p><a href="https://blog.csdn.net/ljianhui/article/details/9245661">一位大佬很详细的解释</a></p>
+
+<p>C++11提供一种统一的语法初始化<strong>任意的对象</strong>，它扩展了初始化列表语法</p>
+
+<h3 id="类内初始化">类内初始化</h3>
+
+<p>C++11新标准规定，可以为数据成员提供一个<strong>类内初始值</strong>(在结构体或类的数据成员声明的同时提供初始值，必须置于等号右侧或花括号内)，创建对象时，类内初始值将用于初始化数据恒源，没有初始值的成员将被默认初始化。</p>
+
+<pre><code>struct example {
+    int width = 100;
+    int height{100};
+};
+</code></pre>
+
+<h3 id="列表初始化">列表初始化</h3>
+
+<p>使用花括号来初始化变量在C++11中得到全面应用</p>
+
+<p>注意，如果使用列表初始化且初始值存在丢失信息的风险，则编译器会报错</p>
+
+<pre><code>long double ld = 3.141592654;
+int a{Id} , b = {ld};          // 转换失败，存在信息丢失的风险 
+int c(ld) , d = id;            // 转换成功，且确实丢失了部分值
+</code></pre>
+
+<h3 id="列表初始化返回值">列表初始化返回值</h3>
+
+<p>函数可以返回花括号包围的值的列表，此处的列表也用来对表示函数返回的临时量进行初始化，返回的值由函数的返回类型决定</p>
+
+<pre><code>vector&lt;string&gt; process(int condition)
+{
+    if (condition == 0)
+        return {};
+    else
+        return {&quot;test&quot;, &quot;function&quot;};
+}
+</code></pre>
+
+<h3 id="容器-顺序-的列表初始化">容器(顺序)的列表初始化</h3>
+
+<table>
+<thead>
+<tr>
+<th>形式</th>
+<th>内容</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>C c</td>
+<td>默认构造函数</td>
+</tr>
+
+<tr>
+<td>C c1{c2} </br> C c1=c2</td>
+<td>c1初始化为c2的拷贝</td>
+</tr>
+
+<tr>
+<td>C c{a,b,c&hellip;} </br> C c = {a,b,c&hellip;}</td>
+<td>c 初始化为初始化列表中的元素拷贝</td>
+</tr>
+
+<tr>
+<td>C c(b,e)</td>
+<td>c 初始化为迭代器 b 和 e 指定范围的元素拷贝</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="关联容器的列表初始化">关联容器的列表初始化</h3>
+
+<pre><code>set&lt;string&gt; exclude = { &quot;the&quot;, &quot;but&quot;, &quot;and&quot;};
+
+map&lt;string,string&gt; authors = { {&quot;Joyce&quot;, &quot;janmes&quot;},
+                               {&quot;Austen&quot;, &quot;Jane&quot;},
+                               {&quot;Dickens&quot;, &quot;Charles&quot;} };
+</code></pre>
+
+<h3 id="列表初始化-pair-的返回类型">列表初始化 pair 的返回类型</h3>
+
+<pre><code>pair&lt;string, int&gt; process (vector&lt;string&gt; &amp;v)
+{
+    if (!v.empty())
+        return {v.back(), v.back().size()};
+    else
+        return pair&lt;string,int&gt;();
+
+}
+</code></pre>
+
+<h3 id="pair-的列表初始化">pair 的列表初始化</h3>
+
+<pre><code>pair&lt;string,int&gt; p{&quot;test&quot;. 1};
+</code></pre>
+
+<h3 id="动态分配对象的列表初始化">动态分配对象的列表初始化</h3>
+
+<pre><code>vector&lt;int&gt; *pv = new vector&lt;int&gt;{0,1,2,3,4}
+</code></pre>
+
+<h3 id="动态分配数组的列表初始化">动态分配数组的列表初始化</h3>
+
+<pre><code>int *p = new int[3]{1,2,3}
+</code></pre>
+
+<h2 id="lambda-函数">lambda 函数</h2>
+
+<p>一个 lambda 表达式表示一个可调用的代码单元，我们可以将其理解为一个未命名的内联函数,<strong>匿名函数</strong>。</p>
+
+<p><a href="https://zh.wikipedia.org/wiki/%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0#C++_11">https://zh.wikipedia.org/wiki/%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0#C++_11</a></p>
+
+<p>既然作为函数，需要返回类型，函数名称，0个或多个形参组成的列表以及函数体</p>
+
+<pre><code>[capture] (parameters) mutable exception attribute -&gt; return_type { body }
+</code></pre>
+
+<p>如果lambda函数没有形参且没有 <code>mutable</code> 、<code>exception</code> 或 <code>attribute</code> 声明，那么参数的空圆括号可以省略。但如果需要给出 <code>mutable</code> 、<code>exception</code> 或 <code>attribute</code> 声明，那么参数即使为空，圆括号也不能省略。</p>
+
+<p>如果函数体只有一个return语句，或者返回值类型为void，那么返回值类型声明可以被省略：</p>
+
+<pre><code>[capture](parameters){body}
+</code></pre>
+
+<p>根据上面的定义可以用一个简单的例子展示一下</p>
+
+<pre><code>[](int x, int y) -&gt; int { return x + y; }
+[](int x, int y) { return x + y; } 
+[](int&amp; x) { ++x; } 
+[]() { ++global_x; } 
+[]{ ++global_x; } 
+</code></pre>
+
+<p>C++ 同样支持闭包(简单点说，就是允许函数捕获一些变量，即使该函数在其作用域外被调用)， 闭包在 lamdba 表达式声明的 <code>[]</code> 中定义</p>
+
+<pre><code>[]         // 未定义变量。尝试在lambda中使用任何外部变量是一个错误。
+[x, &amp;y]    // x 按值捕获，y 引用捕获
+[&amp;]        // 任何外部变量被引用隐式捕获 (如果使用)
+[=]        // 任何外部变量被值隐式捕获 (如果使用)
+[&amp;, x]     // x 通过值显式捕获。其他变量将通过引用
+[=, &amp;z]    // z 通过引用显式捕获。其他变量将按值捕获
+</code></pre>
+
+<p>注意：</p>
+
+<ul>
+<li>默认的捕获写在前，特殊捕获写在后, 例如 [&amp;x, =] 这种写法就是错的</li>
+<li>按值捕获的变量是个只读常量，默认是不允许在函数体中修改捕获的变量，而用 mutable 修饰 lamdba 函数可以打破这种限制</li>
+</ul>
+
+<h3 id="使用引用捕获">使用引用捕获</h3>
+
+<pre><code>std::vector&lt;int&gt; some_list{ 1, 2, 3, 4, 5 };
+int total = 0;
+std::for_each(begin(some_list), end(some_list),
+              [&amp;total](int x) { total += x; });
+
+total 值为 75
+</code></pre>
+
+<h3 id="使用按值捕获">使用按值捕获</h3>
+
+<pre><code>std::vector&lt;int&gt; some_list{ 1, 2, 3, 4, 5 };
+int total = 0;
+int value = 5;
+std::for_each(begin(some_list), end(some_list),
+              [&amp;total, value](int x) { total += x*value; });
+
+total 值为 75， value 值为 5
+</code></pre>
+
+<p>现在使用 mutable 修饰 lamdba 函数，改变 value 值</p>
+
+<pre><code>std::vector&lt;int&gt; some_list{ 1, 2, 3, 4, 5 };
+int total = 0;
+int value = 5;
+std::for_each(begin(some_list), end(some_list),
+              [&amp;total, value](int x) mutable {value=2; total += x*value; });
+
+total 值为 30， value 值为 5
+</code></pre>
+
+<p>从这里我们可以看出，我们给 value 做了赋值操作，但是这一操作仅只在函数内部生效而已，实际是给拷贝至函数内部的 value 进行赋值,而外部的 value 的值依旧是 5</p>
+
+<h3 id="this-捕获">this 捕获</h3>
+
+<p><code>[this]</code> 捕获当前类的 <code>this</code> 指针，让 lambda 表达式拥有和当前类成员同样的访问权限，可以修改类的成员变量，使用类的成员函数。</p>
+
+<p><strong>如果已经使用了 <code>&amp;</code> 或者 <code>=</code>，就默认添加此选项。</strong></p>
+
+<pre><code>class Foo
+{
+public:
+    Foo() : x(10) {}
+
+    void bar()
+    {
+        auto lam = [this](){ return ++x; };
+        std::cout &lt;&lt; lam() &lt;&lt; std::endl;
+    }
+private:
+    int x;
+};
+
+Foo foo;
+foo.bar(); // Outputs 11
+foo.bar(); // Outputs 12
+</code></pre>
+
+<h3 id="结合-qt">结合 QT</h3>
+
+<p>Qt5, 可以将 lambda 用于 <code>connect</code> 中，而不必定义单独的函数。</p>
+
+<p>举个简单的例子， m_lineEdit 上的值发生改变，将值显示在 m_label 上</p>
+
+<pre><code>connect(m_lineEdit, &amp;QLineEdit::textChanged,
+         [this](const QString&amp; s) { m_label-&gt;setText(s); });
+</code></pre>
+
+<h3 id="lambda-补充">lambda 补充</h3>
+
+<p>关于 lambda 表达式的类型， 一般情况下我们使用 <code>auto</code> 关键字自动推导类型，同时我们也可以使用 <code>std::function</code> 和 <code>std::bind</code> 来存储和操作 lambda 表达式</p>
+
+<pre><code>std::function&lt;int (int)&gt; f1 = [](int a) {return a;};
+std::function&lt;int (int)&gt; f2 = std::bind([](int a){return a;}, std::placeholders::_1);
+std::cout &lt;&lt; f1(22) &lt;&lt; std::endl;
+std::cout &lt;&lt; f2(22) &lt;&lt; std::endl;
+</code></pre>
+
+<p>对于<strong>没有捕获任何变量的lambda</strong>，还可以转换成一个普通的函数指针。</p>
+
+<pre><code>int (*f)(int) = [](int a){return a;};
+std::cout &lt;&lt; f(1) &lt;&lt; std::endl;
+</code></pre>
+
+<h2 id="关键字">关键字</h2>
+
+<h3 id="constexpr">constexpr</h3>
+
+<p>提到 <code>constexpr</code>, 需要简单解释一下 <strong>常量表达式</strong>，常量表达式是指代码中类似于 <code>1+1</code> 每次执行都是相同的结果，直接用结果 <code>2</code> 代替不会产生新的问题，而这一部分是编译时期就能优化。而在数组大小的定义和枚举值等地方C++要求必须使用常量表达式</p>
+
+<h4 id="修饰变量">修饰变量</h4>
+
+<p>C++11之前，可以在常量表达式中使用的的变量必须被声明为const，用常量表达式来初始化，并且必须是整型或枚举类型。C++11去除了变量必须是整型或枚举类型的限制，只要变量使用了constexpr关键字来定义：</p>
+
+<pre><code>constexpr double earth_gravitational_acceleration = 9.8;
+constexpr double moon_gravitational_acceleration = earth_gravitational_acceleration / 6.0;
+</code></pre>
+
+<h4 id="修饰函数">修饰函数</h4>
+
+<p>声明为constexpr的函数也可以像其他函数一样用于常量表达式以外的地方， 但是用constexpr修饰函数将限制函数的行为：</p>
+
+<ul>
+<li>函数返回值不能是void类型</li>
+<li>函数体不能声明变量或定义新的类型</li>
+<li>函数体只能包含声明、null语句或者一条return语句</li>
+
+<li><p>在形参实参结合后，return语句中的表达式为常量表达式</p>
+
+<p>constexpr int GetFive() {return 5;}</p>
+
+<p>int some_value[GetFive() + 7]；</p></li>
+</ul>
+
+<h4 id="修饰构造">修饰构造</h4>
+
+<p>通过前置 <code>constexpr</code> 关键字，就可以声明 <code>constexpr</code> 构造函数，同时：除了声明为 <code>=default</code> 或者 <code>=delete</code> 以外，<code>constexpr</code> 构造函数的函数体一般为空，使用初始化列表或者其他的 <code>constexpr</code> 构造函数初始化所有数据成员，之后这个构造函数就可以被用在其它constexpr里</p>
+
+<h3 id="类型别名-using">类型别名 using</h3>
+
+<p>使用类型别名可以使复杂的类型名字变得简单明了、易于理解和使用，还有助于程序员清楚的知道使用该类型的真实目的</p>
+
+<p>类型别名有下面2种方法：</p>
+
+<ul>
+<li><p>typedef</p>
+
+<p>typedef double wages;</p></li>
+
+<li><p>别名声明<br />
+关键字 <code>using</code> 作为别名声明的开始，后面紧跟别名和等号，其作用是把等号左侧的名字规定成等号右侧类型的别名</p>
+
+<p>using pFunc = int (*)(int);
+  pFunc f = [](int a){return a;};
+  std::cout &lt;&lt; f(1) &lt;&lt; std::endl;</p></li>
+</ul>
+
+<h3 id="auto">auto</h3>
+
+<p>auto 用它能让编译器替我们去分析表达式所属的类型， auto 让编译器通过初始值来推算变量的类型，也就是说，auto 定义的变量必须有初始值</p>
+
+<p>注意： auto 一般会忽略掉 <code>顶层const</code> , 同时 <code>底层const</code> 会被保存下来</p>
+
+<blockquote>
+<p><code>顶层const</code> 可以表示任意的对象是常量<br />
+<code>底层const</code> 则与指针和引用等复合类型的基本基础类型部分有关,表示指向的对象是一个常量<br />
+简单点说就是用 <code>const</code> 修饰对象的就是 <code>顶层const</code> ，比较特殊的是指针，既可以是 <code>顶层const</code>,也可以使 <code>底层const</code></p>
+</blockquote>
+
+<p>例如</p>
+
+<pre><code>int i=0;
+int *const p1 = &amp;i;       // 不能修改 p1, 顶层const
+const int ci = 10;        // 不能修改 a, 顶层const
+const int *p2 = &amp;ci;      // 允许修改 p2. 底层const
+const int *const p3 = p2  // 第一个是底层const, 第二个是顶层const
+const int &amp;r = ci         // 用于声明引用的const 都是底层const
+</code></pre>
+
+<p>回头再一下 auto</p>
+
+<pre><code>const int ci = 1;      // 顶层 const 
+const int &amp;cr = ci;    // 底层 const
+
+auto b = ci;    // b 是一个整数
+auto c = cr;    // c 是一个整数
+auto d = &amp;i;    // d 是一个整形指针
+auto e = &amp;ci;   // e 是一个指向整数常量的指针
+</code></pre>
+
+<h3 id="decltype">decltype</h3>
+
+<p>作用：选择并返回操作数的数据类型</p>
+
+<p>decltype 对 <code>顶层const</code> 和 <code>底层const</code> 处理和 <code>auto</code> 不同，原对象类型是啥，返回类型包括顶层const和引用</p>
+
+<pre><code>int i=42, *p =&amp;i, &amp;r = i;
+decltype(r+0) b;    // 未初始化的 int
+decltype(*p) c;     // 错误， int&amp; 必须初始化
+</code></pre>
+
+<p>解引用操作： <code>*p</code> 解引用指针可以得到指针的所指的对象，而且还可以给这个对象赋值，因此 <code>decltype(*p)</code> 的结果类型就是 <code>int&amp;</code> , 而非 int</p>
+
+<p><strong>注意： decltype((variable)) (注意是双括号)的结果永远是引用。</strong></p>
+
+<h3 id="noexcept">noexcept</h3>
+
+<p>使用noexcept表明函数或操作不会发生异常，会给编译器更大的优化空间。</p>
+
+<h2 id="智能指针">智能指针</h2>
+
+<h2 id="更简单的语法和新规定">更简单的语法和新规定</h2>
+
+<h3 id="范围-for-语句">范围 for 语句</h3>
+
+<p>for语句允许简单的范围迭代</p>
+
+<pre><code>for (declaration: expression)
+    statemnt
+</code></pre>
+
+<ul>
+<li><strong>expression</strong> 必须表示一个序列，这些类型的共同特点是拥有能返回迭代器的 <code>begin</code> 和 <code>end</code> 成员</li>
+<li><strong>declaration</strong> 定义一个变量，序列中的每个元素都得能转换成该变量的类型，最简单直接使用 <code>auto</code> 类型说明符</li>
+</ul>
+
+<p>例如：</p>
+
+<pre><code>int my_array[5] = {1, 2, 3, 4, 5};
+
+for (int &amp;x : my_array) {
+    x *= 2;
+}
+
+for (auto &amp;x : my_array) {
+    x *= 2;
+}
+</code></pre>
+
+<h3 id="定义-vector-对象的-vector">定义 vector 对象的 vector</h3>
+
+<p>旧版本中，如果vector的元素还是vector 或者其他模板类型时，必须在外层 vector 对象的右尖括号和其元素类型之间的添加一个空格，新版本没有这个限制了</p>
+
+<pre><code>vector&lt;vector&lt;int&gt; &gt;
+</code></pre>
+
+<p>原因： C++03的分析器一律将&rdquo;&gt;&gt;&ldquo;视为右移运算符。但在嵌套模板定义式中，绝大多数的场合其实都代表两个连续右角括号。为了避免分析器误判，撰码时不能把右角括号连着写。</p>
+
+<p>C++11变更了分析器的解读规则；当遇到连续的右角括号时，会在合理的情况下将右尖括号解析为模板引用的结束符号。给使用&gt;,&gt;=,&gt;&gt;的表达式加上圆括号，可以避免其与圆括号外部的左尖括号相匹配：</p>
+
+<h3 id="除法的舍入规则">除法的舍入规则</h3>
+
+<p>C++11 新标准则规定商一律向0取整，即直接切除小数部分</p>
+
+<h3 id="iota-函数">iota 函数</h3>
+
+<p>iota 函数可将给定区间的值设定为从某值开始的连续值，例如将连续十个整数设定为从 1 开始的连续整数（即 1、2、3、4、5、6、7、8、9、10）。</p>
+
+<pre><code>#include &lt;iostream&gt;
+#include &lt;array&gt;
+#include &lt;numeric&gt;
+
+std::array&lt;int, 10&gt; ai;
+std::iota(ai.begin(), ai.end(), 1);
+for(int i: ai){
+    std::cout&lt;&lt;i&lt;&lt;&quot; &quot;;    //1 2 3 4 5 6 7 8 9 10 
+}
+</code></pre>
+
+<h3 id="可扩展的随机数功能">可扩展的随机数功能</h3>
+
+<p>C标准库允许使用rand函数来生成伪随机数。不过其算法则取决于各程序库开发者。C++直接从C继承了这部分，但是C++11将会提供产生伪随机数的新方法。</p>
+
+<p>C++11的随机数功能分为两部分：第一，一个随机数生成引擎，其中包含该生成引擎的状态，用来产生随机数。第二，一个分布，这可以用来决定产生随机数的范围，也可以决定以何种分布方式产生随机数。随机数生成对象即是由随机数生成引擎和分布所构成。</p>
+
+<p>不同于C标准库的rand;针对产生随机数的机制，C++11将会提供三种算法，每一种算法都有其强项和弱项：</p>
+
+<table>
+<thead>
+<tr>
+<th>模板类</th>
+<th>整数/浮点数</th>
+<th>质量</th>
+<th>速度</th>
+<th>状态数*</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>linear_congruential</td>
+<td>整数</td>
+<td>低</td>
+<td>中等[来源请求]</td>
+<td>1</td>
+</tr>
+
+<tr>
+<td>subtract_with_carry</td>
+<td>Unicode两者皆可</td>
+<td>中等</td>
+<td>快</td>
+<td>25</td>
+</tr>
+
+<tr>
+<td>mersenne_twister</td>
+<td>整数</td>
+<td>佳</td>
+<td>快</td>
+<td>624</td>
+</tr>
+</tbody>
+</table>
+
+<p>C++11将会提供一些标准分布：</p>
+
+<ul>
+<li>uniform_int_distribution（整数均匀分布）</li>
+<li>bernoulli_distribution(伯努利分布）</li>
+<li>geometric_distribution（几何分布）</li>
+<li>poisson_distribution（卜瓦松分布）</li>
+<li>binomial_distribution（二项分布）</li>
+<li>uniform_real_distribution（浮点型均匀分布)</li>
+<li>exponential_distribution（指数分布）</li>
+<li>normal_distribution（正态分布）</li>
+<li>gamma_distribution（伽玛分布）</li>
+</ul>
+
+<p>底下描述一个随机数生成对象如何由随机数生成引擎和分布构成：</p>
+
+<pre><code>std::uniform_int_distribution&lt;int&gt; distribution(0, 99); // 以离散型均匀分布方式产生int乱数，范围落在0到99之間
+std::mt19937 engine; // 建立乱数生成引擎
+auto generator = std::bind(distribution, engine); // 利用bind將乱数生成引擎和分布組合成一個乱数生成物件
+int random = generator();  // 产生乱数
+</code></pre>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/c&#43;&#43;" role="button">C&#43;&#43; </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-01/qt-%E5%9B%BE%E7%89%87%E8%A3%81%E5%88%87/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Qt-图片裁切</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-04/qt-%E4%B8%AD%E6%96%87%E9%97%AE%E9%A2%98%E5%92%8C%E8%B7%AF%E5%BE%84%E4%B8%AD%E7%A9%BA%E6%A0%BC%E9%97%AE%E9%A2%98/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span> QT 中文问题和路径中空格问题</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#long-long-%e7%b1%bb%e5%9e%8b">
+												 long long 类型
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#nullptr-%e5%b8%b8%e9%87%8f">
+												 nullptr 常量
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%9d%e5%a7%8b%e5%8c%96">
+												 初始化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%b1%bb%e5%86%85%e5%88%9d%e5%a7%8b%e5%8c%96">
+												 类内初始化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%97%e8%a1%a8%e5%88%9d%e5%a7%8b%e5%8c%96">
+												 列表初始化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%97%e8%a1%a8%e5%88%9d%e5%a7%8b%e5%8c%96%e8%bf%94%e5%9b%9e%e5%80%bc">
+												 列表初始化返回值
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%b9%e5%99%a8-%e9%a1%ba%e5%ba%8f-%e7%9a%84%e5%88%97%e8%a1%a8%e5%88%9d%e5%a7%8b%e5%8c%96">
+												 容器(顺序)的列表初始化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%b3%e8%81%94%e5%ae%b9%e5%99%a8%e7%9a%84%e5%88%97%e8%a1%a8%e5%88%9d%e5%a7%8b%e5%8c%96">
+												 关联容器的列表初始化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%97%e8%a1%a8%e5%88%9d%e5%a7%8b%e5%8c%96-pair-%e7%9a%84%e8%bf%94%e5%9b%9e%e7%b1%bb%e5%9e%8b">
+												 列表初始化 pair 的返回类型
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#pair-%e7%9a%84%e5%88%97%e8%a1%a8%e5%88%9d%e5%a7%8b%e5%8c%96">
+												 pair 的列表初始化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%80%81%e5%88%86%e9%85%8d%e5%af%b9%e8%b1%a1%e7%9a%84%e5%88%97%e8%a1%a8%e5%88%9d%e5%a7%8b%e5%8c%96">
+												 动态分配对象的列表初始化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%80%81%e5%88%86%e9%85%8d%e6%95%b0%e7%bb%84%e7%9a%84%e5%88%97%e8%a1%a8%e5%88%9d%e5%a7%8b%e5%8c%96">
+												 动态分配数组的列表初始化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#lambda-%e5%87%bd%e6%95%b0">
+												 lambda 函数
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bd%bf%e7%94%a8%e5%bc%95%e7%94%a8%e6%8d%95%e8%8e%b7">
+												 使用引用捕获
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bd%bf%e7%94%a8%e6%8c%89%e5%80%bc%e6%8d%95%e8%8e%b7">
+												 使用按值捕获
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#this-%e6%8d%95%e8%8e%b7">
+												 this 捕获
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bb%93%e5%90%88-qt">
+												 结合 QT
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#lambda-%e8%a1%a5%e5%85%85">
+												 lambda 补充
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%b3%e9%94%ae%e5%ad%97">
+												 关键字
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#constexpr">
+												 constexpr
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bf%ae%e9%a5%b0%e5%8f%98%e9%87%8f">
+												 修饰变量
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bf%ae%e9%a5%b0%e5%87%bd%e6%95%b0">
+												 修饰函数
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bf%ae%e9%a5%b0%e6%9e%84%e9%80%a0">
+												 修饰构造
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%b1%bb%e5%9e%8b%e5%88%ab%e5%90%8d-using">
+												 类型别名 using
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#auto">
+												 auto
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#decltype">
+												 decltype
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#noexcept">
+												 noexcept
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%99%ba%e8%83%bd%e6%8c%87%e9%92%88">
+												 智能指针
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9b%b4%e7%ae%80%e5%8d%95%e7%9a%84%e8%af%ad%e6%b3%95%e5%92%8c%e6%96%b0%e8%a7%84%e5%ae%9a">
+												 更简单的语法和新规定
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%8c%83%e5%9b%b4-for-%e8%af%ad%e5%8f%a5">
+												 范围 for 语句
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%9a%e4%b9%89-vector-%e5%af%b9%e8%b1%a1%e7%9a%84-vector">
+												 定义 vector 对象的 vector
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%99%a4%e6%b3%95%e7%9a%84%e8%88%8d%e5%85%a5%e8%a7%84%e5%88%99">
+												 除法的舍入规则
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#iota-%e5%87%bd%e6%95%b0">
+												 iota 函数
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8f%af%e6%89%a9%e5%b1%95%e7%9a%84%e9%9a%8f%e6%9c%ba%e6%95%b0%e5%8a%9f%e8%83%bd">
+												 可扩展的随机数功能
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

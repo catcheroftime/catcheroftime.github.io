@@ -6,10 +6,19 @@
     <description>Recent content in Qt on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Fri, 25 Oct 2019 15:56:00 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 06 Jan 2020 20:15:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/qt/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Qt-图片裁切</title>
+      <link>https://catcheroftime.github.io/blog/2020-01/qt-%E5%9B%BE%E7%89%87%E8%A3%81%E5%88%87/</link>
+      <pubDate>Mon, 06 Jan 2020 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-01/qt-%E5%9B%BE%E7%89%87%E8%A3%81%E5%88%87/</guid>
+      <description>&lt;p&gt;在上传头像过程中，经常会需要将图片裁切成指定的大小，给定一个指定大小的裁切框，调整裁切框位置裁切出理想的图片，今天在这里实现一个简单的图片裁切的应用, 这一次不是用 &lt;code&gt;自定义插件&lt;/code&gt; 的形式实现的，而是通过 &lt;code&gt;提升为&lt;/code&gt;，刚好比较一下二者的区别&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>QT-D指针Q指针</title>
@@ -32,18 +41,9 @@
     </item>
     
     <item>
-      <title>Qt-UI设计界面(大纲)</title>
-      <link>https://catcheroftime.github.io/blog/2019-09/qt-ui%E8%AE%BE%E8%AE%A1%E7%95%8C%E9%9D%A2%E5%A4%A7%E7%BA%B2/</link>
-      <pubDate>Thu, 05 Sep 2019 15:50:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/blog/2019-09/qt-ui%E8%AE%BE%E8%AE%A1%E7%95%8C%E9%9D%A2%E5%A4%A7%E7%BA%B2/</guid>
-      <description>&lt;p&gt;最近突发奇想，想自己整理一份详细的QT开发过程中踩过的坑，也给自己查缺补漏一下。这一部分主要是总结UI &lt;code&gt;设计&lt;/code&gt; 下的所有可视化的按钮和控件， 在介绍默认的控件的同时也会相应总结类的常用使用方法。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
       <title>Qt-进度条插件开发</title>
       <link>https://catcheroftime.github.io/blog/2019-08/qt-%E8%BF%9B%E5%BA%A6%E6%9D%A1%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</link>
-      <pubDate>Sat, 10 Aug 2019 15:50:00 +0800</pubDate>
+      <pubDate>Sat, 10 Aug 2019 20:45:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/blog/2019-08/qt-%E8%BF%9B%E5%BA%A6%E6%9D%A1%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</guid>
       <description>&lt;p&gt;在 &lt;a href=&#34;https://www.cnblogs.com/feiyangqingyun/p/6128288.html&#34;&gt;飞扬青云&lt;/a&gt; 大佬的博客下,意外看到一款水波纹的进度条,整体看上去很美观,感觉适用的场景也很多 (1. 单纯的进度条显示 2. 当前状态的展示,例如CPU,内存之类使用的占比)，所以自己也尝试开发了一下.&lt;/p&gt;</description>
@@ -76,15 +76,6 @@
       <guid>https://catcheroftime.github.io/blog/2019-07/qt-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</guid>
       <description>&lt;p&gt;&lt;code&gt;Qt Designer&lt;/code&gt; 中自带的控件虽然能够在很大程度上满足我们日常的开发，但是当遇到一些比较特殊需求时，往往显得力不从心。
 所以自定义插件的开发，并将其导入Qt的设计师中，这样可以像基本控件一样拖拽到UI界面中，同时也可以自定义一些属于插件的独有属性，直接在UI界面中配置，十分方便快捷。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>QSS&amp;CSS</title>
-      <link>https://catcheroftime.github.io/blog/2019-06/qsscss/</link>
-      <pubDate>Tue, 18 Jun 2019 00:15:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/blog/2019-06/qsscss/</guid>
-      <description>&lt;p&gt;主要是记录一下自己子在给客户端美化过程中遇到的一些问题， 以及一些对Qt一些常用控件写好的demo&lt;/p&gt;</description>
     </item>
     
   </channel>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Qt常见问题 on 一个懒散的程序猿</title>
+    <link>https://catcheroftime.github.io/tags/qt%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/</link>
+    <description>Recent content in Qt常见问题 on 一个懒散的程序猿</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Thu, 02 Apr 2020 15:50:00 +0800</lastBuildDate>
+    
+	<atom:link href="https://catcheroftime.github.io/tags/qt%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> QT 中文问题和路径中空格问题</title>
+      <link>https://catcheroftime.github.io/blog/2020-04/qt-%E4%B8%AD%E6%96%87%E9%97%AE%E9%A2%98%E5%92%8C%E8%B7%AF%E5%BE%84%E4%B8%AD%E7%A9%BA%E6%A0%BC%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Thu, 02 Apr 2020 15:50:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-04/qt-%E4%B8%AD%E6%96%87%E9%97%AE%E9%A2%98%E5%92%8C%E8%B7%AF%E5%BE%84%E4%B8%AD%E7%A9%BA%E6%A0%BC%E9%97%AE%E9%A2%98/</guid>
+      <description>&lt;p&gt;记录在使用 QT 开发过程中碰到的关于 QSetting 编写配置文件读写中文的问题，QProcess command 路径中存在中文的问题，以及使用 QString 转 std::string 时，原QString携带中文的问题&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
