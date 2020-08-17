@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="前几天的博客中介绍了如何更自由的调整 QInputDialog 类，当时留了一个坑，想完整的学习 QInputDialog 源码的实现，我回来填坑了, 整片文章可能比较冗长，主要是总结了阅读源码过程中一些感受和疑问">
+  
+  <meta property="og:title" content="QInputDialog 源码分析" />
+<meta property="og:description" content="前几天的博客中介绍了如何更自由的调整 QInputDialog 类，当时留了一个坑，想完整的学习 QInputDialog 源码的实现，我回来填坑了, 整片文章可能比较冗长，主要是总结了阅读源码过程中一些感受和疑问" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-08/qinputdialog-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" />
+<meta property="article:published_time" content="2020-08-05T00:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-08-05T00:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       QInputDialog 源码分析 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-08/qinputdialog-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/qt"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Qt </a></li>
+      
+        <li><a href="https://catcheroftime.github.io/categories/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Qt源码阅读 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">QInputDialog 源码分析</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Aug 5, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>前几天的博客中介绍了如何更自由的调整 <code>QInputDialog</code> 类，当时留了一个坑，想完整的学习 <code>QInputDialog</code> 源码的实现，我回来填坑了, 整片文章可能比较冗长，主要是总结了阅读源码过程中一些感受和疑问</p>
+
+<h2 id="简单看一下-qinputdialog-源码">简单看一下 QInputDialog 源码</h2>
+
+<p>在看源码之前需要确定 QInputDialog 这个类提供了哪些功能?</p>
+
+<blockquote>
+<p>The QInputDialog class provides a simple convenience dialog to get a single value from the user.<br />
+The input value can be a string, a number or an item from a list. A label must be set to tell the user what they should enter.<br />
+Five static convenience functions are provided: getText(), getMultiLineText(), getInt(), getDouble(), and getItem().</p>
+</blockquote>
+
+<p>提供了便捷对话框，可以从用户那里获取单个值，输入的值可以是字符串，数字，列表中的一条， 通过提供的5个静态函数，可以得到以下的结论</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">静态函数</th>
+<th align="left">搭配的控件</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">getText()</td>
+<td align="left">QLineEdit</td>
+</tr>
+
+<tr>
+<td align="left">getMultiLineText()</td>
+<td align="left">QPlainTextEdit</td>
+</tr>
+
+<tr>
+<td align="left">getInt()</td>
+<td align="left">QSpinBox</td>
+</tr>
+
+<tr>
+<td align="left">getDouble()</td>
+<td align="left">QDoubleSpinBox</td>
+</tr>
+
+<tr>
+<td align="left">getItem()</td>
+<td align="left">QComboBox</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="inputmode">InputMode</h3>
+
+<pre><code>enum InputMode {
+    TextInput,
+    IntInput,
+    DoubleInput
+};
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th align="left">内容</th>
+<th align="left">值</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">QInputDialog::TextInput</td>
+<td align="left">0</td>
+<td align="left">Used to input text strings.</td>
+</tr>
+
+<tr>
+<td align="left">QInputDialog::IntInput</td>
+<td align="left">1</td>
+<td align="left">Used to input integers.</td>
+</tr>
+
+<tr>
+<td align="left">QInputDialog::DoubleInput</td>
+<td align="left">2</td>
+<td align="left">Used to input floating point numbers with double precision accuracy.</td>
+</tr>
+</tbody>
+</table>
+
+<p>InputMode 决定了最后从 QInputDialog 获取值时的类型，</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">InputMode</th>
+<th align="left">类型</th>
+<th align="left">接口</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">QInputDialog::IntInput</td>
+<td align="left">int</td>
+<td align="left">int intValue() const;</td>
+<td align="left">返回值是从 QSpinBox 控件中获取值 <code>d-&gt;intSpinBox-&gt;value()</code>，默认是0</td>
+</tr>
+
+<tr>
+<td align="left">QInputDialog::DoubleInput</td>
+<td align="left">double</td>
+<td align="left">double doubleValue() const;</td>
+<td align="left">返回值是从 QDoubleSpinBox 空间中获取值<code>d-&gt;doubleSpinBox-&gt;value()</code>. 默认是 0</td>
+</tr>
+
+<tr>
+<td align="left">QInputDialog::TextInput</td>
+<td align="left">QString</td>
+<td align="left">QString textValue() const;</td>
+<td align="left">从控件 QLineEdit，QPlainTextEdit，QComboBox 中获取的都是 QString 类型，这些控件在值改变时，触发信号，改变一个QInputDialogPrivate的成员变量textValue， QInputDialog 获取值时 <code>d-&gt;textValue</code></td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="inputdialogoption">InputDialogOption</h3>
+
+<p>看一个类需要先简单看一下它的枚举</p>
+
+<pre><code>enum InputDialogOption {
+    NoButtons                    = 0x00000001,
+    UseListViewForComboBoxItems  = 0x00000002,
+    UsePlainTextEditForTextInput = 0x00000004
+};
+
+Q_DECLARE_FLAGS(InputDialogOptions, InputDialogOption)
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th align="left">内容</th>
+<th align="left">值</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">QInputDialog::NoButtons</td>
+<td align="left">0x00000001</td>
+<td align="left">Don&rsquo;t display OK and Cancel buttons (useful for &ldquo;live dialogs&rdquo;).</td>
+</tr>
+
+<tr>
+<td align="left">QInputDialog::UseListViewForComboBoxItems</td>
+<td align="left">0x00000002</td>
+<td align="left">Use a QListView rather than a non-editable QComboBox for displaying the items set with setComboBoxItems().</td>
+</tr>
+
+<tr>
+<td align="left">QInputDialog::UsePlainTextEditForTextInput</td>
+<td align="left">0x00000004</td>
+<td align="left">Use a QPlainTextEdit for multiline text input. This value was introduced in 5.2.</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="setoptions">setOptions</h4>
+
+<p>通过 setOptions 来设置 QInputDialog 的 opts;</p>
+
+<pre><code>void QInputDialog::setOptions(InputDialogOptions options)
+{
+    Q_D(QInputDialog);
+
+    // 异或检测 options 是否改变
+    InputDialogOptions changed = (options ^ d-&gt;opts);
+    if (!changed)
+        return;
+
+    d-&gt;opts = options;
+    // 初始化布局
+    d-&gt;ensureLayout();
+
+    // 根据影响对话框外观的各种选项 options, 来设置对话框 
+    if (changed &amp; NoButtons)
+        d-&gt;buttonBox-&gt;setVisible(!(options &amp; NoButtons));
+    if ((changed &amp; UseListViewForComboBoxItems) &amp;&amp; inputMode() == TextInput)
+        d-&gt;chooseRightTextInputWidget();
+    if ((changed &amp; UsePlainTextEditForTextInput) &amp;&amp; inputMode() == TextInput)
+        d-&gt;chooseRightTextInputWidget();
+}
+</code></pre>
+
+<p>这里涉及到2个比较关键的函数 <code>ensureLayout()</code>, 和 <code>chooseRightTextInputWidget()</code>, 这个后面会介绍。这里先简单总结一下枚举左右生效的条件</p>
+
+<h3 id="qinputdialogprivate">QInputDialogPrivate</h3>
+
+<p>QT 是使用 <strong>D指针</strong> 将真正的对象封装在对应的 <code>*Private</code> 中， 例如 <code>QInputDialog</code> 封装在 <code>QInputDialogPrivate</code> 中， 主要看一下 <code>QInputDialogPrivate</code> 函数的实现</p>
+
+<pre><code>class QInputDialogPrivate : public QDialogPrivate
+{                 
+    Q_DECLARE_PUBLIC(QInputDialog)
+
+public:
+    QInputDialogPrivate();
+
+    void ensureLayout();
+    void ensureLineEdit();
+    void ensurePlainTextEdit();
+    void ensureComboBox();
+    void ensureListView();
+    void ensureIntSpinBox();
+    void ensureDoubleSpinBox();
+    void ensureEnabledConnection(QAbstractSpinBox *spinBox);
+    void setInputWidget(QWidget *widget);
+    void chooseRightTextInputWidget();
+    void setComboBoxText(const QString &amp;text);
+    void setListViewText(const QString &amp;text);
+    QString listViewText() const;
+    void ensureLayout() const { const_cast&lt;QInputDialogPrivate *&gt;(this)-&gt;ensureLayout(); }
+    bool useComboBoxOrListView() const { return comboBox &amp;&amp; comboBox-&gt;count() &gt; 0; }
+    void _q_textChanged(const QString &amp;text);
+    void _q_plainTextEditTextChanged();
+    void _q_currentRowChanged(const QModelIndex &amp;newIndex, const QModelIndex &amp;oldIndex);
+
+    mutable QLabel *label;
+    mutable QDialogButtonBox *buttonBox;
+    mutable QLineEdit *lineEdit;
+    mutable QPlainTextEdit *plainTextEdit;
+    mutable QSpinBox *intSpinBox;
+    mutable QDoubleSpinBox *doubleSpinBox;
+    mutable QComboBox *comboBox;
+    mutable QListView *listView;
+    mutable QWidget *inputWidget;
+    mutable QVBoxLayout *mainLayout;
+    QInputDialog::InputDialogOptions opts;
+    QString textValue;
+    QPointer&lt;QObject&gt; receiverToDisconnectOnClose;
+    QByteArray memberToDisconnectOnClose;
+};
+</code></pre>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98" role="button">Qt 常见问题 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-08/qt-qinputdialog%E7%AD%89%E8%87%AA%E5%B8%A6%E5%BC%B9%E7%AA%97%E6%A0%B7%E5%BC%8F%E4%BF%AE%E6%94%B9/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Qt QInputDialog等自带弹窗样式修改</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-08/qt-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%B3%E4%B8%8B%E8%A7%92%E6%8F%90%E7%A4%BA%E4%BF%A1%E6%81%AF%E5%BC%B9%E7%AA%97/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>Qt-自定义右下角提示信息弹窗</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%ae%80%e5%8d%95%e7%9c%8b%e4%b8%80%e4%b8%8b-qinputdialog-%e6%ba%90%e7%a0%81">
+												 简单看一下 QInputDialog 源码
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#inputmode">
+												 InputMode
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#inputdialogoption">
+												 InputDialogOption
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#setoptions">
+												 setOptions
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#qinputdialogprivate">
+												 QInputDialogPrivate
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
