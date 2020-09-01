@@ -6,7 +6,7 @@
     <description>Recent content in Tags on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Tue, 11 Aug 2020 00:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 30 Aug 2020 20:15:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,9 +14,18 @@
     <item>
       <title>Qt</title>
       <link>https://catcheroftime.github.io/tags/qt/</link>
-      <pubDate>Tue, 11 Aug 2020 00:15:00 +0800</pubDate>
+      <pubDate>Sun, 30 Aug 2020 20:15:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/tags/qt/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>图片裁切</title>
+      <link>https://catcheroftime.github.io/tags/%E5%9B%BE%E7%89%87%E8%A3%81%E5%88%87/</link>
+      <pubDate>Sun, 30 Aug 2020 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/%E5%9B%BE%E7%89%87%E8%A3%81%E5%88%87/</guid>
       <description></description>
     </item>
     
@@ -53,15 +62,6 @@
       <pubDate>Tue, 10 Mar 2020 18:22:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/tags/c&#43;&#43;/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>图片裁切</title>
-      <link>https://catcheroftime.github.io/tags/%E5%9B%BE%E7%89%87%E8%A3%81%E5%88%87/</link>
-      <pubDate>Mon, 06 Jan 2020 20:15:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/%E5%9B%BE%E7%89%87%E8%A3%81%E5%88%87/</guid>
       <description></description>
     </item>
     

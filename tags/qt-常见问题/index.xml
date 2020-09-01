@@ -12,11 +12,11 @@
     
     
     <item>
-      <title>QInputDialog 源码分析</title>
-      <link>https://catcheroftime.github.io/blog/2020-08/qinputdialog-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <title>QInputDialog 源码分析(一)</title>
+      <link>https://catcheroftime.github.io/blog/2020-08/qinputdialog-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%80/</link>
       <pubDate>Wed, 05 Aug 2020 00:15:00 +0800</pubDate>
       
-      <guid>https://catcheroftime.github.io/blog/2020-08/qinputdialog-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <guid>https://catcheroftime.github.io/blog/2020-08/qinputdialog-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%80/</guid>
       <description>&lt;p&gt;前几天的博客中介绍了如何更自由的调整 &lt;code&gt;QInputDialog&lt;/code&gt; 类，当时留了一个坑，想完整的学习 &lt;code&gt;QInputDialog&lt;/code&gt; 源码的实现，我回来填坑了, 整片文章可能比较冗长，主要是总结了阅读源码过程中一些感受和疑问&lt;/p&gt;</description>
     </item>
     
