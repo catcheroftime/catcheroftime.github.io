@@ -458,7 +458,7 @@ void ImageShowLabel::paintEvent(QPaintEvent *event)
 <li>放缩的模式
 
 <ul>
-<li>自有放缩</li>
+<li>自由放缩</li>
 <li>固定比例放缩</li>
 <li>1:1 放缩</li>
 </ul></li>
@@ -634,31 +634,31 @@ void mouseReleaseEvent(QMouseEvent *event);
 <li>非边缘位置，鼠标样式为正常指针样式</li>
 <li>边缘位置，根据上下左右单独设置样式</li>
 </ul></li>
+<li>点击状态下，需要根据点击的位置，也就是鼠标的样式，区分是移动还是放缩</li>
+</ul>
 
-<li><p>点击状态下，需要根据点击的位置，也就是鼠标的样式，区分是移动还是放缩</p>
+<p>代码如下：</p>
 
-<p>void CropBox::mouseMoveEvent(QMouseEvent *event)
+<pre><code>void CropBox::mouseMoveEvent(QMouseEvent *event)
 {
     // event-&gt;pos() 获取的坐标是鼠标相对于裁切框的坐标
     QPoint point = event-&gt;pos();
     // 将这个坐标转换成相对于父对象的坐标，位置后放缩判断做准备
     QPoint parent_point = mapToParent(point);
-    QPoint global_point = event-&gt;globalPos();</p>
+    QPoint global_point = event-&gt;globalPos();
 
-<pre><code>if (!m_bMovingFlag) {
-    setDirection(point);
-} else {
-    if (m_curDirec == NONE)
-        handleMove(global_point);
-    else
-        handleResize(parent_point);
+    if (!m_bMovingFlag) {
+        setDirection(point);
+    } else {
+        if (m_curDirec == NONE)
+            handleMove(global_point);
+        else
+            handleResize(parent_point);
+    }
+
+    event-&gt;accept();
 }
-
-event-&gt;accept();
 </code></pre>
-
-<p>}</p></li>
-</ul>
 
 <h4 id="mousereleaseevent">mouseReleaseEvent</h4>
 
