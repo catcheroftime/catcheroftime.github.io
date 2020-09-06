@@ -15,8 +15,8 @@
 所以自定义插件的开发，并将其导入Qt的设计师中，这样可以像基本控件一样拖拽到UI界面中，同时也可以自定义一些属于插件的独有属性，直接在UI界面中配置，十分方便快捷。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-07/qt-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" />
-<meta property="article:published_time" content="2019-07-15T00:15:00&#43;08:00"/>
-<meta property="article:modified_time" content="2019-07-15T00:15:00&#43;08:00"/>
+<meta property="article:published_time" content="2019-07-15T00:15:00+08:00" />
+<meta property="article:modified_time" content="2019-07-15T00:15:00+08:00" />
 
 
   <title>
@@ -288,71 +288,40 @@
           <div class="post-content markdown">
             <p><code>Qt Designer</code> 中自带的控件虽然能够在很大程度上满足我们日常的开发，但是当遇到一些比较特殊需求时，往往显得力不从心。
 所以自定义插件的开发，并将其导入Qt的设计师中，这样可以像基本控件一样拖拽到UI界面中，同时也可以自定义一些属于插件的独有属性，直接在UI界面中配置，十分方便快捷。</p>
-
 <p>接下来我将用自己在后一篇文章中开发的自定义的时间轴插件为例， 简单介绍一下创建自定义插件的过程和一些细节。</p>
-
 <h2 id="创建工程">创建工程</h2>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/createplugin_firststep.png" alt="createplugin_firststeps" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/createplugin_firststep.png" alt="createplugin_firststeps"></p>
 <p>接下来， 我以TimelinePlugin(下一篇我实现的插件为例)，填写创建过程中的一些基本信息</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/createplugin_secondstep.png" alt="createplugin_secondstep" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/createplugin_secondstep.png" alt="createplugin_secondstep"></p>
 <p>源文件信息中填写一些控件类的名称</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/createplugin_threestep.png" alt="createplugin_threestep" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/createplugin_threestep.png" alt="createplugin_threestep"></p>
 <p>这一部分填写的是对插件的描述， 比如所属于那个分组(这里的组写的是 <code>Customise</code>), 其实就是左侧控件归属于那个标签组， <code>工具提示</code>和 <code>这是什么</code> 其实就是 <code>toolTip()</code> 和 <code>whatsThis()</code></p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/designer_group.png" alt="designer_group" /></p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/createplugin_fourstep.png" alt="createplugin_fourstep.png" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/designer_group.png" alt="designer_group"></p>
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/createplugin_fourstep.png" alt="createplugin_fourstep.png"></p>
 <p>这里面其实是当插件被拖拽到UI界面中时，需要引用的xml文件内容</p>
-
 <p>下一步中还有一个设置插件名称的部分， 填写好之后， 创建工程的部分就结束了。</p>
-
 <h2 id="部署">部署</h2>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/deploy_plugin.png" alt="deploy_plugin" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/deploy_plugin.png" alt="deploy_plugin"></p>
 <p>这里建议 <code>Build</code> 环节中， <code>Release</code>版本中添加额外的构建步骤， 如图所示， <code>Make 参数</code> 为 <code>install</code>, 这样在编译过程中， 会将编译出的插件库复制到 <code>Qt Designer</code> 的插件目录下。</p>
-
 <p>而添加这一步会生效的原因是在 pro 文件中添加了这2行代码， 声明需要复制的地址，和执行的条件， 这2行代码一般在创建工程时候默认生成</p>
-
 <pre><code>target.path = $$[QT_INSTALL_PLUGINS]/designer
 INSTALLS    += target
 </code></pre>
-
-<p>其实这时候编译出来的插件库，给第三方提供头文件和库文件，别人是没办法直接使用的，还需要加一步特别重要的步骤， <font color=red>添加导出符号</font></p>
-
-<p><font color=red>为了让插件在所有平台上正常工作，需要确保导出了Qt Designer所需要的符号。</font><br />
+<p>其实这时候编译出来的插件库，给第三方提供头文件和库文件，别人是没办法直接使用的，还需要加一步特别重要的步骤， <!-- raw HTML omitted -->添加导出符号<!-- raw HTML omitted --></p>
+<p><!-- raw HTML omitted -->为了让插件在所有平台上正常工作，需要确保导出了Qt Designer所需要的符号。<!-- raw HTML omitted --><br>
 插件类必须被Qt Designer加载的插件按顺序导出。<code>QDESIGNER_WIDGET_EXPORT</code> 宏必须被使用，或自己编译动态库导出文件。这里我建议使用Qt自带的<code>QDESIGNER_WIDGET_EXPORT</code>宏。</p>
-
 <p>用法如下：</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/plguin_def.png" alt="plguin_def" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/plguin_def.png" alt="plguin_def"></p>
 <p>部署和一些导出的环节基本就结束了， 接下来简单尝试一些是否能够正常使用</p>
-
 <h2 id="使用">使用</h2>
-
 <p>我简单在插件中添加一个 <code>Label</code>, 并给 <code>Label</code> 上显示为 <code>TimelinePlugin</code>, 同时创建一个 <code>ShowPlugin</code> 的工程， 里面就是只有一个空的mainwidow的文件， 在 <code>Qt Designer</code> 中将插件拖拽到 <code>mainwidow.ui</code> 中</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/test_plugin.png" alt="test_plugin" /></p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/test_pluginui.png" alt="test_pluginui" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/test_plugin.png" alt="test_plugin"></p>
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/test_pluginui.png" alt="test_pluginui"></p>
 <p>此外 ShowPlugin.pro 文件中需要配置插件的头文件位置， 以及链接插件库, 将编译好的 <code>Timelineplugin.dll</code> 提前移动到链接库的地址中， 如下图</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/test_pluginpro.png" alt="test_pluginpro" /></p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/test_pluginlibpath.png" alt="test_pluginlibpath" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/test_pluginpro.png" alt="test_pluginpro"></p>
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/test_pluginlibpath.png" alt="test_pluginlibpath"></p>
 <p>使用的环节基本就这些，最后编译 <code>ShowPlugin</code> 工程，可以得到的结果图如下：</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/test_plugindemo.png" alt="test_plugindemo" /></p>
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/designer/test_plugindemo.png" alt="test_plugindemo"></p>
           </div>
 
           

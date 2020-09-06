@@ -15,8 +15,8 @@
 这个文档主要记录脚本中出现的库的安装方式和一些简单的使用说明" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-07/python-request%E5%BA%93opencv%E5%BA%93%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/" />
-<meta property="article:published_time" content="2019-07-15T16:02:00&#43;08:00"/>
-<meta property="article:modified_time" content="2019-07-15T16:02:00&#43;08:00"/>
+<meta property="article:published_time" content="2019-07-15T16:02:00+08:00" />
+<meta property="article:modified_time" content="2019-07-15T16:02:00+08:00" />
 
 
   <title>
@@ -286,22 +286,15 @@
 
 
           <div class="post-content markdown">
-            <p>在使用 Python 编写测试脚本过程中， 进行服务端功能的测试<br />
+            <p>在使用 Python 编写测试脚本过程中， 进行服务端功能的测试<br>
 这个文档主要记录脚本中出现的库的安装方式和一些简单的使用说明</p>
-
 <h2 id="requests">requests</h2>
-
 <p>这个库主要是用来进行http请求的发送</p>
-
 <pre><code> pip install requests --user
 </code></pre>
-
 <h3 id="requests-常用接口">requests 常用接口</h3>
-
-<h4 id="request-method-url-kwargs">request(method, url, **kwargs)</h4>
-
+<h4 id="requestmethod-url-kwargs">request(method, url, **kwargs)</h4>
 <p>下面是官方文档中对这个函数的完整描述</p>
-
 <pre><code>&quot;&quot;&quot;Constructs and sends a :class:`Request &lt;Request&gt;`.  
 
 :param method: method for the new :class:`Request` object.
@@ -334,36 +327,27 @@
 :return: :class:`Response &lt;Response&gt;` object
 :rtype: requests.Response
 </code></pre>
-
 <p>接下来简单说一下使用和提几个常用的<code>param</code>，</p>
-
 <ul>
 <li><code>methon</code> 中填写请求的类型， 例如 <code>GET</code>, <code>POST</code>, <code>DELETE</code> 等等</li>
 <li><code>url</code> 字段填写http的正常地址</li>
 <li>接下来是可扩充的额外字段
-
 <ul>
 <li><code>header</code> 中放一些请求的头信息， 比如指明解析方式的 <code>Content-Type：application/json</code>， 连接方式<code>Connection:keep-alive</code> 等一般都是放在 <code>header</code> 中</li>
 <li><code>Post</code> 请求中Body体的内容用 <code>data</code> 或者 <code>json</code></li>
 <li><code>timeout</code>  自定义请求超时时间</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <p>示例：</p>
-
 <pre><code>&gt;&gt;&gt; import requests
 &gt;&gt;&gt; req = requests.request('GET', 'https://www.baidu,com')
   &lt;Response [200]&gt;
 </code></pre>
-
 <h4 id="其他接口">其他接口</h4>
-
 <p>其他例如<code>post</code>, <code>get</code>, <code>put</code>, <code>delete</code>等等， 其实本质上都是通过上面的<code>request</code>接口， 只是将 <code>method</code> 直接默认设置好了</p>
-
 <h3 id="消息体的处理">消息体的处理</h3>
-
 <p>一般通信之间都会使用json格式， 传输数据， 这里以json为例：</p>
-
 <pre><code>playbackurl_url = 'http://192.168.1.160:10010/api/cms/history/recordurl/1'
 res = requests.request('GET',playbackurl_url)
 res_json = res.json()
@@ -371,47 +355,34 @@ code = res_json['code']
 errorstring = res_json['errorstring']
 url = res_json['result']['url']
 </code></pre>
-
 <p>收到返回后， 将结果转json, 再从json中取数据， 这里最后第一步对res进行状态的判定， 这里例如192.168.1.160 服务器没有打开， 其实也就没有必要走 res.json()</p>
-
 <h2 id="opencv">opencv</h2>
-
 <p>这个库目前在测试工程中使用的是它判断rtsp流地址是否有效，测试播放是否成功的部分功能</p>
-
 <pre><code>pip install opencv-python --user
 </code></pre>
-
 <p>opencv库的功能特别强大，后面会提供官方文档， 有需要的可以在研究研究</p>
-
 <h3 id="opencv常用接口">opencv常用接口</h3>
-
 <h4 id="videocapture">VideoCapture</h4>
-
 <p>VideoCapture函数一共有以下三种形式</p>
-
 <ul>
 <li><code>&lt;VideoCapture object&gt; = cv.VideoCapture()</code> 默认构造, 之后通过open()传入和下面2个函数传入参数一致</li>
 <li><code>&lt;VideoCapture object&gt; = cv.VideoCapture(filename[, apiPreference])</code>  打开视频文件或捕获设备或IP视频流以进行视频捕获。
-
 <ul>
 <li>支持传入视频文件名称</li>
 <li>图像序列(例如 img_00.jpg, img_01.jpg, img_02.jpg, &hellip;)</li>
 <li>视频流的URL</li>
-</ul></li>
+</ul>
+</li>
 <li><code>&lt;VideoCapture object&gt; = cv.VideoCapture(index[, apiPreference])</code> 打开摄像头进行视频捕捉
-
 <ul>
 <li><code>index</code> 要打开的视频捕获设备的ID。 要使用默认后端打开默认摄像头，只需传递0.</li>
-</ul></li>
 </ul>
-
-<p><code>apiPreference</code> 这个字段不是很理解， 先抄一下官方说明<br />
+</li>
+</ul>
+<p><code>apiPreference</code> 这个字段不是很理解， 先抄一下官方说明<br>
 preferred Capture API backends to use. Can be used to enforce a specific reader implementation if multiple are available: e.g. cv::CAP_DSHOW or cv::CAP_MSMF or cv::CAP_V4L.  ( 首选使用的Capture API后端。 如果有多个可用，则可用于强制执行特定的读取器实现：例如 cv :: CAP_DSHOW或cv :: CAP_MSMF或cv :: CAP_V4L。)</p>
-
 <h3 id="代码说明">代码说明</h3>
-
 <h4 id="直接播放rtsp地址的demo">直接播放RTSP地址的Demo</h4>
-
 <pre><code>import cv2
 
 rtsp_url = 'rtsp://admin:hk234567@192.168.10.103:554'
@@ -425,9 +396,7 @@ while True:
 cap.release()                 // 释放播放器资源
 cv2.destroyAllWindows()       // 关闭所有图像窗口
 </code></pre>
-
 <h4 id="实际测试rtsp地址demo">实际测试RTSP地址Demo</h4>
-
 <pre><code>import cv2
 
 rtsp_url = 'rtsp://admin:hk234567@192.168.10.103:554'
@@ -438,10 +407,8 @@ else:
     //播放失败信息记录
 cap.release()                 // 释放播放器资源
 </code></pre>
-
 <h3 id="官方文档地址">官方文档地址</h3>
-
-<p><a href="https://docs.opencv.org/4.0.0/d7/dfc/group__highgui.html">opencv官方文档</a><br />
+<p><a href="https://docs.opencv.org/4.0.0/d7/dfc/group__highgui.html">opencv官方文档</a><br>
 <a href="https://docs.opencv.org/4.0.0/d8/dfe/classcv_1_1VideoCapture.html">cv::VideoCapture类官方文档</a></p>
           </div>
 
@@ -458,10 +425,7 @@ cap.release()                 // 释放播放器资源
       <li><a href="https://catcheroftime.github.io/tags/python" role="button">python </a></li>
       
     
-      <li><a href="https://catcheroftime.github.io/tags/requests%E5%BA%93" role="button">requests库 </a></li>
-      
-    
-      <li><a href="https://catcheroftime.github.io/tags/opencv%E5%BA%93" role="button">opencv库 </a></li>
+      <li><a href="https://catcheroftime.github.io/tags/python%E5%BA%93" role="button">python库 </a></li>
       
     
   </div>
@@ -591,7 +555,7 @@ cap.release()                 // 释放播放器资源
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#request-method-url-kwargs">
+						 					<a class="nav-link" href="#requestmethod-url-kwargs">
 												 request(method, url, **kwargs)
 											</a>
 										</li>

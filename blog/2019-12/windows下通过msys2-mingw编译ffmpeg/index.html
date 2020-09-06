@@ -13,8 +13,8 @@
 <meta property="og:description" content="在使用 ffmpeg 过程中，如果是直接使用 ffmpeg 的库，可以直接在官方下载动态库或者静态库使用，但是当需要根据实际情况修改一些 ffmpeg 的代码，这时候避免不掉的是编译 ffmpeg 的源码，下面是我亲测可用的编译过程的整理" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-12/windows%E4%B8%8B%E9%80%9A%E8%BF%87msys2-mingw%E7%BC%96%E8%AF%91ffmpeg/" />
-<meta property="article:published_time" content="2019-12-11T17:10:00&#43;08:00"/>
-<meta property="article:modified_time" content="2019-12-11T17:10:00&#43;08:00"/>
+<meta property="article:published_time" content="2019-12-11T17:10:00+08:00" />
+<meta property="article:modified_time" content="2019-12-11T17:10:00+08:00" />
 
 
   <title>
@@ -263,7 +263,7 @@
   <ul class="post-meta li-x">
     
       
-        <li><a href="https://catcheroftime.github.io/categories/ffmpeg"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> ffmpeg </a></li>
+        <li><a href="https://catcheroftime.github.io/categories/%E7%BC%96%E8%AF%91"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 编译 </a></li>
       
     
     
@@ -285,106 +285,67 @@
 
           <div class="post-content markdown">
             <p>在使用 <code>ffmpeg</code> 过程中，如果是直接使用 <code>ffmpeg</code> 的库，可以直接在官方下载动态库或者静态库使用，但是当需要根据实际情况修改一些 <code>ffmpeg</code> 的代码，这时候避免不掉的是编译 <code>ffmpeg</code> 的源码，下面是我亲测可用的编译过程的整理</p>
-
 <h2 id="msys2-安装">msys2 安装</h2>
-
 <p>msys2 是一个类似linux环境，上网下载一个 msys2 64或者32位版本安装</p>
-
 <p>我这里安装的是64位版本，按照默认的方式安装</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2.png" alt="msys2安装" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2.png" alt="msys2安装"></p>
 <p>安装完成之后，可以简单看一下安装路径下的文件层次结构</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2_filelevel.png" alt="msys2文件层次" /></p>
-
-<h3 id="更新字符集-不太重要">更新字符集(不太重要)</h3>
-
+<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2_filelevel.png" alt="msys2文件层次"></p>
+<h3 id="更新字符集不太重要">更新字符集(不太重要)</h3>
 <p>打开安装目录下的 <code>msys2_shell.cmd</code> 文件, 在弹窗的标题栏上，右击选择 <code>Options...</code> , 选择 <code>Text</code> , 更改显示中文的字符集为 <code>GBK</code> ，避免乱码.如下图</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2_updatetext.png" alt="msys2更新字符集" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2_updatetext.png" alt="msys2更新字符集"></p>
 <h3 id="配置镜像源">配置镜像源</h3>
-
 <p>msys2 使用的是 Pacman 进行包管理，在下载安装第三方库的时候，需要先更改使用的镜像源</p>
-
 <p>以我的为例， 我将 <code>msys2</code> 安装在 <code>C:\msys64</code> , 管理镜像源的文件在路径 <code>C:\msys64\etc\pacman.d</code> 文件夹下,如下图，将文件地址更改为国内的中科大镜像</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2_downpath.png" alt="msys2安装" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2_downpath.png" alt="msys2安装"></p>
 <p>分别更新 mirrorlist.mingw32 文件</p>
-
 <pre><code>Server = http://mirrors.ustc.edu.cn/msys2/mingw/i686/
 Server = http://repo.msys2.org/mingw/i686
 Server = http://downloads.sourceforge.net/project/msys2/REPOS/MINGW/i686
 Server = http://www2.futureware.at/~nickoe/msys2-mirror/i686/
 </code></pre>
-
 <p>mirrorlist.mingw64 文件</p>
-
 <pre><code>Server = http://mirrors.ustc.edu.cn/msys2/mingw/x86_64/
 Server = http://repo.msys2.org/mingw/x86_64
 Server = http://downloads.sourceforge.net/project/msys2/REPOS/MINGW/x86_64
 Server = http://www2.futureware.at/~nickoe/msys2-mirror/x86_64/
 Server = http://mirror.bit.edu.cn/msys2/REPOS/
 </code></pre>
-
 <p>mirrorlist.msys 文件</p>
-
 <pre><code>Server = http://mirrors.ustc.edu.cn/msys2/msys/$arch/
 Server = http://repo.msys2.org/msys/$arch
 Server = http://downloads.sourceforge.net/project/msys2/REPOS/MSYS2/$arch
 Server = http://www2.futureware.at/~nickoe/msys2-mirror/msys/$arch/
 </code></pre>
-
 <h3 id="msys2-更新">msys2 更新</h3>
-
 <p>运行 msys2_shell.cmd , 升级系统以及所有安装的软件</p>
-
 <pre><code>pacman -Syu
 </code></pre>
-
 <p>之后关闭所有msys2 的 shell 窗口， 执行msys2安装的根目录下的 <code>autorebase.bat</code> 文件</p>
-
 <h3 id="安装其他编译需要的库">安装其他编译需要的库</h3>
-
 <pre><code>pacman -S make 
 pacman -S yasm
 pacman -S pkg-config
 pacman -S diffutils
 </code></pre>
-
 <p>这些库具体的功能，可以自己了解一下，这里就不解释，主要还是编译ffmpeg</p>
-
 <h2 id="mingw-安装">mingw 安装</h2>
-
 <p>打开安装目录下的 <code>msys2_shell.cmd</code> 文件, 首先查看已经提供的 GCC 版本选择</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2_installgcc.png" alt="msys2_mingw安装" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/compile/ffmpeg/msys2_installgcc.png" alt="msys2_mingw安装"></p>
 <p>如图， 可以看到2个版本的 <code>gcc</code> , 32位和64位， 根据实际的需要选择安装， 我这里安装的是32位</p>
-
 <pre><code>pacman -S mingw-w64-i686-gcc
 </code></pre>
-
 <p>msys2 会自动将这个包装在 <code>C:\msys64\mingw32</code></p>
-
 <p>同理，如果需要编译64位的</p>
-
 <pre><code>pacman -S mingw-w64-x86_64-gcc
 </code></pre>
-
 <h2 id="编译ffmpeg">编译ffmpeg</h2>
-
 <p>首先通过 github clone ffmpeg 源码</p>
-
 <p>剩下的就是编译， 打开 <code>mingw32.exe</code> , cd 到 ffmpeg 源码路径下</p>
-
 <pre><code>./configure --prefix=/usr/local_x86/ffmpeg --enable-shared
 make 
 make install
 </code></pre>
-
 <p>ffmpeg 编译生成的编译配置文件，参数有很多， 我这里只使用了 &ndash;enable-shared 编译出动态库，如果需要添加其他的参数比如 &ndash;enable-ffplay, 这里还需要为 msys2 中添加 SDL 相关的库等等， 所以根据实际需求，可以自行添加相应的库</p>
           </div>
 
@@ -398,7 +359,7 @@ make install
   <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
   <div class="tags-sm">
     
-      <li><a href="https://catcheroftime.github.io/tags/ffmpeg%E7%BC%96%E8%AF%91" role="button">ffmpeg编译 </a></li>
+      <li><a href="https://catcheroftime.github.io/tags/ffmpeg" role="button">ffmpeg </a></li>
       
     
   </div>
@@ -500,7 +461,7 @@ make install
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e6%9b%b4%e6%96%b0%e5%ad%97%e7%ac%a6%e9%9b%86-%e4%b8%8d%e5%a4%aa%e9%87%8d%e8%a6%81">
+						 					<a class="nav-link" href="#%e6%9b%b4%e6%96%b0%e5%ad%97%e7%ac%a6%e9%9b%86%e4%b8%8d%e5%a4%aa%e9%87%8d%e8%a6%81">
 												 更新字符集(不太重要)
 											</a>
 										</li>

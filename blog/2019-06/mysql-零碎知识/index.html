@@ -13,8 +13,8 @@
 <meta property="og:description" content="这个文档主要统计一下不常用到的 SQL 语句和一些知识点， 更新ing" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-06/mysql-%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86/" />
-<meta property="article:published_time" content="2019-06-13T16:00:00&#43;08:00"/>
-<meta property="article:modified_time" content="2019-06-13T16:00:00&#43;08:00"/>
+<meta property="article:published_time" content="2019-06-13T16:00:00+08:00" />
+<meta property="article:modified_time" content="2019-06-13T16:00:00+08:00" />
 
 
   <title>
@@ -285,53 +285,42 @@
 
           <div class="post-content markdown">
             <p>这个文档主要统计一下不常用到的 <code>SQL</code> 语句和一些知识点， 更新ing</p>
-
 <h2 id="查看-mysql-系统环境变量">查看 MySQL 系统环境变量</h2>
-
 <pre><code>SHOW [GLOBAL|SESSION] VARIABLES [LIKE 匹配的模式];   // LIKE表达式后边可以跟通配符来进行模糊查询 []为可填写参数
 例如
     SHOW VARIABLES LIKE 'default_storage_engine';
     SHOW VARIABLES like 'max_connections';
     SHOW VARIABLES LIKE 'default%';
 </code></pre>
-
 <p>服务器程序使用的默认存储引擎就是InnoDB，允许同时连接的客户端数量最多为151</p>
-
 <p>系统变量可以根据作用范围分为2种</p>
-
 <ul>
 <li>GLOBAL：全局变量，影响服务器的整体操作。</li>
 <li>SESSION：会话变量，影响某个客户端连接的操作。（注：SESSION有个别名叫LOCAL）</li>
 </ul>
-
 <p>设置系统变量</p>
-
 <ul>
-<li>通过启动选项设置（作用范围都是GLOBAL的，对所有客户端都有效）</li>
-
-<li><p>服务器程序运行过程中设置</p>
-
-<p>SET GLOBAL default_storage_engine = MyISAM;
-  SET SESSION default_storage_engine = MyISAM;
-  如果在设置系统变量的语句中省略了作用范围，默认的作用范围就是SESSION</p></li>
+<li>
+<p>通过启动选项设置（作用范围都是GLOBAL的，对所有客户端都有效）</p>
+</li>
+<li>
+<p>服务器程序运行过程中设置</p>
+<pre><code>SET GLOBAL default_storage_engine = MyISAM;
+SET SESSION default_storage_engine = MyISAM;
+如果在设置系统变量的语句中省略了作用范围，默认的作用范围就是SESSION
+</code></pre>
+</li>
 </ul>
-
 <p>注意</p>
-
 <ul>
 <li>并不是所有系统变量都具有GLOBAL和SESSION的作用范围。</li>
-<li>有些系统变量是只读的，并不能设置值。
-<br /></li>
+<li>有些系统变量是只读的，并不能设置值。</li>
 </ul>
-
-<h2 id="字符集-比较规则的查看">字符集、比较规则的查看</h2>
-
+<h2 id="字符集比较规则的查看">字符集、比较规则的查看</h2>
 <pre><code>SHOW (CHARACTER SET|CHARSET) [LIKE 匹配的模式];
 SHOW COLLATION [LIKE 匹配的模式];
 </code></pre>
-
 <h2 id="创建和删除索引语句">创建和删除索引语句</h2>
-
 <pre><code>ALTER TABLE 表名 ADD [INDEX|KEY] 索引名 (需要被索引的单个列或多个列);
 // ALTER TABLE index_demo ADD INDEX idx_c1_c2 (c1,c2)
 
@@ -450,7 +439,7 @@ ALTER TABLE 表名 DROP [INDEX|KEY] 索引名;
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e5%ad%97%e7%ac%a6%e9%9b%86-%e6%af%94%e8%be%83%e8%a7%84%e5%88%99%e7%9a%84%e6%9f%a5%e7%9c%8b">
+						 					<a class="nav-link" href="#%e5%ad%97%e7%ac%a6%e9%9b%86%e6%af%94%e8%be%83%e8%a7%84%e5%88%99%e7%9a%84%e6%9f%a5%e7%9c%8b">
 												 字符集、比较规则的查看
 											</a>
 										</li>

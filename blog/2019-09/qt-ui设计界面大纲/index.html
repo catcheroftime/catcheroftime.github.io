@@ -13,8 +13,8 @@
 <meta property="og:description" content="最近突发奇想，想自己整理一份详细的QT开发过程中踩过的坑，也给自己查缺补漏一下。这一部分主要是总结UI 设计 下的所有可视化的按钮和控件， 在介绍默认的控件的同时也会相应总结类的常用使用方法。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-09/qt-ui%E8%AE%BE%E8%AE%A1%E7%95%8C%E9%9D%A2%E5%A4%A7%E7%BA%B2/" />
-<meta property="article:published_time" content="2019-09-05T15:50:00&#43;08:00"/>
-<meta property="article:modified_time" content="2019-09-05T15:50:00&#43;08:00"/>
+<meta property="article:published_time" content="2019-09-05T15:50:00+08:00" />
+<meta property="article:modified_time" content="2019-09-05T15:50:00+08:00" />
 
 
   <title>
@@ -285,75 +285,46 @@
 
           <div class="post-content markdown">
             <p>最近突发奇想，想自己整理一份详细的QT开发过程中踩过的坑，也给自己查缺补漏一下。这一部分主要是总结UI <code>设计</code> 下的所有可视化的按钮和控件， 在介绍默认的控件的同时也会相应总结类的常用使用方法。</p>
-
-<p>目前我使用的 QT 版本是<font color=red> 5.7.1 </font><br />
+<p>目前我使用的 QT 版本是<!-- raw HTML omitted --> 5.7.1 <!-- raw HTML omitted --><br>
 首先先看一下整体 QT 软件界面下所有的标签页， 之后会详细的介绍 UI 设计界面的元素。</p>
-
 <h2 id="标签页简介">标签页简介</h2>
-
 <h3 id="欢迎">欢迎</h3>
-
 <p>很常见的打开IDE的界面</p>
-
 <ul>
 <li>Projects
-
 <ul>
 <li>新建项目</li>
 <li>打开最近项目</li>
-</ul></li>
-<li>示例<br />
+</ul>
+</li>
+<li>示例<br>
 其实是把安装QT的时候一同安装的Example下的示例demo可视化的展示在这里</li>
-<li>教程<br />
+<li>教程<br>
 官方提供一些视频课程，因为提供的都是youtube上的视频，没有翻墙软件也基本看不了</li>
 </ul>
-
-<p><img src="https://catcheroftime.github.io/images/blog/ui_overview/ui_welcome.png" alt="welcome" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/ui_overview/ui_welcome.png" alt="welcome"></p>
 <h3 id="编辑">编辑</h3>
-
-<p><img src="https://catcheroftime.github.io/images/blog/ui_overview/ui_edit.png" alt="edit" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/ui_overview/ui_edit.png" alt="edit"></p>
 <h3 id="设计">设计</h3>
-
-<p><img src="https://catcheroftime.github.io/images/blog/ui_overview/ui_overview.png" alt="overview" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/ui_overview/ui_overview.png" alt="overview"></p>
 <h3 id="debug">Debug</h3>
-
-<p><img src="https://catcheroftime.github.io/images/blog/ui_overview/ui_debug.png" alt="debug" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/ui_overview/ui_debug.png" alt="debug"></p>
 <h3 id="项目">项目</h3>
-
 <h3 id="帮助">帮助</h3>
-
 <p>QT 的帮助界面</p>
-
 <h2 id="工具栏快捷键">工具栏快捷键</h2>
-
 <h2 id="widget-combobox">Widget comboBox</h2>
-
 <h3 id="layout">Layout</h3>
-
 <h3 id="spaces">Spaces</h3>
-
 <h3 id="buttons">Buttons</h3>
-
-<h3 id="item-view-model-based">Item View(Model-Based)</h3>
-
-<h3 id="item-widgets-item-based">Item Widgets(Item-Based)</h3>
-
+<h3 id="item-viewmodel-based">Item View(Model-Based)</h3>
+<h3 id="item-widgetsitem-based">Item Widgets(Item-Based)</h3>
 <h3 id="containers">Containers</h3>
-
 <h3 id="input-widgets">Input Widgets</h3>
-
 <h3 id="display-widgets">Display Widgets</h3>
-
 <h2 id="object-inspector">Object Inspector</h2>
-
 <h2 id="property-editor">Property Editor</h2>
-
-<h2 id="signals-slot-editor">Signals &amp; Slot Editor</h2>
-
+<h2 id="signals--slot-editor">Signals &amp; Slot Editor</h2>
 <h2 id="action-editor">Action Editor</h2>
           </div>
 
@@ -747,7 +718,7 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#item-view-model-based">
+						 					<a class="nav-link" href="#item-viewmodel-based">
 												 Item View(Model-Based)
 											</a>
 										</li>
@@ -773,7 +744,7 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#item-widgets-item-based">
+						 					<a class="nav-link" href="#item-widgetsitem-based">
 												 Item Widgets(Item-Based)
 											</a>
 										</li>
@@ -919,7 +890,7 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#signals-slot-editor">
+						 					<a class="nav-link" href="#signals--slot-editor">
 												 Signals &amp; Slot Editor
 											</a>
 										</li>

@@ -13,8 +13,8 @@
 <meta property="og:description" content="记录在使用 QT 开发过程中碰到的关于 QSetting 编写配置文件读写中文的问题，QProcess command 路径中存在中文的问题，以及使用 QString 转 std::string 时，原QString携带中文的问题" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2020-04/qt-%E4%B8%AD%E6%96%87%E9%97%AE%E9%A2%98%E5%92%8C%E8%B7%AF%E5%BE%84%E4%B8%AD%E7%A9%BA%E6%A0%BC%E9%97%AE%E9%A2%98/" />
-<meta property="article:published_time" content="2020-04-02T15:50:00&#43;08:00"/>
-<meta property="article:modified_time" content="2020-04-02T15:50:00&#43;08:00"/>
+<meta property="article:published_time" content="2020-04-02T15:50:00+08:00" />
+<meta property="article:modified_time" content="2020-04-02T15:50:00+08:00" />
 
 
   <title>
@@ -285,29 +285,20 @@
 
           <div class="post-content markdown">
             <p>记录在使用 QT 开发过程中碰到的关于 QSetting 编写配置文件读写中文的问题，QProcess command 路径中存在中文的问题，以及使用 QString 转 std::string 时，原QString携带中文的问题</p>
-
-<h2 id="qprocess-startdetached-或者-start-command路径中空格问题">QProcess::startDetached() 或者 start() command路径中空格问题</h2>
-
+<h2 id="qprocessstartdetached-或者-start-command路径中空格问题">QProcess::startDetached() 或者 start() command路径中空格问题</h2>
 <p>在开发过程中遇到一个重启客户端的问题失败的问题</p>
-
 <p>错误示例：</p>
-
 <pre><code>QString filepath = qApp-&gt;applicationFilePath();
 QProcess::startDetached(filepath);
 </code></pre>
-
 <p>当路径中没有空格是没有问题，但是当程序安装在 ‪<code>D:\Program Files</code> 路径下,这一段代码就会失效</p>
-
 <p>更正</p>
-
 <pre><code>QString infilepath = qApp-&gt;applicationFilePath();
 infilepath = infilepath.replace(&quot;/&quot;,&quot;\\&quot;);
 QString filepath = &quot;\&quot;&quot; + infilepath + &quot;\&quot;&quot;;
 QProcess::startDetached(filepath);
 </code></pre>
-
 <p>为了找到空格具体影响的原因，需要看一下 <code>QProcess::startDetached(const QString &amp;command)</code> 这个函数的源码</p>
-
 <pre><code>bool QProcess::startDetached(const QString &amp;command)
 {
     QStringList args = parseCombinedArgString(command);
@@ -319,9 +310,7 @@ QProcess::startDetached(filepath);
     return QProcessPrivate::startDetached(prog, args);
 }
 </code></pre>
-
 <p>从这里可以看出，解析 command 可能出现问题, 因为一个 cmd 命名可以分为2部分，一部分为 prog 应用程序部分，另一部分是 args 参数，所以接下来主要是看 <code>static QStringList parseCombinedArgString(const QString &amp;program)</code> 这个函数</p>
-
 <pre><code>static QStringList parseCombinedArgString(const QString &amp;program)
 {
     QStringList args;
@@ -362,49 +351,38 @@ QProcess::startDetached(filepath);
     return args;
 }
 </code></pre>
-
 <p>从这一段代码可以看出，先判断 <code>&quot;</code> 双引号，双引号不会存入tmp，(当三个双引号连续，会写入tmp 一个)， 并且以 <code>program.at(i).isSpace()</code> 空格来判断 args 的结尾</p>
-
-<p>按照上面代码的规则<br />
-以 <code>QString filepath = &quot;D:\\Program Files\\1.exe&quot;;</code> 路径为例<br />
+<p>按照上面代码的规则<br>
+以 <code>QString filepath = &quot;D:\\Program Files\\1.exe&quot;;</code> 路径为例<br>
 最后解析的结果为 <code>D:\Program</code> 和 <code>Files\1.exe</code> 2部分</p>
-
 <p>所以这里有个很简单的解决方案，就是改成 <code>QString filepath = &quot;\&quot;D:\\Program Files\\1.exe\&quot;&quot;;</code></p>
-
 <p>如果携带参数的话 可以用空格将所有参数隔开， <code>QString filepath = &quot;\&quot;D:\\Program Files\\1.exe\&quot; -help&quot;;</code></p>
-
 <p>关于路径中 &ldquo;\&rdquo; 和 &ldquo;/&rdquo; 的差异我的理解是：</p>
-
 <ul>
 <li>Windows下使用的是反斜杠 &ldquo;\&rdquo;,</li>
 <li>Linux下使用的是正斜杠 &ldquo;/&rdquo;</li>
 </ul>
-
 <p>但是在QT里，我用获取路径的函数等得到的 QString 路径用的都是 &ldquo;/&rdquo; 正斜杠，可能是因为 &ldquo;\&rdquo; 反斜杠是转义字符，所以得到的路径我一般</p>
-
 <ul>
-<li>先使用replace(&ldquo;/&rdquo;,&rdquo;\\&rdquo;)转一下路径中的正斜杠</li>
-
-<li><p>然后用双引号包一下就可以解决这个问题了</p>
-
-<p>QString infilepath = qApp-&gt;applicationFilePath();
-  infilepath = infilepath.replace(&ldquo;/&rdquo;,&rdquo;\&rdquo;);
-  QString filepath = &ldquo;\&ldquo;&rdquo; + infilepath + &ldquo;\&ldquo;&rdquo;;
-  QProcess::startDetached(filepath);</p></li>
+<li>
+<p>先使用replace(&quot;/&rdquo;,&quot;\\&quot;)转一下路径中的正斜杠</p>
+</li>
+<li>
+<p>然后用双引号包一下就可以解决这个问题了</p>
+<pre><code>QString infilepath = qApp-&gt;applicationFilePath();
+infilepath = infilepath.replace(&quot;/&quot;,&quot;\\&quot;);
+QString filepath = &quot;\&quot;&quot; + infilepath + &quot;\&quot;&quot;;
+QProcess::startDetached(filepath);
+</code></pre>
+</li>
 </ul>
-
 <p>最后总结一下</p>
-
 <pre><code>static bool startDetached(const QString &amp;command);
 void start(const QString &amp;command, OpenMode mode = ReadWrite);
 </code></pre>
-
 <p>在使用这2个需要解析指令和参数的函数时，需要注意指令部分需要使用双引号包起来</p>
-
 <h2 id="qsetting-读写中文的问题">QSetting 读写中文的问题</h2>
-
 <p>读取和设置的时候都需要设置编码格式，<code>settings.setIniCodec(QTextCodec::codecForName(&quot;GB2312&quot;));</code></p>
-
 <pre><code>// 设置
 void setValueForSettings(const QString &amp;target, const QVariant &amp;value)
 {
@@ -424,11 +402,8 @@ QVariant getValueFromSettings(const QString &amp;target)
     return value;
 }
 </code></pre>
-
 <h2 id="中文路径问题">中文路径问题</h2>
-
 <p>在使用一些 C 的函数时例如 std::fstream 的 open 时，直接使用 QT 的 toStdString() 函数将 QString 类型转成 std::string 时，只要路径中存在中文，转换出来的新的 std::string 实际上是乱码， C 函数并不能正确使用，这主要是因为 toStdString() 函数本身调用的是 Utf8 的编码， 所以想正确转换， 需要使用 <code>QTextCodec</code> 类，声明转码器为 <code>GBK</code> 或者 <code>GB2312</code></p>
-
 <pre><code>#include &lt;QTextCodec&gt;
 
 QTextCodec *code = QTextCodec::codecForName(&quot;GB2312&quot;);//解决中文路径问题
@@ -524,7 +499,7 @@ std::string name = code-&gt;fromUnicode(dir).data();
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#qprocess-startdetached-%e6%88%96%e8%80%85-start-command%e8%b7%af%e5%be%84%e4%b8%ad%e7%a9%ba%e6%a0%bc%e9%97%ae%e9%a2%98">
+						 					<a class="nav-link" href="#qprocessstartdetached-%e6%88%96%e8%80%85-start-command%e8%b7%af%e5%be%84%e4%b8%ad%e7%a9%ba%e6%a0%bc%e9%97%ae%e9%a2%98">
 												 QProcess::startDetached() 或者 start() command路径中空格问题
 											</a>
 										</li>

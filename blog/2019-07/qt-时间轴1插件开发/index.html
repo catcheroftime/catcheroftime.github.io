@@ -13,8 +13,8 @@
 <meta property="og:description" content="通过前面一节提到的 Qt 自定义插件的开发，开发出一个类似于统计一天不同时间段的插件，这种插件在摄像头的计划中能很频繁看到，例如0点到9点做录像任务， 9点到下午5点做行为检测任务， 晚上10点到12点继续做录像计划这种场景。而这篇文章主要记录一下自己开发过程中的一些思路和简单的代码解释，以及目前还存在问题。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-07/qt-%E6%97%B6%E9%97%B4%E8%BD%B41%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" />
-<meta property="article:published_time" content="2019-07-17T20:45:00&#43;08:00"/>
-<meta property="article:modified_time" content="2019-07-17T20:45:00&#43;08:00"/>
+<meta property="article:published_time" content="2019-07-17T20:45:00+08:00" />
+<meta property="article:modified_time" content="2019-07-17T20:45:00+08:00" />
 
 
   <title>
@@ -289,11 +289,8 @@
 
           <div class="post-content markdown">
             <p>通过前面一节提到的 Qt 自定义插件的开发，开发出一个类似于统计一天不同时间段的插件，这种插件在摄像头的计划中能很频繁看到，例如0点到9点做录像任务， 9点到下午5点做行为检测任务， 晚上10点到12点继续做录像计划这种场景。而这篇文章主要记录一下自己开发过程中的一些思路和简单的代码解释，以及目前还存在问题。</p>
-
 <h2 id="思路逻辑">思路逻辑</h2>
-
 <h3 id="明确需求">明确需求</h3>
-
 <ol>
 <li>一天24小时，精确范围到分钟的时间轴</li>
 <li>支持在时间轴上通过鼠标点击、移动和释放生成时间段，或者支持输入起始时间生成时间段</li>
@@ -302,23 +299,15 @@
 <li>删除已有时间段</li>
 <li>提供时间段统计输出的接口</li>
 </ol>
-
 <h3 id="简单的逻辑">简单的逻辑</h3>
-
 <h4 id="时间精度问题">时间精度问题</h4>
-
-<p>时间轴上时间段显示的范围是00：00-23：59，以录像为例，00：00-23：59时间段代表全天录像，录像时间从开始时间到结束时间向后1分钟。 不录象，不用创建时间段。<br />
+<p>时间轴上时间段显示的范围是00：00-23：59，以录像为例，00：00-23：59时间段代表全天录像，录像时间从开始时间到结束时间向后1分钟。 不录象，不用创建时间段。<br>
 接下来是时间精度的问题，一天1440（60*24）分钟，精确到分钟， 在屏幕上展示的时候， 如果1个像素代表1分钟，至少需要1440个像素，可是实际上一般不会存在1440px宽度的插件，在开发过程中，我会选择720宽度。</p>
-
 <h4 id="时间轴绘图">时间轴绘图</h4>
-
 <p>Qt 中的 <code>paintEvent(QPaintEvent *)</code> 支持画图，在此函数中，绘制时间轴刻度</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/timeline_demo1.png" alt="时间轴" /></p>
-
-<p><code>widget_graduation</code> 是容纳时间轴刻度的 <code>QWidget</code>,在它上面直接画刻度<br />
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/timeline_demo1.png" alt="时间轴"></p>
+<p><code>widget_graduation</code> 是容纳时间轴刻度的 <code>QWidget</code>,在它上面直接画刻度<br>
 <code>widget_timeaxis</code> 是容纳时间段的 <code>QWdiget</code>, 仅仅设置一个渐变色的样式， 和widget_graduation布局为垂直布局</p>
-
 <pre><code>ui-&gt;widget_timeaxis-&gt;setStyleSheet(&quot;background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 rgb(120,120,120),stop:1 rgb(140,140,140));&quot;)
 int start_position = ui-&gt;widget_graduation-&gt;pos().x();
 int height = ui-&gt;widget_graduation-&gt;pos().y() + ui-&gt;widget_graduation-&gt;height()-1;
@@ -346,15 +335,10 @@ for (int i = 0; i&lt;=24 ; ++i ) {
         painter.drawText(x+start_position-3,height - 8, QString::number(i));
 }
 </code></pre>
-
 <h4 id="时间段的对象选择">时间段的对象选择</h4>
-
 <p>时间段需要支持事件的捕捉，所以我选择用 <code>QWidget</code>,不同类型的事件，比如之前举例录像任务，行为检测任务等等，可以通过给 <code>QWidget</code> 设置不同的样式进行区分，每一个 <code>QWidget</code> 在移动和创建的过程中需要统计它能使用的最大和最小范围，避免出现和其他时间段重合的问题。</p>
-
 <p>Qt 其实就是事件驱动的框架， 它提供了很多事件的接口， 可以重新实现这些事件接口，来实现创建、移动、拉伸时间段的功能</p>
-
 <p>常见的事件接口有以下几个：</p>
-
 <pre><code>// 鼠标移动事件
 void mouseMoveEvent(QMouseEvent *e);
 
@@ -366,43 +350,31 @@ void mousePressEvent(QMouseEvent *e);
 // 鼠标释放事件    
 void mouseReleaseEvent(QMouseEvent *e); 
 </code></pre>
-
 <p>其实真正开发时候我并没有用这几个接口，我是直接使用了 <code>eventFilter</code>接口</p>
-
 <pre><code>bool eventFilter(QObject *target, QEvent *event);
 </code></pre>
-
 <p>主要是因为，我在插件类中需要监听其中的 <code>QWidget</code>（时间段）的事件，并对 <code>QWidget</code>做一些自己业务上的处理。</p>
-
 <h2 id="代码逻辑">代码逻辑</h2>
-
 <h3 id="创建新的时间段">创建新的时间段</h3>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/create_timecell.gif" alt="创建" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/create_timecell.gif" alt="创建"></p>
 <p>创建时间段的鼠标操作过程分为3步</p>
-
 <ul>
 <li>鼠标点击到一个位置，创建一个新的时间段</li>
 <li>鼠标移动， 时间段跟随鼠标变化</li>
 <li>鼠标释放时，确定时间段的时间范围</li>
 </ul>
-
 <p>其中有几个需要重视的点</p>
-
 <ul>
 <li>点击一个位置后，需要计算创建的新的时间段的时间范围，需要存储一些事件段的基本信息，比如这个时间段的起始位置，以及能取到的最大和最小的范围</li>
 <li>创建的过程鼠标可以向左或者向右移动，最后生成的大小， 需要根据最后的鼠标的位置算出 <code>QWidget</code>的长度。然后将 <code>QWidget</code> 移动到指定的位置
-
 <ul>
 <li>鼠标落地在点击位置的右边，此时 <code>QWidget</code>的长度是 鼠标落点位置-起始位置，<code>QWidget</code>移动到的位置为 起始位置</li>
 <li>鼠标落点在点击位置的左边，此时 <code>QWidget</code>的长度是 起始位置-鼠标落点位置，<code>QWidget</code>移动到的位置为 鼠标落点位置</li>
-</ul></li>
 </ul>
-
-<p>上面提到 <code>widget_timeaxis</code> 是容纳时间段的 <code>QWdiget</code>的，<code>widget_graduation</code> 是容纳时间轴刻度的<br />
+</li>
+</ul>
+<p>上面提到 <code>widget_timeaxis</code> 是容纳时间段的 <code>QWdiget</code>的，<code>widget_graduation</code> 是容纳时间轴刻度的<br>
 直接粘贴一下代码了，代码中有详细的描述</p>
-
 <pre><code>// 存储了QWidget的一些基本信息
 // 当前起始位置，时间段的宽度(基本没用),能移动的最小最大值，QWidget的颜色
 struct WidgetInfo
@@ -502,66 +474,48 @@ bool TimelinePlugin::eventFilter(QObject *target, QEvent *event)
     }
 }
 </code></pre>
-
 <h3 id="移动时间段">移动时间段</h3>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/move.gif" alt="移动" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/move.gif" alt="移动"></p>
 <p>移动时间段时，鼠标的操作过程</p>
-
 <ul>
 <li>鼠标点击一个时间段， 此时需要记录一个鼠标点击的位置全局位置</li>
 <li>鼠标移动， 时间段跟随鼠标一起移动</li>
 <li>鼠标释放， 结束移动</li>
 </ul>
-
 <p>移动时间段，需要注意的几个细节</p>
-
 <ul>
 <li>记录鼠标点击的全局位置，移动过程中的全局位置，那么时间段移动的位置计算是 移动过程中全局位置-鼠标点击时的全局位置+时间段的初始位置(这个信息记录在对应的时间段的WidgetInfo)</li>
 <li>鼠标在移动过程中需要改变鼠标的形状
-
 <ul>
 <li>在时间段最左测一定像素或者最右边的一定像素，鼠标形状改成 <code>拖拽拉伸 Qt::SizeHorCursor</code> 的样式</li>
 <li>未点击状态时，鼠标移动到中间位置时， 鼠标形状为 <code>手 Qt::OpenHandCursor</code> 的形状</li>
 <li>点击状态(按住)时， 鼠标形状变成 <code>抓住 Qt::ClosedHandCursor</code> 的形状</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <h3 id="改变时间范围">改变时间范围</h3>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/change_timecell.gif" alt="改变timecell" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/change_timecell.gif" alt="改变timecell"></p>
 <p>改变时间段时，鼠标的操作过程</p>
-
 <ul>
 <li>鼠标移动到时间段， 最左侧或者最右侧一定像素的时候，鼠标变成 <code>拖拽拉伸 Qt::SizeHorCursor</code> 的形状，此时点击按住</li>
 <li>鼠标移动， 时间段跟随鼠标位置改变大小</li>
 <li>鼠标释放， 事件结束</li>
 </ul>
-
 <p>改变事件范围，需要注意的几个细节</p>
-
 <ul>
 <li>对于鼠标最左侧和最右侧，需要区分一下
-
 <ul>
 <li>鼠标在时间段左侧点击时，鼠标移动的范围是：时间段最左侧可移动的最小值和时间段右边位置(时间段原来起点+宽度)， 此时时间段移动的位置是： 鼠标的位置； 时间段的长度是：时间段右边的位置-鼠标的位置</li>
 <li>鼠标在时间段右边点击时，鼠标移动的范围时：时间段原来的起点和时间段最右侧可移动的最大值， 此时时间段移动的位置是： 时间段原来起点； 时间段的长度是：鼠标的位置-时间段原来起点</li>
-</ul></li>
+</ul>
+</li>
 <li>此时改变时间范围的鼠标移动需要和移动时间段的鼠标移动进行区分</li>
 </ul>
-
 <p>这一部分和移动时间段的代码比较多，这里不粘贴了，想了解的可以去github上直接看工程，链接在blog最后</p>
-
 <h3 id="手动添加和删除">手动添加和删除</h3>
-
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/create_remove.gif" alt="添加和删除" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/create_remove.gif" alt="添加和删除"></p>
 <p>删除操作，比较简单，之前自己定的实现时， 鼠标右键时删除， 这个很容易实现</p>
-
 <p>手动添加的意思这里是， 提供一个写入时间段的接口</p>
-
 <pre><code>struct TimecellDetail
 {
     QTime start_time;
@@ -572,47 +526,36 @@ bool TimelinePlugin::eventFilter(QObject *target, QEvent *event)
 void setTimeCell(const TimecellDetail &amp;detail);
 QList&lt;TimecellDetail&gt; getTimeCell();
 </code></pre>
-
 <p>不过这里需要做一些判断</p>
-
 <ul>
 <li>第一步判断输入的开始时间和结束时间转换成距离是否合法</li>
 <li>第二部判断输入的时间是否和其他已有的时间段有冲突</li>
 <li>都合理之后直接创建新的时间段</li>
 </ul>
-
 <p>其实上面的所有操作都需要在 <code>时间段</code> 可移动的范围内移动或者拉伸</p>
-
 <h2 id="尚未解决的问题与扩展">尚未解决的问题与扩展</h2>
-
 <h3 id="尚未解决的问题">尚未解决的问题</h3>
-
 <ul>
 <li>目前在通过起始位置和时间段宽度计算时，存在一些小问题，正常计算的时候会算出24：00, 然而<code>QTimeEdit</code>插件的范围是 <code>00：00-23：59</code>, 目前的解决方案是当算出是 24：00时， 直接写成23：59展示</li>
-<li>关于跟随时间轴一起移动的下方显示数据的小UI也存在问题，目前此UI的父对象不是插件，是初始化的时候插件的父对象传入的，当时间段滑动到最右侧时，此UI会远远超出时间轴的位置，需要插件父对象预留一些位置，防止被遮盖。 如图<br />
-<img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/timcell_error1.png" alt="timcell_error1.png" />
-<img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/timcell_error2.png" alt="timcell_error2.png" /></li>
+<li>关于跟随时间轴一起移动的下方显示数据的小UI也存在问题，目前此UI的父对象不是插件，是初始化的时候插件的父对象传入的，当时间段滑动到最右侧时，此UI会远远超出时间轴的位置，需要插件父对象预留一些位置，防止被遮盖。 如图<br>
+<img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/timcell_error1.png" alt="timcell_error1.png">
+<img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/timcell_error2.png" alt="timcell_error2.png"></li>
 <li>鼠标快速移动的时候，有的时候时间段跟不上鼠标一起移动或者拉伸，这个目前没有想到好的解决办法</li>
 </ul>
-
 <h3 id="可扩展">可扩展</h3>
-
 <ul>
 <li>Demo中只实现了一天的时间轴， 可以重新封装一下， 变成一周的时间轴插件，在此基础上还可以有一些其他比较实用的开发
-
 <ul>
 <li>一键删除所有时间段</li>
 <li>复制其中一天的配置到其他天，根据已有的接口已经和容易实现</li>
-</ul></li>
+</ul>
+</li>
 <li><code>WidgetInfo</code> 和 <code>TimecellDetail</code> 结构体中 <code>QString color</code> 可以根据实际情况做一个映射表，比如红色是报警， 黄色是警告之类的， 时间段中也可以存其他的信息，用作一些额外新的记录</li>
 <li>目前对时间段编辑只有开始时间和结束时间，也可以添加一些额外信息的编辑，比如这里的颜色信息</li>
 </ul>
-
 <h2 id="代码地址">代码地址</h2>
-
 <p>虽然我知道根本没人看， 但是还是求 <code>Star</code></p>
-
-<p>github 地址 ：<a href="https://github.com/catcheroftime/TimelinePlugin">https://github.com/catcheroftime/TimelinePlugin</a></p>
+<p>github 地址 ：https://github.com/catcheroftime/TimelinePlugin</p>
           </div>
 
           
@@ -626,9 +569,6 @@ QList&lt;TimecellDetail&gt; getTimeCell();
   <div class="tags-sm">
     
       <li><a href="https://catcheroftime.github.io/tags/qt" role="button">Qt </a></li>
-      
-    
-      <li><a href="https://catcheroftime.github.io/tags/%E6%97%B6%E9%97%B4%E8%BD%B4" role="button">时间轴 </a></li>
       
     
       <li><a href="https://catcheroftime.github.io/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6" role="button">自定义插件 </a></li>

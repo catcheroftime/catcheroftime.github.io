@@ -13,8 +13,8 @@
 <meta property="og:description" content="每次在用 QT 点击编译总是很好奇编译器具体对我的代码做了哪些操作，同时也好奇动态库，静态库等在程序运行中是怎么被程序调用的，于是学习一波 《程序员的自我修养-链接装载与库》，通过这篇博客打卡" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-10/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB-%E9%93%BE%E6%8E%A5%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/" />
-<meta property="article:published_time" content="2019-10-12T11:02:00&#43;08:00"/>
-<meta property="article:modified_time" content="2019-10-12T11:02:00&#43;08:00"/>
+<meta property="article:published_time" content="2019-10-12T11:02:00+08:00" />
+<meta property="article:modified_time" content="2019-10-12T11:02:00+08:00" />
 
 
   <title>
@@ -285,22 +285,16 @@
 
           <div class="post-content markdown">
             <p>每次在用 <code>QT</code> 点击编译总是很好奇编译器具体对我的代码做了哪些操作，同时也好奇动态库，静态库等在程序运行中是怎么被程序调用的，于是学习一波 《程序员的自我修养-链接装载与库》，通过这篇博客打卡</p>
-
 <p>学习时间：2019-10-12</p>
-
 <h2 id="静态链接过程">静态链接过程</h2>
-
 <ul>
 <li>预处理 (Pregressing)</li>
 <li>编译 (Complication)</li>
 <li>汇编 (Assembly)</li>
 <li>链接 (Linking)</li>
 </ul>
-
 <h3 id="预处理">预处理</h3>
-
 <p>预处理过程主要处理那些源代码中以 <code>#</code> 开始的预编译指令 规则如下：</p>
-
 <ul>
 <li>将所有的 <code>#define</code> 删除， 并且展开所有的宏定义</li>
 <li>处理所有的条件预编译指令，比如 <code>#if</code>, <code>#ifdef</code>， <code>#elif</code>, <code>#else</code>, <code>#endif</code></li>
@@ -309,33 +303,19 @@
 <li>添加行号和文件名标识，比如 #2 “hello.c” 2, 以便于编译时编译器产生调试用的行号信息及泳衣编译时产生编译错误或警告时能够显示的行号</li>
 <li>保留所有的 #pragma 编译指令，因为编译器须要使用它们</li>
 </ul>
-
 <h3 id="编译">编译</h3>
-
 <p>编译过程就是把预处理完的文件(*.i)经过6步：扫描，语法分析，语义分析，源代码优化，代码生成和目标代码优化后生成相应的<strong>汇编代码文件(*.s)</strong></p>
-
 <h3 id="汇编">汇编</h3>
-
 <p>汇编器是将汇编代码转变成机器可以执行的指令，每一个汇编语句几乎都对应一条机器指令。这一部分主要是通过汇编器as完成，根据汇编指令和机器指令的对照表一一翻译，最后生成<strong>目标文件(Object File)(*.o)</strong></p>
-
 <h3 id="链接">链接</h3>
-
 <p><a href="https://www.cnblogs.com/linhaostudy/p/8876930.html">https://www.cnblogs.com/linhaostudy/p/8876930.html</a> 可以参考一下这篇博客</p>
-
 <p>整个链接过程中，它就是将几个输入目标文件加工后合并成一个输出文件。</p>
-
 <p>链接的过程主要包括 地址和空间分配，符号决议，重定位等步骤</p>
-
 <p>比如：我们在程序模块 <code>main.c</code> 中使用另一个模块 <code>func.c</code> 中的函数 <code>foo()</code>, 我们在 <code>main.c</code> 模块中每一处调用 <code>foo</code> 的时候必须确切知道 <code>foo</code> 这个函数的地址， 但是由于每个模块都是单独编译的，在编译器编译 <code>main.c</code> 的时候它并不知道 <code>foo</code> 函数的地址， 暂时把这些调用 <code>foo</code> 的指令的目标地址搁置，等待最后连接的时候由链接器去将这些指令的目标地址修正。 这个地址修正的过程叫做<strong>重定位</strong>， 每个要被修正的地方叫一个<strong>重定位入口</strong></p>
-
 <p>学习时间：2019-10-15</p>
-
 <h2 id="目标文件">目标文件</h2>
-
 <p>编译器编译源代码后生成的文件叫做 <strong>目标文件</strong>， 代码进行预处理编译和汇编，不发生链接</p>
-
 <h3 id="目标文件格式">目标文件格式</h3>
-
 <table>
 <thead>
 <tr>
@@ -344,26 +324,22 @@
 <th align="left">实例</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="left">可重定位文件(Relocatable File)</td>
 <td align="left">这类文件包含了代码和数据，可以被用来链接成可置信文件或共享目标文件</td>
-<td align="left">Linux的.o文件<br>Windows的 .obj</td>
+<td align="left">Linux的.o文件<!-- raw HTML omitted -->Windows的 .obj</td>
 </tr>
-
 <tr>
 <td align="left">可执行文件(Executable File)</td>
 <td align="left">这类文件包含了可以直接执行的程序</td>
-<td align="left">比如/bin/bash文件<br>Windows的.exe文件</td>
+<td align="left">比如/bin/bash文件<!-- raw HTML omitted -->Windows的.exe文件</td>
 </tr>
-
 <tr>
 <td align="left">共享目标文件(Shared Object File)</td>
-<td align="left">这类文件包含了代码和数据，可以在2种情况下使用。<br>一种在链接器可以使用这种文件跟其他的可重定位文件和共享目标文件链接，产生新的目标文件。<br>第二种是动态链接器可以将这几个这种共享目标文件与可执行文件结合，作为进程映像的一部分运行</td>
-<td align="left">Linux的 .so,如/lib/glibc-2.5.so <br>Windows的 DLL</td>
+<td align="left">这类文件包含了代码和数据，可以在2种情况下使用。<!-- raw HTML omitted -->一种在链接器可以使用这种文件跟其他的可重定位文件和共享目标文件链接，产生新的目标文件。<!-- raw HTML omitted -->第二种是动态链接器可以将这几个这种共享目标文件与可执行文件结合，作为进程映像的一部分运行</td>
+<td align="left">Linux的 .so,如/lib/glibc-2.5.so <!-- raw HTML omitted -->Windows的 DLL</td>
 </tr>
-
 <tr>
 <td align="left">核心转储文件(Core Dump File)</td>
 <td align="left">当进程意外终止时，系统可以将该进程的地址空间的内容及终止时的一些其他信息转储到核心转储文件</td>
@@ -371,38 +347,27 @@
 </tr>
 </tbody>
 </table>
-
 <h3 id="目标文件结构">目标文件结构</h3>
-
 <blockquote>
 <p>目标文件中的内容至少有编译后的机器指令代码、数据，除此以外，还有包括链接时需要的比如符号表，调试信息，字符串等信息。</p>
 </blockquote>
-
 <p>按照这些信息的不同属性，以 <code>段(Segment)</code> 或者叫 <code>节(Section)</code> 的形式存储。程序源代码编译后的机器指令经常被放在 <code>代码段(Code Section)</code> 里，代码段常见的名字有 <code>“.code”</code> 和 <code>“.text”</code>；全局变量和局部静态变量数据经常放在 <code>数据段(Data Section)</code>，数据段的名字一般为 <code>“.data”</code>。</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/devbook/link_load_and_library/targetfile_struct.png" alt="targetfile_struct" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/devbook/link_load_and_library/targetfile_struct.png" alt="targetfile_struct"></p>
 <p>图中的可执行文件(目标文件)的格式是ELF，ELF文件的开头是一个“文件头”，它描述了整个文件的文件属性，包括文件是否可执行、是静态链接还是动态链接及入口地址(如果是可执行文件)、目标硬件、目标操作系统等信息，同事包括一个 <strong>段表(Section Table)</strong>，段表其实是描述文件中各个段的数组，段表描述了文件中各个段是否存在，大小，在文件中的偏移位置及段的属性等，从段表中可以得到每个段的所有信息，文件头后面就是各个段的内容。（不同的编译器可能对某些段的处理存在差异）</p>
-
 <p>程序指令(代码段)和程序数据(数据段和.bss段)分开的原因</p>
-
 <ul>
 <li>程序装载后，数据和指令分别被映射到两个虚存区域，由于数据区域对于进程来时是可读写的，而指令区域对于进程是只读的，权限可以分别控制，防止程序指令被有意无意修改</li>
 <li>现在CPU的缓存一般被设计成数据缓存和指令缓存分离，程序的指令和数据分开对CPU的缓存命中率提高有好处</li>
 <li>最重要的原因，当系统中运行多个该程序副本，它们的指令都一样，所有内存中只需要保存一份程序的指令部分，对于指令这种只读区域，共享指令可以大大节省空间。</li>
 </ul>
-
 <h4 id="常见段">常见段</h4>
-
 <ul>
-<li>.text   段 ：一般C语言的编译后执行语句都变成成机器代码<br /></li>
+<li>.text   段 ：一般C语言的编译后执行语句都变成成机器代码</li>
 <li>.data   段 ：已初始化的全局变量和局部静态变量保存位置</li>
 <li>.rodate 段 ： (Read Only Data)存放只读数据，一般是程序里面的只读变量(如 const 修饰的变量)和字符串常量</li>
 <li>.bss    段 ：记录所有未初始化的全局变量和静态变量的大小，只是为未初始化的全局变量和局部静态变量预留位置而已</li>
 </ul>
-
 <h4 id="其他段">其他段</h4>
-
 <table>
 <thead>
 <tr>
@@ -410,84 +375,64 @@
 <th align="left">说明</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="left">.rodata1</td>
 <td align="left">跟 &ldquo;.rodata&rdquo; 一样</td>
 </tr>
-
 <tr>
 <td align="left">.comment</td>
 <td align="left">存放编译器版本信息， 比如字符串 “GCC:(GNU)4.2.0”</td>
 </tr>
-
 <tr>
 <td align="left">.debug</td>
 <td align="left">调试信息</td>
 </tr>
-
 <tr>
 <td align="left">.dynamic</td>
 <td align="left">动态链接信息</td>
 </tr>
-
 <tr>
 <td align="left">.hash</td>
 <td align="left">符号哈希表</td>
 </tr>
-
 <tr>
 <td align="left">.line</td>
 <td align="left">调试时的行号表，即源代码行号与编译后指令的对应表</td>
 </tr>
-
 <tr>
 <td align="left">.note</td>
 <td align="left">额外的编译器信息，比如程序的公司名、发布版本号等</td>
 </tr>
-
 <tr>
 <td align="left">.strtab</td>
 <td align="left">String Table 字符串表，用于存储ELF文件中用到的各种字符串</td>
 </tr>
-
 <tr>
 <td align="left">.symtab</td>
 <td align="left">Symbol Table 符号表</td>
 </tr>
-
 <tr>
 <td align="left">.shstrtab</td>
 <td align="left">Section String Table 段名表</td>
 </tr>
-
 <tr>
-<td align="left">.plt</br>.got</td>
+<td align="left">.plt<!-- raw HTML omitted -->.got</td>
 <td align="left">动态链接的跳转表和全局入口表</td>
 </tr>
-
 <tr>
-<td align="left">.init</br>.fini</td>
+<td align="left">.init<!-- raw HTML omitted -->.fini</td>
 <td align="left">程序初始化与终结代码段</td>
 </tr>
 </tbody>
 </table>
-
 <p>学习时间：2019-10-18</p>
-
 <h3 id="elf文件结构">ELF文件结构</h3>
-
-<p><img src="https://catcheroftime.github.io/images/blog/devbook/link_load_and_library/elffile_struct.png" alt="elffile_struct" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/devbook/link_load_and_library/elffile_struct.png" alt="elffile_struct"></p>
 <p>ELF目标文件格式的最前端是ELF文件头，它包含了描述整个文件的基本属性，比如ELF文件版本、目标机器型号、程序入口地址等。然后是ELF文件各个段，其中最重要的是段表(Section Header Table)，它描述了文件中包含的所有的段的信息，比如每个段的段名，段的长度，在文件中的偏移、读写的权限及段的其他属性</p>
-
 <h4 id="文件头">文件头</h4>
-
 <p>ELF文件头中定义了 <strong>ELF魔数、文件机器字节长度、数据存储方式、版本、运行平台、ABI版本、ELF重定位类型、硬件平台、硬件平台版本、入口地址、程序头入口和长度、段表的位置和长度及段的数量</strong>等等</p>
-
 <p>ELF 文件头结构及相关常数被定义在 “/uer/include/elf.h” 中， 文件头结构有2个版本 &ldquo;Elf32_Ehdr&rdquo; 和 &ldquo;Elf64_Ehdr&rdquo;， 它们只是部分成员的大小不一样，内容是一样，该文件详细定义了一套自己的变量系统，具体可以自己在 Linux 下查看，有很详细的备注</p>
-
 <pre><code>/* The ELF file header.  This appears at the start of every ELF file.  */
 typedef struct
 {
@@ -507,11 +452,8 @@ typedef struct
     Elf32_Half     e_shstrndx;          /* Section header string table index */
 } Elf32_Ehdr;
 </code></pre>
-
 <h4 id="段表">段表</h4>
-
 <p>段表结构比较简单，它是以一个以 “Elf32_Shdr” 结构体为元素的数组，数组元素的个数等于段的个数，每个 “Elf32_Shdr” 结构体对应一个段， “Elf32_Shdr”被称为段描述符 ，sizeof(Elf32_Shdr)为40个字节</p>
-
 <pre><code>/* Section header.  */
 typedef struct
 {
@@ -527,27 +469,16 @@ typedef struct
     Elf32_Word     sh_entsize;       /* Entry size if section holds table */
 } Elf32_Shdr;
 </code></pre>
-
 <h4 id="重定位表">重定位表</h4>
-
 <h4 id="字符串表">字符串表</h4>
-
 <p>ELF文件中用到很多字符串，比如段名和变量名等，因为字符串的长度往往是不定的，所以把字符串集中起来存放在一个表，然后使用字符串在表中的偏移来引用字符串，在应用字符串只需要给出一个数字下标，不用考虑字符串长度的问题。</p>
-
-<p><img src="https://catcheroftime.github.io/images/blog/devbook/link_load_and_library/stringtable.png" alt="stringtable" /></p>
-
+<p><img src="https://catcheroftime.github.io/images/blog/devbook/link_load_and_library/stringtable.png" alt="stringtable"></p>
 <p>一般字符串表在ELF文件中也以段的形式保存， 常见的段名 <strong>“.strtab”</strong> (字符串表，用于保存普通的字符串) 和 <strong>“.shstrtab”</strong> (段表字符串表，用于保存段表中用到的字符串)</p>
-
 <p>学习时间：2019-10-23</p>
-
-<h3 id="链接的接口-符号">链接的接口&ndash;符号</h3>
-
+<h3 id="链接的接口--符号">链接的接口&ndash;符号</h3>
 <p>链接的本质就是要把不同的目标文件之间拼接成一个整体，实际上是目标文件之间对地址的引用，即对函数和变量的地址的引用， 为了避免连接过程中不同变量和函数之间的函数，每个函数或者变量都有自己独特的名字，函数和变量统称为 <strong>符号</strong>，函数名或变量名就是 <strong>符号名</strong>， 符号就是连接中的粘合剂，整个链接过程都是基于符号才能完成，每一个目标文件都会有一个相应的 <strong>符号表</strong>(Sysbol Table)</p>
-
 <h4 id="符号表结构">符号表结构</h4>
-
 <p>符号表一般是文件中的一个段，段名一般叫 “.systab”， 符号表的结构很简单，它是一个 “Elf32_Sym” 结构的数组</p>
-
 <pre><code>/* Symbol table entry.  */
 
 typedef struct
@@ -560,20 +491,15 @@ typedef struct
     Elf32_Section  st_shndx;     /* Section index */
 } Elf32_Sym;
 </code></pre>
-
 <h4 id="符号修饰和函数签名">符号修饰和函数签名</h4>
-
-<p>为了防止符号名冲突：<br />
-C语言规定，C语言源代码文件中所有的全局的变量和函数经过编译以后，相对应的符号名全部加上下划线 “_”，例如一个C语言函数 “foo”,那么他编译后的符号名就是 “foo_”<br />
-这种简单而原始的方法确实能够暂时减少 <strong>多种语言</strong> 目标文件之间的符号冲突的概率，但是没有从根本上解决符号冲突的问题<br />
+<p>为了防止符号名冲突：<br>
+C语言规定，C语言源代码文件中所有的全局的变量和函数经过编译以后，相对应的符号名全部加上下划线 “_”，例如一个C语言函数 “foo”,那么他编译后的符号名就是 “foo_”<br>
+这种简单而原始的方法确实能够暂时减少 <strong>多种语言</strong> 目标文件之间的符号冲突的概率，但是没有从根本上解决符号冲突的问题<br>
 C++ 引入 <code>namespace</code> 的方法解决多模块的符号冲突问题,语言层次的解决此问题</p>
-
 <blockquote>
 <p>实际上编译过程中 C++ 解决此问题的方法是 <strong>符号修饰(Name Decoration)</strong> 或 <strong>符号改编(Name Mangling)</strong></p>
 </blockquote>
-
 <p>例如下面这个例子，这里有6个 <code>func</code> 函数，但是返回类型和参数及命名空间各有不同：</p>
-
 <pre><code>int func(int);
 float func(float);
 
@@ -591,9 +517,7 @@ namespace N {
     };
 }
 </code></pre>
-
 <p>标识一个函数到底是谁，主要通过函数签名(Function Signature)，函数签名包含了一个函数的信息，包括函数名、它的参数类型、它所在的类和命名空间及其他信息。在编译器及链接器处理符号时，它们使用 <strong>名称修饰</strong> 的方法，使得每个函数签名对应一个修饰后的名称。编译器在将C++源代码编译成目标文件时，会将函数和变量的名字进行修饰，形成符号名，也就是说，C++编译器和链接器都是用符号来识别和处理函数和变量</p>
-
 <table>
 <thead>
 <tr>
@@ -601,74 +525,58 @@ namespace N {
 <th align="left">修饰后名称(符号名)</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="left">int func(int)</td>
 <td align="left">_Z4funci</td>
 </tr>
-
 <tr>
 <td align="left">float func(float)</td>
 <td align="left">_Z4funcf</td>
 </tr>
-
 <tr>
 <td align="left">int C::func(int)</td>
 <td align="left">_ZN1C4funcEi</td>
 </tr>
-
 <tr>
 <td align="left">int C::C2::func(int)</td>
 <td align="left">_ZN1C2C24funcEi</td>
 </tr>
-
 <tr>
 <td align="left">int N::func(int)</td>
 <td align="left">_ZN1N4funcEi</td>
 </tr>
-
 <tr>
 <td align="left">int N::C::func(int)</td>
 <td align="left">_ZN1N1C4funcEi</td>
 </tr>
 </tbody>
 </table>
-
 <p>GCC 的基本C++名称修饰方法如下：</p>
-
-<p>所有符号的都以 <code>_Z</code> 开头，对于嵌套的名字(在命名空间或在类里面的)，后面紧跟 <code>N</code> , 然后是各个名称空间和类的名字，每个名字前是名字字符串的长度，在以 <code>E</code> 结尾，它的参数列表紧跟在 <code>E</code> 后面或者函数名称后面，更详细可以参考GCC的名称修饰标准<br />
+<p>所有符号的都以 <code>_Z</code> 开头，对于嵌套的名字(在命名空间或在类里面的)，后面紧跟 <code>N</code> , 然后是各个名称空间和类的名字，每个名字前是名字字符串的长度，在以 <code>E</code> 结尾，它的参数列表紧跟在 <code>E</code> 后面或者函数名称后面，更详细可以参考GCC的名称修饰标准<br>
 <strong>注意：不同的编译器有不同的名称修饰规则</strong></p>
-
 <blockquote>
 <p>extern &ldquo;C&rdquo;</p>
 </blockquote>
-
-<p>在符号管理上，C++为了与C兼容，C++有同一个用来声明或定义一个C的符号的 <code>extern “C”</code> 关键字用法<br />
+<p>在符号管理上，C++为了与C兼容，C++有同一个用来声明或定义一个C的符号的 <code>extern “C”</code> 关键字用法<br>
 C++编译器会将在 <code>extern “C”</code> 的大括号内部的代码当做C语言代码处理，C++的名称修饰机制将不会起作用</p>
-
 <blockquote>
 <p>弱符号和强符号</p>
 </blockquote>
-
 <p>多个目标文件中含有相同名字的全局符号的定义，那么这些目标文件链接的时候将会出现符号重复定义的错误，例如目标文件A和目标文件B都定义了一个全局整形变量 global, 并将它们都初始化，那么链接器将A与B进行链接时会报错，这些符号的定义可以被称为 <strong>强符号(Strong Symbol)</strong></p>
-
 <p>对于C++/C 语言而言，编译器默认函数和初始化了的全局变量为强符号，未初始化的全局变量为弱符号， GCC的 <code>__attribute__((weak))</code> 来定义任何一个强符号为弱符号</p>
-
 <p>如下：</p>
-
 <pre><code>extern int ext;                      // 外部变量的引用
 
 int weak;                            // weak   弱符号
 int strong = 1;                      // strong 强符号
 __attribute__((weak)) weak2 = 2;     // weak2  弱符号
-
+ 
 int main()                           // main 强符号
 {
     return 0;
 }
 </code></pre>
-
 <h2 id="静态链接">静态链接</h2>
           </div>
 
@@ -1171,7 +1079,7 @@ int main()                           // main 强符号
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e9%93%be%e6%8e%a5%e7%9a%84%e6%8e%a5%e5%8f%a3-%e7%ac%a6%e5%8f%b7">
+						 					<a class="nav-link" href="#%e9%93%be%e6%8e%a5%e7%9a%84%e6%8e%a5%e5%8f%a3--%e7%ac%a6%e5%8f%b7">
 												 链接的接口–符号
 											</a>
 										</li>

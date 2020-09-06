@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on 一个懒散的程序猿</title>
@@ -6,7 +6,7 @@
     <description>Recent content in Tags on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sun, 30 Aug 2020 20:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 03 Sep 2020 00:15:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,36 +14,27 @@
     <item>
       <title>Qt</title>
       <link>https://catcheroftime.github.io/tags/qt/</link>
-      <pubDate>Sun, 30 Aug 2020 20:15:00 +0800</pubDate>
+      <pubDate>Thu, 03 Sep 2020 00:15:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/tags/qt/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>图片裁切</title>
-      <link>https://catcheroftime.github.io/tags/%E5%9B%BE%E7%89%87%E8%A3%81%E5%88%87/</link>
-      <pubDate>Sun, 30 Aug 2020 20:15:00 +0800</pubDate>
+      <title>Qt源码阅读</title>
+      <link>https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</link>
+      <pubDate>Thu, 03 Sep 2020 00:15:00 +0800</pubDate>
       
-      <guid>https://catcheroftime.github.io/tags/%E5%9B%BE%E7%89%87%E8%A3%81%E5%88%87/</guid>
+      <guid>https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</guid>
       <description></description>
     </item>
     
     <item>
       <title>自定义插件</title>
       <link>https://catcheroftime.github.io/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6/</link>
-      <pubDate>Tue, 11 Aug 2020 00:15:00 +0800</pubDate>
+      <pubDate>Sun, 30 Aug 2020 20:15:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Qt 常见问题</title>
-      <link>https://catcheroftime.github.io/tags/qt-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/</link>
-      <pubDate>Wed, 05 Aug 2020 00:15:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/qt-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/</guid>
       <description></description>
     </item>
     
@@ -66,11 +57,11 @@
     </item>
     
     <item>
-      <title>ffmpeg编译</title>
-      <link>https://catcheroftime.github.io/tags/ffmpeg%E7%BC%96%E8%AF%91/</link>
+      <title>ffmpeg</title>
+      <link>https://catcheroftime.github.io/tags/ffmpeg/</link>
       <pubDate>Wed, 11 Dec 2019 17:10:00 +0800</pubDate>
       
-      <guid>https://catcheroftime.github.io/tags/ffmpeg%E7%BC%96%E8%AF%91/</guid>
+      <guid>https://catcheroftime.github.io/tags/ffmpeg/</guid>
       <description></description>
     </item>
     
@@ -111,15 +102,6 @@
     </item>
     
     <item>
-      <title>Qt源码阅读</title>
-      <link>https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</link>
-      <pubDate>Fri, 25 Oct 2019 15:56:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>链接装载与库</title>
       <link>https://catcheroftime.github.io/tags/%E9%93%BE%E6%8E%A5%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/</link>
       <pubDate>Sat, 12 Oct 2019 11:02:00 +0800</pubDate>
@@ -147,47 +129,11 @@
     </item>
     
     <item>
-      <title>QPainterPath</title>
-      <link>https://catcheroftime.github.io/tags/qpainterpath/</link>
-      <pubDate>Sat, 10 Aug 2019 20:45:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/qpainterpath/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>进度条</title>
-      <link>https://catcheroftime.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1/</link>
-      <pubDate>Sat, 10 Aug 2019 20:45:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>时间轴</title>
-      <link>https://catcheroftime.github.io/tags/%E6%97%B6%E9%97%B4%E8%BD%B4/</link>
-      <pubDate>Sun, 28 Jul 2019 18:15:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/%E6%97%B6%E9%97%B4%E8%BD%B4/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>opencv库</title>
-      <link>https://catcheroftime.github.io/tags/opencv%E5%BA%93/</link>
+      <title>python库</title>
+      <link>https://catcheroftime.github.io/tags/python%E5%BA%93/</link>
       <pubDate>Mon, 15 Jul 2019 16:02:00 +0800</pubDate>
       
-      <guid>https://catcheroftime.github.io/tags/opencv%E5%BA%93/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>requests库</title>
-      <link>https://catcheroftime.github.io/tags/requests%E5%BA%93/</link>
-      <pubDate>Mon, 15 Jul 2019 16:02:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/requests%E5%BA%93/</guid>
+      <guid>https://catcheroftime.github.io/tags/python%E5%BA%93/</guid>
       <description></description>
     </item>
     
@@ -215,15 +161,6 @@
       <pubDate>Mon, 10 Jun 2019 12:54:26 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/tags/hugo/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>DB</title>
-      <link>https://catcheroftime.github.io/tags/db/</link>
-      <pubDate>Sun, 31 Mar 2019 12:54:26 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/db/</guid>
       <description></description>
     </item>
     
