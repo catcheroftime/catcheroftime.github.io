@@ -13,8 +13,8 @@
 <meta property="og:description" content="前几天的博客中介绍了如何更自由的调整 QInputDialog 类，当时留了一个坑，想完整的学习 QInputDialog 源码的实现，我回来填坑了, 整片文章可能比较冗长，主要是总结了阅读源码过程中一些感受和疑问" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2020-09/qinputdialog%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8A/" />
-<meta property="article:published_time" content="2020-09-02T00:15:00+08:00" />
-<meta property="article:modified_time" content="2020-09-02T00:15:00+08:00" />
+<meta property="article:published_time" content="2020-09-02T00:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-09-02T00:15:00&#43;08:00"/>
 
 
   <title>
@@ -287,15 +287,20 @@
 
           <div class="post-content markdown">
             <p>前几天的博客中介绍了如何更自由的调整 <code>QInputDialog</code> 类，当时留了一个坑，想完整的学习 <code>QInputDialog</code> 源码的实现，我回来填坑了, 整片文章可能比较冗长，主要是总结了阅读源码过程中一些感受和疑问</p>
+
 <h2 id="了解-qinputdialog-提供的功能">了解 QInputDialog 提供的功能</h2>
+
 <p>在看源码之前需要确定 QInputDialog 这个类提供了哪些功能?</p>
+
 <blockquote>
-<p>The QInputDialog class provides a simple convenience dialog to get a single value from the user.<br>
-The input value can be a string, a number or an item from a list. A label must be set to tell the user what they should enter.<br>
+<p>The QInputDialog class provides a simple convenience dialog to get a single value from the user.<br />
+The input value can be a string, a number or an item from a list. A label must be set to tell the user what they should enter.<br />
 Five static convenience functions are provided: getText(), getMultiLineText(), getInt(), getDouble(), and getItem().</p>
 </blockquote>
-<p>提供便捷的对话框，可以从用户的输入里获取某个值，这个值可以是字符串，可以是数字，也可以是列表中的一条<br>
+
+<p>提供便捷的对话框，可以从用户的输入里获取某个值，这个值可以是字符串，可以是数字，也可以是列表中的一条<br />
 并且提供了5个静态函数，从5个静态静态函数的返回值中我们可以估摸出界面里配合显示的控件大概如下</p>
+
 <table>
 <thead>
 <tr>
@@ -304,27 +309,32 @@ Five static convenience functions are provided: getText(), getMultiLineText(), g
 <th align="left">搭配的控件</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">getText()</td>
 <td align="left">获取普通字符串</td>
 <td align="left">QLineEdit</td>
 </tr>
+
 <tr>
 <td align="left">getMultiLineText()</td>
 <td align="left">获取富文本字符串</td>
 <td align="left">QPlainTextEdit</td>
 </tr>
+
 <tr>
 <td align="left">getInt()</td>
 <td align="left">获取 int 型</td>
 <td align="left">QSpinBox</td>
 </tr>
+
 <tr>
 <td align="left">getDouble()</td>
 <td align="left">获取 double 型</td>
 <td align="left">QDoubleSpinBox</td>
 </tr>
+
 <tr>
 <td align="left">getItem()</td>
 <td align="left">获取给定条目中的某一条</td>
@@ -332,163 +342,190 @@ Five static convenience functions are provided: getText(), getMultiLineText(), g
 </tr>
 </tbody>
 </table>
+
 <p>为了组织布局，肯定是拥有 <code>QVBoxLayout</code>, 显示提醒用户的描述 <code>QLabel</code>, 以及 <code>QDialogButtonBox</code> 的按键组等等</p>
+
 <p>我们设想了大概需要的控件，同时也设想一下大致的代码逻辑</p>
+
 <ul>
 <li>提供初始化各种控件的接口，根据用户需要对应初始化，比如5个静态函数的方式</li>
 <li>提供 获取int，获取double，获取QString 的接口，根据初始化控件的选择对应调用</li>
 <li>提供设置对应控件的接口，比如 QSpinBox 设置最大值最小值，以及设置当前值的接口等等</li>
 </ul>
+
 <p>其实整体逻辑很清晰，接下可以针对源码看一些边边角角的东西</p>
+
 <h2 id="qinputdialogprivate">QInputDialogPrivate</h2>
+
 <p>QT 是使用 <strong>D指针</strong> 将真正的对象封装在对应的 <code>*Private</code> 中， 例如 <code>QInputDialog</code> 封装在 <code>QInputDialogPrivate</code> 中，先简单对 <code>QInputDialogPrivate</code> 提供给 <code>QInputDialog</code> 类的接口做一个简单的介绍，之后会针对 <code>QInputDialog</code> 的接口如何调用 <code>QInputDialogPrivate</code> 接口详细分析</p>
-<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="k">class</span> <span class="nc">QInputDialogPrivate</span> <span class="o">:</span> <span class="k">public</span> <span class="n">QDialogPrivate</span>
-<span class="p">{</span>
-    <span class="n">Q_DECLARE_PUBLIC</span><span class="p">(</span><span class="n">QInputDialog</span><span class="p">)</span>
-<span class="k">public</span><span class="o">:</span>
-    <span class="n">QInputDialogPrivate</span><span class="p">();</span>
-    <span class="c1">// 初始化布局
-</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">ensureLayout</span><span class="p">();</span>
 
-    <span class="c1">// 根据 InputDialogOption 是否是 UsePlainTextEditForTextInput 来决定初始化 QLineEidt 还是 QPlainTextEdit
-</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">ensureLineEdit</span><span class="p">();</span>
-    <span class="kt">void</span> <span class="nf">ensurePlainTextEdit</span><span class="p">();</span>
+<pre><code class="language-C++">class QInputDialogPrivate : public QDialogPrivate
+{
+    Q_DECLARE_PUBLIC(QInputDialog)
+public:
+    QInputDialogPrivate();
+    // 初始化布局
+    void ensureLayout();
 
-    <span class="c1">// QInputDialog 使用 setComboBoxEditable(bool editable) 或者 setComboBoxItems(const QStringList &amp;items) 时，会初始化 QComboBox 的布局，
-</span><span class="c1"></span>    <span class="c1">// 再根据 InputDialogOption 是否是UseListViewForComboBoxItems 来决定是否初始化 QListView
-</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">ensureComboBox</span><span class="p">();</span>
-    <span class="kt">void</span> <span class="nf">ensureListView</span><span class="p">();</span>
+    // 根据 InputDialogOption 是否是 UsePlainTextEditForTextInput 来决定初始化 QLineEidt 还是 QPlainTextEdit
+    void ensureLineEdit();
+    void ensurePlainTextEdit();
 
-    <span class="c1">// 初始化 QSpinBox
-</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">ensureIntSpinBox</span><span class="p">();</span>
+    // QInputDialog 使用 setComboBoxEditable(bool editable) 或者 setComboBoxItems(const QStringList &amp;items) 时，会初始化 QComboBox 的布局，
+    // 再根据 InputDialogOption 是否是UseListViewForComboBoxItems 来决定是否初始化 QListView
+    void ensureComboBox();
+    void ensureListView();
 
-    <span class="c1">// 初始化 QDoubleSpinBox
-</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">ensureDoubleSpinBox</span><span class="p">();</span>
+    // 初始化 QSpinBox
+    void ensureIntSpinBox();
 
-    <span class="c1">// 相比于 QLineEdit,QPlainTextEdit 的默认值可以是空，仅仅只是返回一个用户给定的值， ok 按钮不需要状态
-</span><span class="c1"></span>    <span class="c1">// 但是 QSpinBox 和 QDoubleSpinBox（继承 QAbstractSpinBox ）控件是存在一个有效值范围，检测当前值是否有效，来决定 ok 按钮的状态(值无效，OK按钮不可用，值有效，OK按钮可用)
-</span><span class="c1"></span>    <span class="c1">// 这个函数主要就是通过信号槽的建立，来实现此功能
-</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">ensureEnabledConnection</span><span class="p">(</span><span class="n">QAbstractSpinBox</span> <span class="o">*</span><span class="n">spinBox</span><span class="p">);</span>
+    // 初始化 QDoubleSpinBox
+    void ensureDoubleSpinBox();
 
-    <span class="c1">// 设置弹窗中最后真正显示的控件， 这个 widget 可以是 QLineEdit，QPlainTextEdit 等中的一个
-</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">setInputWidget</span><span class="p">(</span><span class="n">QWidget</span> <span class="o">*</span><span class="n">widget</span><span class="p">);</span>
+    // 相比于 QLineEdit,QPlainTextEdit 的默认值可以是空，仅仅只是返回一个用户给定的值， ok 按钮不需要状态
+    // 但是 QSpinBox 和 QDoubleSpinBox（继承 QAbstractSpinBox ）控件是存在一个有效值范围，检测当前值是否有效，来决定 ok 按钮的状态(值无效，OK按钮不可用，值有效，OK按钮可用)
+    // 这个函数主要就是通过信号槽的建立，来实现此功能
+    void ensureEnabledConnection(QAbstractSpinBox *spinBox);
 
-    <span class="c1">// QString 返回值的有3种， QLineEdit，QPlainTextEdit，QComboBox 这里会根据 InputDialogOptions 来选择具体选择哪种控件
-</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">chooseRightTextInputWidget</span><span class="p">();</span>
+    // 设置弹窗中最后真正显示的控件， 这个 widget 可以是 QLineEdit，QPlainTextEdit 等中的一个
+    void setInputWidget(QWidget *widget);
 
-    <span class="c1">// 设置窗口弹出时控件上显示的值
-</span><span class="c1"></span>    <span class="c1">// QLineEdit 可以直接调用 setText(const QString &amp;text)
-</span><span class="c1"></span>    <span class="c1">// QPlainTextEdit 直接调用 setPlainText(const QString &amp;text)
-</span><span class="c1"></span>    <span class="c1">// QSpinBox 调用 setValue(int val)
-</span><span class="c1"></span>    <span class="c1">// QDoubleSpinBox 调用 setValue(double val)
-</span><span class="c1"></span>    <span class="c1">// QComboBox 存在一个先 findText 是否存在的过程，对于 QComboBox 和 QListView 所以单独封装成2个函数
-</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">setComboBoxText</span><span class="p">(</span><span class="k">const</span> <span class="n">QString</span> <span class="o">&amp;</span><span class="n">text</span><span class="p">);</span>
-    <span class="kt">void</span> <span class="nf">setListViewText</span><span class="p">(</span><span class="k">const</span> <span class="n">QString</span> <span class="o">&amp;</span><span class="n">text</span><span class="p">);</span>
+    // QString 返回值的有3种， QLineEdit，QPlainTextEdit，QComboBox 这里会根据 InputDialogOptions 来选择具体选择哪种控件
+    void chooseRightTextInputWidget();
 
-    <span class="c1">// 获取 listview 中的值
-</span><span class="c1"></span>    <span class="n">QString</span> <span class="nf">listViewText</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    // 设置窗口弹出时控件上显示的值
+    // QLineEdit 可以直接调用 setText(const QString &amp;text)
+    // QPlainTextEdit 直接调用 setPlainText(const QString &amp;text)
+    // QSpinBox 调用 setValue(int val)
+    // QDoubleSpinBox 调用 setValue(double val)
+    // QComboBox 存在一个先 findText 是否存在的过程，对于 QComboBox 和 QListView 所以单独封装成2个函数
+    void setComboBoxText(const QString &amp;text);
+    void setListViewText(const QString &amp;text);
 
-    <span class="kt">void</span> <span class="nf">ensureLayout</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">const_cast</span><span class="o">&lt;</span><span class="n">QInputDialogPrivate</span> <span class="o">*&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">ensureLayout</span><span class="p">();</span> <span class="p">}</span>
-    <span class="kt">bool</span> <span class="nf">useComboBoxOrListView</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">comboBox</span> <span class="o">&amp;&amp;</span> <span class="n">comboBox</span><span class="o">-&gt;</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
+    // 获取 listview 中的值
+    QString listViewText() const;
 
-    <span class="c1">// 这2个函数是 QLineEdit 和 QPlainTextEdit 控件 textChanged(QString) 信号绑定的槽函数
-</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">_q_textChanged</span><span class="p">(</span><span class="k">const</span> <span class="n">QString</span> <span class="o">&amp;</span><span class="n">text</span><span class="p">);</span>
-    <span class="kt">void</span> <span class="nf">_q_plainTextEditTextChanged</span><span class="p">();</span>
+    void ensureLayout() const { const_cast&lt;QInputDialogPrivate *&gt;(this)-&gt;ensureLayout(); }
+    bool useComboBoxOrListView() const { return comboBox &amp;&amp; comboBox-&gt;count() &gt; 0; }
 
-    <span class="c1">// QListView 行发生改变的时候，触发的槽函数
-</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">_q_currentRowChanged</span><span class="p">(</span><span class="k">const</span> <span class="n">QModelIndex</span> <span class="o">&amp;</span><span class="n">newIndex</span><span class="p">,</span> <span class="k">const</span> <span class="n">QModelIndex</span> <span class="o">&amp;</span><span class="n">oldIndex</span><span class="p">);</span>
+    // 这2个函数是 QLineEdit 和 QPlainTextEdit 控件 textChanged(QString) 信号绑定的槽函数
+    void _q_textChanged(const QString &amp;text);
+    void _q_plainTextEditTextChanged();
 
-    <span class="c1">// 控件对象
-</span><span class="c1"></span>    <span class="k">mutable</span> <span class="n">QLineEdit</span> <span class="o">*</span><span class="n">lineEdit</span><span class="p">;</span>
-    <span class="k">mutable</span> <span class="n">QPlainTextEdit</span> <span class="o">*</span><span class="n">plainTextEdit</span><span class="p">;</span>
-    <span class="k">mutable</span> <span class="n">QSpinBox</span> <span class="o">*</span><span class="n">intSpinBox</span><span class="p">;</span>
-    <span class="k">mutable</span> <span class="n">QDoubleSpinBox</span> <span class="o">*</span><span class="n">doubleSpinBox</span><span class="p">;</span>
-    <span class="k">mutable</span> <span class="n">QComboBox</span> <span class="o">*</span><span class="n">comboBox</span><span class="p">;</span>
-    <span class="k">mutable</span> <span class="n">QListView</span> <span class="o">*</span><span class="n">listView</span><span class="p">;</span>
+    // QListView 行发生改变的时候，触发的槽函数
+    void _q_currentRowChanged(const QModelIndex &amp;newIndex, const QModelIndex &amp;oldIndex);
 
-    <span class="c1">// 最后界面呈现时的布局， QLabel, QWidget 以及按钮组 QDialogButtonBox
-</span><span class="c1"></span>    <span class="k">mutable</span> <span class="n">QVBoxLayout</span> <span class="o">*</span><span class="n">mainLayout</span><span class="p">;</span>
-    <span class="k">mutable</span> <span class="n">QLabel</span> <span class="o">*</span><span class="n">label</span><span class="p">;</span>
-    <span class="k">mutable</span> <span class="n">QWidget</span> <span class="o">*</span><span class="n">inputWidget</span><span class="p">;</span>
-    <span class="k">mutable</span> <span class="n">QDialogButtonBox</span> <span class="o">*</span><span class="n">buttonBox</span><span class="p">;</span>
+    // 控件对象
+    mutable QLineEdit *lineEdit;
+    mutable QPlainTextEdit *plainTextEdit;
+    mutable QSpinBox *intSpinBox;
+    mutable QDoubleSpinBox *doubleSpinBox;
+    mutable QComboBox *comboBox;
+    mutable QListView *listView;
 
-    <span class="c1">// 保存 InputDialogOptions
-</span><span class="c1"></span>    <span class="n">QInputDialog</span><span class="o">::</span><span class="n">InputDialogOptions</span> <span class="n">opts</span><span class="p">;</span>
+    // 最后界面呈现时的布局， QLabel, QWidget 以及按钮组 QDialogButtonBox
+    mutable QVBoxLayout *mainLayout;
+    mutable QLabel *label;
+    mutable QWidget *inputWidget;
+    mutable QDialogButtonBox *buttonBox;
 
-    <span class="c1">// QTextEdit, QPlainTextEdit, QComboBox, QListView 当前显示的值
-</span><span class="c1"></span>    <span class="n">QString</span> <span class="n">textValue</span><span class="p">;</span>
+    // 保存 InputDialogOptions
+    QInputDialog::InputDialogOptions opts;
 
-    <span class="c1">// QInputDialog open(QObject *receiver, const char *member) 的接口有重载，这2个变量就是保存窗口accepted()关闭后，会触发的信号槽中的对象和接口信息
-</span><span class="c1"></span>    <span class="n">QPointer</span><span class="o">&lt;</span><span class="n">QObject</span><span class="o">&gt;</span> <span class="n">receiverToDisconnectOnClose</span><span class="p">;</span>
-    <span class="n">QByteArray</span> <span class="n">memberToDisconnectOnClose</span><span class="p">;</span>
-<span class="p">};</span>
-</code></pre></div><p>里面对每个函数都做了简单的介绍，一定要对里面描述有个印象，不然后面的介绍可能会看的有点懵</p>
+    // QTextEdit, QPlainTextEdit, QComboBox, QListView 当前显示的值
+    QString textValue;
+
+    // QInputDialog open(QObject *receiver, const char *member) 的接口有重载，这2个变量就是保存窗口accepted()关闭后，会触发的信号槽中的对象和接口信息
+    QPointer&lt;QObject&gt; receiverToDisconnectOnClose;
+    QByteArray memberToDisconnectOnClose;
+};
+</code></pre>
+
+<p>里面对每个函数都做了简单的介绍，一定要对里面描述有个印象，不然后面的介绍可能会看的有点懵</p>
+
 <h2 id="初始化控件相关的函数">初始化控件相关的函数</h2>
+
 <h3 id="ensurelayout">ensureLayout()</h3>
+
 <ul>
 <li>初始化默认的 <code>QLabel *label</code></li>
 <li>初始化默认的显示的控件 <code>QWidget *inputWidget</code>, 默认显示的是 <code>QLineEdit</code></li>
 <li>初始化按钮组 <code>QDialogButtonBox *buttonBox</code>，默认开始和取消2个按钮</li>
 <li>初始化默认布局，<code>QVBoxLayout *mainLayout</code>, 将 <code>label</code>, <code>inputWidget</code>, <code>buttonBox</code> 依次加入布局中，展示</li>
 </ul>
+
 <p>源码如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">QInputDialogPrivate</span><span class="o">::</span><span class="n">ensureLayout</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">Q_Q</span><span class="p">(</span><span class="n">QInputDialog</span><span class="p">);</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">mainLayout</span><span class="p">)</span>
-        <span class="k">return</span><span class="p">;</span>
+<pre><code class="language-C++">void QInputDialogPrivate::ensureLayout()
+{
+    Q_Q(QInputDialog);
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">inputWidget</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">ensureLineEdit</span><span class="p">();</span>
-        <span class="n">inputWidget</span> <span class="o">=</span> <span class="n">lineEdit</span><span class="p">;</span>
-    <span class="p">}</span>
+    if (mainLayout)
+        return;
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">label</span><span class="p">)</span>
-        <span class="n">label</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QLabel</span><span class="p">(</span><span class="n">QInputDialog</span><span class="o">::</span><span class="n">tr</span><span class="p">(</span><span class="s">&#34;Enter a value:&#34;</span><span class="p">),</span> <span class="n">q</span><span class="p">);</span>
-<span class="cp">#ifndef QT_NO_SHORTCUT
-</span><span class="cp"></span>    <span class="c1">// 设置 QLabel 快捷键跳转的对象
-</span><span class="c1"></span>    <span class="n">label</span><span class="o">-&gt;</span><span class="n">setBuddy</span><span class="p">(</span><span class="n">inputWidget</span><span class="p">);</span>
-<span class="cp">#endif
-</span><span class="cp"></span>    <span class="n">label</span><span class="o">-&gt;</span><span class="n">setSizePolicy</span><span class="p">(</span><span class="n">QSizePolicy</span><span class="o">::</span><span class="n">Minimum</span><span class="p">,</span> <span class="n">QSizePolicy</span><span class="o">::</span><span class="n">Fixed</span><span class="p">);</span>
+    if (!inputWidget) {
+        ensureLineEdit();
+        inputWidget = lineEdit;
+    }
 
-    <span class="n">buttonBox</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QDialogButtonBox</span><span class="p">(</span><span class="n">QDialogButtonBox</span><span class="o">::</span><span class="n">Ok</span> <span class="o">|</span> <span class="n">QDialogButtonBox</span><span class="o">::</span><span class="n">Cancel</span><span class="p">,</span> <span class="n">Qt</span><span class="o">::</span><span class="n">Horizontal</span><span class="p">,</span> <span class="n">q</span><span class="p">);</span>
-    <span class="n">QObject</span><span class="o">::</span><span class="n">connect</span><span class="p">(</span><span class="n">buttonBox</span><span class="p">,</span> <span class="n">SIGNAL</span><span class="p">(</span><span class="n">accepted</span><span class="p">()),</span> <span class="n">q</span><span class="p">,</span> <span class="n">SLOT</span><span class="p">(</span><span class="n">accept</span><span class="p">()));</span>
-    <span class="n">QObject</span><span class="o">::</span><span class="n">connect</span><span class="p">(</span><span class="n">buttonBox</span><span class="p">,</span> <span class="n">SIGNAL</span><span class="p">(</span><span class="n">rejected</span><span class="p">()),</span> <span class="n">q</span><span class="p">,</span> <span class="n">SLOT</span><span class="p">(</span><span class="n">reject</span><span class="p">()));</span>
+    if (!label)
+        label = new QLabel(QInputDialog::tr(&quot;Enter a value:&quot;), q);
+#ifndef QT_NO_SHORTCUT
+    // 设置 QLabel 快捷键跳转的对象
+    label-&gt;setBuddy(inputWidget);
+#endif
+    label-&gt;setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
-    <span class="n">mainLayout</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QVBoxLayout</span><span class="p">(</span><span class="n">q</span><span class="p">);</span>
-    <span class="c1">//we want to let the input dialog grow to available size on Symbian.
-</span><span class="c1"></span>    <span class="n">mainLayout</span><span class="o">-&gt;</span><span class="n">setSizeConstraint</span><span class="p">(</span><span class="n">QLayout</span><span class="o">::</span><span class="n">SetMinAndMaxSize</span><span class="p">);</span>
-    <span class="n">mainLayout</span><span class="o">-&gt;</span><span class="n">addWidget</span><span class="p">(</span><span class="n">label</span><span class="p">);</span>
-    <span class="n">mainLayout</span><span class="o">-&gt;</span><span class="n">addWidget</span><span class="p">(</span><span class="n">inputWidget</span><span class="p">);</span>
-    <span class="n">mainLayout</span><span class="o">-&gt;</span><span class="n">addWidget</span><span class="p">(</span><span class="n">buttonBox</span><span class="p">);</span>
-    <span class="c1">// 因为不确定 inputBox 具体的哪种控件， 所以这里需要对 SpinBox 建立信号槽
-</span><span class="c1"></span>    <span class="n">ensureEnabledConnection</span><span class="p">(</span><span class="n">qobject_cast</span><span class="o">&lt;</span><span class="n">QAbstractSpinBox</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">inputWidget</span><span class="p">));</span>
-    <span class="n">inputWidget</span><span class="o">-&gt;</span><span class="n">show</span><span class="p">();</span>
-<span class="p">}</span>
-</code></pre></div><h3 id="ensurelineedit">ensureLineEdit()</h3>
+    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, q);
+    QObject::connect(buttonBox, SIGNAL(accepted()), q, SLOT(accept()));
+    QObject::connect(buttonBox, SIGNAL(rejected()), q, SLOT(reject()));
+
+    mainLayout = new QVBoxLayout(q);
+    //we want to let the input dialog grow to available size on Symbian.
+    mainLayout-&gt;setSizeConstraint(QLayout::SetMinAndMaxSize);
+    mainLayout-&gt;addWidget(label);
+    mainLayout-&gt;addWidget(inputWidget);
+    mainLayout-&gt;addWidget(buttonBox);
+    // 因为不确定 inputBox 具体的哪种控件， 所以这里需要对 SpinBox 建立信号槽
+    ensureEnabledConnection(qobject_cast&lt;QAbstractSpinBox *&gt;(inputWidget));
+    inputWidget-&gt;show();
+}
+</code></pre>
+
+<h3 id="ensurelineedit">ensureLineEdit()</h3>
+
 <p>判断 <code>QLineEdit</code> 是否存在后创建，建立信号槽，因为真正展示是交给 <code>inputWidget</code>, 所以 <code>QLineEdit</code> 创建的时候先 <code>hide()</code></p>
-<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">QInputDialogPrivate</span><span class="o">::</span><span class="n">ensureLineEdit</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">Q_Q</span><span class="p">(</span><span class="n">QInputDialog</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">lineEdit</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">lineEdit</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="n">q</span><span class="p">);</span>
-<span class="cp">#ifndef QT_NO_IM
-</span><span class="cp"></span>        <span class="n">qt_widget_private</span><span class="p">(</span><span class="n">lineEdit</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">inheritsInputMethodHints</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<span class="cp">#endif
-</span><span class="cp"></span>        <span class="n">lineEdit</span><span class="o">-&gt;</span><span class="n">hide</span><span class="p">();</span>
-        <span class="n">QObject</span><span class="o">::</span><span class="n">connect</span><span class="p">(</span><span class="n">lineEdit</span><span class="p">,</span> <span class="n">SIGNAL</span><span class="p">(</span><span class="n">textChanged</span><span class="p">(</span><span class="n">QString</span><span class="p">)),</span>
-                        <span class="n">q</span><span class="p">,</span> <span class="n">SLOT</span><span class="p">(</span><span class="n">_q_textChanged</span><span class="p">(</span><span class="n">QString</span><span class="p">)));</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><p><code>qt_widget_private(lineEdit)</code> 获取 <code>D指针</code>， 设置 <code>QLineEdit</code> 键盘输入的属性 <code>Qt::InputMethodHints</code></p>
-<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="n">Q_WIDGETS_EXPORT</span> <span class="n">QWidgetPrivate</span> <span class="o">*</span><span class="nf">qt_widget_private</span><span class="p">(</span><span class="n">QWidget</span> <span class="o">*</span><span class="n">widget</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="n">widget</span><span class="o">-&gt;</span><span class="n">d_func</span><span class="p">();</span>
-<span class="p">}</span>
-</code></pre></div><p><code>ensurePlainTextEdit()</code>, <code>ensureComboBox()</code>, <code>ensureListView()</code>, <code>ensureIntSpinBox()</code>，<code>ensureDoubleSpinBox()</code> 代码结构几乎是一样</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">判断是否存在-&gt;不存在创建-&gt;设置基础属性-&gt;建立信号槽
-</code></pre></div><p>唯一不同的是信号槽的建立的内容存在差别，简单整理下面一张表</p>
+
+<pre><code class="language-C++">void QInputDialogPrivate::ensureLineEdit()
+{
+    Q_Q(QInputDialog);
+    if (!lineEdit) {
+        lineEdit = new QLineEdit(q);
+#ifndef QT_NO_IM
+        qt_widget_private(lineEdit)-&gt;inheritsInputMethodHints = 1;
+#endif
+        lineEdit-&gt;hide();
+        QObject::connect(lineEdit, SIGNAL(textChanged(QString)),
+                        q, SLOT(_q_textChanged(QString)));
+    }
+}
+</code></pre>
+
+<p><code>qt_widget_private(lineEdit)</code> 获取 <code>D指针</code>， 设置 <code>QLineEdit</code> 键盘输入的属性 <code>Qt::InputMethodHints</code></p>
+
+<pre><code class="language-C++">Q_WIDGETS_EXPORT QWidgetPrivate *qt_widget_private(QWidget *widget)
+{
+    return widget-&gt;d_func();
+}
+</code></pre>
+
+<p><code>ensurePlainTextEdit()</code>, <code>ensureComboBox()</code>, <code>ensureListView()</code>, <code>ensureIntSpinBox()</code>，<code>ensureDoubleSpinBox()</code> 代码结构几乎是一样</p>
+
+<pre><code class="language-shell">判断是否存在-&gt;不存在创建-&gt;设置基础属性-&gt;建立信号槽
+</code></pre>
+
+<p>唯一不同的是信号槽的建立的内容存在差别，简单整理下面一张表</p>
+
 <table>
 <thead>
 <tr>
@@ -498,6 +535,7 @@ Five static convenience functions are provided: getText(), getMultiLineText(), g
 <th align="left">对应的槽函数或信号</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">ensureLineEdit()</td>
@@ -505,30 +543,35 @@ Five static convenience functions are provided: getText(), getMultiLineText(), g
 <td align="left">textChanged(QString)</td>
 <td align="left">_q_textChanged(QString)</td>
 </tr>
+
 <tr>
 <td align="left">ensurePlainTextEdit()</td>
 <td align="left">QPlainTextEdit</td>
 <td align="left">textChanged()</td>
 <td align="left">_q_plainTextEditTextChanged()</td>
 </tr>
+
 <tr>
 <td align="left">ensureComboBox()</td>
 <td align="left">QComboBox</td>
-<td align="left">editTextChanged(QString)<!-- raw HTML omitted -->currentIndexChanged(QString)</td>
+<td align="left">editTextChanged(QString)</br>currentIndexChanged(QString)</td>
 <td align="left">_q_textChanged(QString)</td>
 </tr>
+
 <tr>
 <td align="left">ensureListView()</td>
 <td align="left">QListView</td>
 <td align="left">currentRowChanged(QModelIndex,QModelIndex)</td>
 <td align="left">_q_currentRowChanged(QModelIndex,QModelIndex)</td>
 </tr>
+
 <tr>
 <td align="left">ensureIntSpinBox()</td>
 <td align="left">QInputDialogSpinBox</td>
 <td align="left">valueChanged(int)</td>
 <td align="left">SIGNAL(intValueChanged(int))</td>
 </tr>
+
 <tr>
 <td align="left">ensureDoubleSpinBox()</td>
 <td align="left">QInputDialogDoubleSpinBox</td>
@@ -537,175 +580,218 @@ Five static convenience functions are provided: getText(), getMultiLineText(), g
 </tr>
 </tbody>
 </table>
+
 <h3 id="intspinbox-和-doublespinbox-的初始化">intSpinBox 和 doubleSpinBox 的初始化</h3>
+
 <p>这2个控件其实只是值的类型不一样，一个是 <code>int</code> 一个是 <code>double</code>, 所以我只以 <code>QSpinBox *intSpinBox</code> 控件为例</p>
-<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">QInputDialogPrivate</span><span class="o">::</span><span class="n">ensureIntSpinBox</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">Q_Q</span><span class="p">(</span><span class="n">QInputDialog</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">intSpinBox</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">intSpinBox</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QInputDialogSpinBox</span><span class="p">(</span><span class="n">q</span><span class="p">);</span>
-        <span class="n">intSpinBox</span><span class="o">-&gt;</span><span class="n">hide</span><span class="p">();</span>
-        <span class="n">QObject</span><span class="o">::</span><span class="n">connect</span><span class="p">(</span><span class="n">intSpinBox</span><span class="p">,</span> <span class="n">SIGNAL</span><span class="p">(</span><span class="n">valueChanged</span><span class="p">(</span><span class="kt">int</span><span class="p">)),</span>
-                         <span class="n">q</span><span class="p">,</span> <span class="n">SIGNAL</span><span class="p">(</span><span class="n">intValueChanged</span><span class="p">(</span><span class="kt">int</span><span class="p">)));</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><p>从头文件里我们知道成员变量 <code>intSpinBox</code> 的类是 <code>QSpinBox</code>, 但是却是用 <code>QInputDialogSpinBox</code> 来初始化的<br>
+
+<pre><code class="language-C++">void QInputDialogPrivate::ensureIntSpinBox()
+{
+    Q_Q(QInputDialog);
+    if (!intSpinBox) {
+        intSpinBox = new QInputDialogSpinBox(q);
+        intSpinBox-&gt;hide();
+        QObject::connect(intSpinBox, SIGNAL(valueChanged(int)),
+                         q, SIGNAL(intValueChanged(int)));
+    }
+}
+</code></pre>
+
+<p>从头文件里我们知道成员变量 <code>intSpinBox</code> 的类是 <code>QSpinBox</code>, 但是却是用 <code>QInputDialogSpinBox</code> 来初始化的<br />
 并且之前我提到 <code>QSpinBox</code> 需要判断值是否合法来设置 <code>OK</code> 按钮的状态,所以我们还需要看一下 <code>QInputDialogSpinBox</code> 的代码</p>
-<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="k">class</span> <span class="nc">QInputDialogSpinBox</span> <span class="o">:</span> <span class="k">public</span> <span class="n">QSpinBox</span>
-<span class="p">{</span>
-    <span class="n">Q_OBJECT</span>
-<span class="k">public</span><span class="o">:</span>
-    <span class="n">QInputDialogSpinBox</span><span class="p">(</span><span class="n">QWidget</span> <span class="o">*</span><span class="n">parent</span><span class="p">)</span>
-        <span class="o">:</span> <span class="n">QSpinBox</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">connect</span><span class="p">(</span><span class="n">lineEdit</span><span class="p">(),</span> <span class="n">SIGNAL</span><span class="p">(</span><span class="n">textChanged</span><span class="p">(</span><span class="n">QString</span><span class="p">)),</span> <span class="k">this</span><span class="p">,</span> <span class="n">SLOT</span><span class="p">(</span><span class="n">notifyTextChanged</span><span class="p">()));</span>
-        <span class="n">connect</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">SIGNAL</span><span class="p">(</span><span class="n">editingFinished</span><span class="p">()),</span> <span class="k">this</span><span class="p">,</span> <span class="n">SLOT</span><span class="p">(</span><span class="n">notifyTextChanged</span><span class="p">()));</span>
-    <span class="p">}</span>
 
-<span class="nl">signals</span><span class="p">:</span>
-    <span class="kt">void</span> <span class="n">textChanged</span><span class="p">(</span><span class="kt">bool</span><span class="p">);</span>
+<pre><code class="language-C++">class QInputDialogSpinBox : public QSpinBox
+{
+    Q_OBJECT
+public:
+    QInputDialogSpinBox(QWidget *parent)
+        : QSpinBox(parent) {
+        connect(lineEdit(), SIGNAL(textChanged(QString)), this, SLOT(notifyTextChanged()));
+        connect(this, SIGNAL(editingFinished()), this, SLOT(notifyTextChanged()));
+    }
 
-<span class="k">private</span> <span class="nl">slots</span><span class="p">:</span>
-    <span class="kt">void</span> <span class="n">notifyTextChanged</span><span class="p">()</span> <span class="p">{</span> <span class="n">emit</span> <span class="nf">textChanged</span><span class="p">(</span><span class="n">hasAcceptableInput</span><span class="p">());</span> <span class="p">}</span>
+signals:
+    void textChanged(bool);
 
-<span class="c1">// ... 省略了一些键盘鼠标事件函数
-</span><span class="c1"></span><span class="p">};</span>
-</code></pre></div><p>当 <code>QSpinBox</code> 的值有改变以及输入结束之后，会触发一个槽函数 <code>notifyTextChanged()</code>, <code>hasAcceptableInput()</code> 检测当前值是否有效， 并发出一个 <code>textChanged(bool)</code> 的信号</p>
+private slots:
+    void notifyTextChanged() { emit textChanged(hasAcceptableInput()); }
+
+// ... 省略了一些键盘鼠标事件函数
+};
+</code></pre>
+
+<p>当 <code>QSpinBox</code> 的值有改变以及输入结束之后，会触发一个槽函数 <code>notifyTextChanged()</code>, <code>hasAcceptableInput()</code> 检测当前值是否有效， 并发出一个 <code>textChanged(bool)</code> 的信号</p>
+
 <p>前面介绍 <code>ensureLayout()</code> 创建布局的时候，函数的最后手动调用了这个函数 <code>ensureEnabledConnection</code> 这个函数</p>
-<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">QInputDialogPrivate</span><span class="o">::</span><span class="n">ensureEnabledConnection</span><span class="p">(</span><span class="n">QAbstractSpinBox</span> <span class="o">*</span><span class="n">spinBox</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">spinBox</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">QAbstractButton</span> <span class="o">*</span><span class="n">okButton</span> <span class="o">=</span> <span class="n">buttonBox</span><span class="o">-&gt;</span><span class="n">button</span><span class="p">(</span><span class="n">QDialogButtonBox</span><span class="o">::</span><span class="n">Ok</span><span class="p">);</span>
-        <span class="n">QObject</span><span class="o">::</span><span class="n">connect</span><span class="p">(</span><span class="n">spinBox</span><span class="p">,</span> <span class="n">SIGNAL</span><span class="p">(</span><span class="n">textChanged</span><span class="p">(</span><span class="kt">bool</span><span class="p">)),</span> <span class="n">okButton</span><span class="p">,</span> <span class="n">SLOT</span><span class="p">(</span><span class="n">setEnabled</span><span class="p">(</span><span class="kt">bool</span><span class="p">)),</span> <span class="n">Qt</span><span class="o">::</span><span class="n">UniqueConnection</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><p>从这里我们可以看出，当 <code>spinBox</code> 值有效的时候， <code>okButton</code> 设置为可用，反之则设置成不可用</p>
+
+<pre><code class="language-C++">void QInputDialogPrivate::ensureEnabledConnection(QAbstractSpinBox *spinBox)
+{
+    if (spinBox) {
+        QAbstractButton *okButton = buttonBox-&gt;button(QDialogButtonBox::Ok);
+        QObject::connect(spinBox, SIGNAL(textChanged(bool)), okButton, SLOT(setEnabled(bool)), Qt::UniqueConnection);
+    }
+}
+</code></pre>
+
+<p>从这里我们可以看出，当 <code>spinBox</code> 值有效的时候， <code>okButton</code> 设置为可用，反之则设置成不可用</p>
+
 <h2 id="控件对应的槽函数">控件对应的槽函数</h2>
+
 <p>上面整理一张关于信号槽的表，可以在比照看一下，所有的槽函数</p>
-<h3 id="_q_textchangedconst-qstring-text">_q_textChanged(const QString &amp;text)</h3>
+
+<h3 id="q-textchanged-const-qstring-text">_q_textChanged(const QString &amp;text)</h3>
+
 <p><code>QLineEdit</code> 和 <code>QComboBox</code> 控件使用的槽函数，判断 <code>textValue</code> 值是否改变，并赋值和发送值改变的信号</p>
-<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">QInputDialogPrivate</span><span class="o">::</span><span class="n">_q_textChanged</span><span class="p">(</span><span class="k">const</span> <span class="n">QString</span> <span class="o">&amp;</span><span class="n">text</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">Q_Q</span><span class="p">(</span><span class="n">QInputDialog</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">textValue</span> <span class="o">!=</span> <span class="n">text</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">textValue</span> <span class="o">=</span> <span class="n">text</span><span class="p">;</span>
-        <span class="n">emit</span> <span class="n">q</span><span class="o">-&gt;</span><span class="n">textValueChanged</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><h3 id="_q_plaintextedittextchanged">_q_plainTextEditTextChanged()</h3>
+
+<pre><code class="language-C++">void QInputDialogPrivate::_q_textChanged(const QString &amp;text)
+{
+    Q_Q(QInputDialog);
+    if (textValue != text) {
+        textValue = text;
+        emit q-&gt;textValueChanged(text);
+    }
+}
+</code></pre>
+
+<h3 id="q-plaintextedittextchanged">_q_plainTextEditTextChanged()</h3>
+
 <p><code>QPlainTextEdit</code> 控件使用的槽函数</p>
-<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">QInputDialogPrivate</span><span class="o">::</span><span class="n">_q_plainTextEditTextChanged</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">Q_Q</span><span class="p">(</span><span class="n">QInputDialog</span><span class="p">);</span>
-    <span class="n">QString</span> <span class="n">text</span> <span class="o">=</span> <span class="n">plainTextEdit</span><span class="o">-&gt;</span><span class="n">toPlainText</span><span class="p">();</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">textValue</span> <span class="o">!=</span> <span class="n">text</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">textValue</span> <span class="o">=</span> <span class="n">text</span><span class="p">;</span>
-        <span class="n">emit</span> <span class="n">q</span><span class="o">-&gt;</span><span class="n">textValueChanged</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><h3 id="_q_currentrowchangedqmodelindexqmodelindex">_q_currentRowChanged(QModelIndex,QModelIndex)</h3>
+
+<pre><code class="language-C++">void QInputDialogPrivate::_q_plainTextEditTextChanged()
+{
+    Q_Q(QInputDialog);
+    QString text = plainTextEdit-&gt;toPlainText();
+    if (textValue != text) {
+        textValue = text;
+        emit q-&gt;textValueChanged(text);
+    }
+}
+</code></pre>
+
+<h3 id="q-currentrowchanged-qmodelindex-qmodelindex">_q_currentRowChanged(QModelIndex,QModelIndex)</h3>
+
 <p><code>QListView</code> 控件使用的槽函数</p>
-<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">QInputDialogPrivate</span><span class="o">::</span><span class="n">_q_currentRowChanged</span><span class="p">(</span><span class="k">const</span> <span class="n">QModelIndex</span> <span class="o">&amp;</span><span class="n">newIndex</span><span class="p">,</span>
-                                            <span class="k">const</span> <span class="n">QModelIndex</span> <span class="o">&amp;</span> <span class="cm">/* oldIndex */</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">_q_textChanged</span><span class="p">(</span><span class="n">comboBox</span><span class="o">-&gt;</span><span class="n">model</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">(</span><span class="n">newIndex</span><span class="p">).</span><span class="n">toString</span><span class="p">());</span>
-    <span class="n">buttonBox</span><span class="o">-&gt;</span><span class="n">button</span><span class="p">(</span><span class="n">QDialogButtonBox</span><span class="o">::</span><span class="n">Ok</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">setEnabled</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></div><h2 id="剩下的2个主要函数">剩下的2个主要函数</h2>
+
+<pre><code class="language-C++">void QInputDialogPrivate::_q_currentRowChanged(const QModelIndex &amp;newIndex,
+                                            const QModelIndex &amp; /* oldIndex */)
+{
+    _q_textChanged(comboBox-&gt;model()-&gt;data(newIndex).toString());
+    buttonBox-&gt;button(QDialogButtonBox::Ok)-&gt;setEnabled(true);
+}
+</code></pre>
+
+<h2 id="剩下的2个主要函数">剩下的2个主要函数</h2>
+
 <p>介绍到这里，其实只剩下2个比较关键的函数 <code>setInputWidget(QWidget *widget)</code> 和 <code>chooseRightTextInputWidget()</code></p>
-<h3 id="setinputwidgetqwidget-widget">setInputWidget(QWidget *widget)</h3>
+
+<h3 id="setinputwidget-qwidget-widget">setInputWidget(QWidget *widget)</h3>
+
 <p>设置弹窗中 <code>inputWidget</code> 最后展示的控件</p>
-<p>这里需要 移除旧布局里 <code>inputWidget</code>，以及旧 <code>inputWidget</code> 的信号槽关系，以及为新的 <code>inputWidget</code> 创建新的信号槽关系<br>
+
+<p>这里需要 移除旧布局里 <code>inputWidget</code>，以及旧 <code>inputWidget</code> 的信号槽关系，以及为新的 <code>inputWidget</code> 创建新的信号槽关系<br />
 同时根据控件的类型，设置了当前显示的值</p>
-<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">QInputDialogPrivate</span><span class="o">::</span><span class="n">setInputWidget</span><span class="p">(</span><span class="n">QWidget</span> <span class="o">*</span><span class="n">widget</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">Q_ASSERT</span><span class="p">(</span><span class="n">widget</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">inputWidget</span> <span class="o">==</span> <span class="n">widget</span><span class="p">)</span>
-        <span class="k">return</span><span class="p">;</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">mainLayout</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">Q_ASSERT</span><span class="p">(</span><span class="n">inputWidget</span><span class="p">);</span>
-        <span class="n">mainLayout</span><span class="o">-&gt;</span><span class="n">removeWidget</span><span class="p">(</span><span class="n">inputWidget</span><span class="p">);</span>
-        <span class="n">inputWidget</span><span class="o">-&gt;</span><span class="n">hide</span><span class="p">();</span>
-        <span class="n">mainLayout</span><span class="o">-&gt;</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">widget</span><span class="p">);</span>
-        <span class="n">widget</span><span class="o">-&gt;</span><span class="n">show</span><span class="p">();</span>
+<pre><code class="language-C++">void QInputDialogPrivate::setInputWidget(QWidget *widget)
+{
+    Q_ASSERT(widget);
+    if (inputWidget == widget)
+        return;
 
-        <span class="c1">// disconnect old input widget
-</span><span class="c1"></span>        <span class="n">QAbstractButton</span> <span class="o">*</span><span class="n">okButton</span> <span class="o">=</span> <span class="n">buttonBox</span><span class="o">-&gt;</span><span class="n">button</span><span class="p">(</span><span class="n">QDialogButtonBox</span><span class="o">::</span><span class="n">Ok</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">QAbstractSpinBox</span> <span class="o">*</span><span class="n">spinBox</span> <span class="o">=</span> <span class="n">qobject_cast</span><span class="o">&lt;</span><span class="n">QAbstractSpinBox</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">inputWidget</span><span class="p">))</span>
-            <span class="n">QObject</span><span class="o">::</span><span class="n">disconnect</span><span class="p">(</span><span class="n">spinBox</span><span class="p">,</span> <span class="n">SIGNAL</span><span class="p">(</span><span class="n">textChanged</span><span class="p">(</span><span class="kt">bool</span><span class="p">)),</span> <span class="n">okButton</span><span class="p">,</span> <span class="n">SLOT</span><span class="p">(</span><span class="n">setEnabled</span><span class="p">(</span><span class="kt">bool</span><span class="p">)));</span>
+    if (mainLayout) {
+        Q_ASSERT(inputWidget);
+        mainLayout-&gt;removeWidget(inputWidget);
+        inputWidget-&gt;hide();
+        mainLayout-&gt;insertWidget(1, widget);
+        widget-&gt;show();
 
-        <span class="c1">// connect new input widget and update enabled state of OK button
-</span><span class="c1"></span>        <span class="n">QAbstractSpinBox</span> <span class="o">*</span><span class="n">spinBox</span> <span class="o">=</span> <span class="n">qobject_cast</span><span class="o">&lt;</span><span class="n">QAbstractSpinBox</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">widget</span><span class="p">);</span>
-        <span class="n">ensureEnabledConnection</span><span class="p">(</span><span class="n">spinBox</span><span class="p">);</span>
-        <span class="n">okButton</span><span class="o">-&gt;</span><span class="n">setEnabled</span><span class="p">(</span><span class="o">!</span><span class="n">spinBox</span> <span class="o">||</span> <span class="n">spinBox</span><span class="o">-&gt;</span><span class="n">hasAcceptableInput</span><span class="p">());</span>
-    <span class="p">}</span>
+        // disconnect old input widget
+        QAbstractButton *okButton = buttonBox-&gt;button(QDialogButtonBox::Ok);
+        if (QAbstractSpinBox *spinBox = qobject_cast&lt;QAbstractSpinBox *&gt;(inputWidget))
+            QObject::disconnect(spinBox, SIGNAL(textChanged(bool)), okButton, SLOT(setEnabled(bool)));
 
-    <span class="n">inputWidget</span> <span class="o">=</span> <span class="n">widget</span><span class="p">;</span>
+        // connect new input widget and update enabled state of OK button
+        QAbstractSpinBox *spinBox = qobject_cast&lt;QAbstractSpinBox *&gt;(widget);
+        ensureEnabledConnection(spinBox);
+        okButton-&gt;setEnabled(!spinBox || spinBox-&gt;hasAcceptableInput());
+    }
 
-    <span class="c1">// synchronize the text shown in the new text editor with the current
-</span><span class="c1"></span>    <span class="c1">// textValue
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">widget</span> <span class="o">==</span> <span class="n">lineEdit</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">lineEdit</span><span class="o">-&gt;</span><span class="n">setText</span><span class="p">(</span><span class="n">textValue</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">widget</span> <span class="o">==</span> <span class="n">plainTextEdit</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">plainTextEdit</span><span class="o">-&gt;</span><span class="n">setPlainText</span><span class="p">(</span><span class="n">textValue</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">widget</span> <span class="o">==</span> <span class="n">comboBox</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">setComboBoxText</span><span class="p">(</span><span class="n">textValue</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">widget</span> <span class="o">==</span> <span class="n">listView</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">setListViewText</span><span class="p">(</span><span class="n">textValue</span><span class="p">);</span>
-        <span class="n">ensureLayout</span><span class="p">();</span>
-        <span class="n">buttonBox</span><span class="o">-&gt;</span><span class="n">button</span><span class="p">(</span><span class="n">QDialogButtonBox</span><span class="o">::</span><span class="n">Ok</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">listView</span><span class="o">-&gt;</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">hasSelection</span><span class="p">());</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><h3 id="chooserighttextinputwidget">chooseRightTextInputWidget()</h3>
+    inputWidget = widget;
+
+    // synchronize the text shown in the new text editor with the current
+    // textValue
+    if (widget == lineEdit) {
+        lineEdit-&gt;setText(textValue);
+    } else if (widget == plainTextEdit) {
+        plainTextEdit-&gt;setPlainText(textValue);
+    } else if (widget == comboBox) {
+        setComboBoxText(textValue);
+    } else if (widget == listView) {
+        setListViewText(textValue);
+        ensureLayout();
+        buttonBox-&gt;button(QDialogButtonBox::Ok)-&gt;setEnabled(listView-&gt;selectionModel()-&gt;hasSelection());
+    }
+}
+</code></pre>
+
+<h3 id="chooserighttextinputwidget">chooseRightTextInputWidget()</h3>
+
 <p>我们知道 <code>int</code> 时， 直接初始化 <code>intSpinBox</code>, <code>double</code> 则直接初始化 <code>doubleSpinBox</code>,
 但是 <code>QString</code> 的控件一共有4种</p>
+
 <ul>
 <li>QListView</li>
 <li>QComboBox</li>
 <li>QPlainTextEdit</li>
 <li>QLineEidt</li>
 </ul>
+
 <p>所以根据 <code>opts</code>, 来区分应该真正初始化哪一种控件</p>
-<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">QInputDialogPrivate</span><span class="o">::</span><span class="n">chooseRightTextInputWidget</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">QWidget</span> <span class="o">*</span><span class="n">widget</span><span class="p">;</span>
 
-    <span class="c1">// bool useComboBoxOrListView() const { return comboBox &amp;&amp; comboBox-&gt;count() &gt; 0; }
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">useComboBoxOrListView</span><span class="p">())</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">((</span><span class="n">opts</span> <span class="o">&amp;</span> <span class="n">QInputDialog</span><span class="o">::</span><span class="n">UseListViewForComboBoxItems</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">comboBox</span><span class="o">-&gt;</span><span class="n">isEditable</span><span class="p">())</span> <span class="p">{</span>
-            <span class="n">ensureListView</span><span class="p">();</span>
-            <span class="n">widget</span> <span class="o">=</span> <span class="n">listView</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="n">widget</span> <span class="o">=</span> <span class="n">comboBox</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">opts</span> <span class="o">&amp;</span> <span class="n">QInputDialog</span><span class="o">::</span><span class="n">UsePlainTextEditForTextInput</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">ensurePlainTextEdit</span><span class="p">();</span>
-        <span class="n">widget</span> <span class="o">=</span> <span class="n">plainTextEdit</span><span class="p">;</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="n">ensureLineEdit</span><span class="p">();</span>
-        <span class="n">widget</span> <span class="o">=</span> <span class="n">lineEdit</span><span class="p">;</span>
-    <span class="p">}</span>
+<pre><code class="language-C++">void QInputDialogPrivate::chooseRightTextInputWidget()
+{
+    QWidget *widget;
 
-    <span class="n">setInputWidget</span><span class="p">(</span><span class="n">widget</span><span class="p">);</span>
+    // bool useComboBoxOrListView() const { return comboBox &amp;&amp; comboBox-&gt;count() &gt; 0; }
+    if (useComboBoxOrListView()) {
+        if ((opts &amp; QInputDialog::UseListViewForComboBoxItems) &amp;&amp; !comboBox-&gt;isEditable()) {
+            ensureListView();
+            widget = listView;
+        } else {
+            widget = comboBox;
+        }
+    } else if (opts &amp; QInputDialog::UsePlainTextEditForTextInput) {
+        ensurePlainTextEdit();
+        widget = plainTextEdit;
+    } else {
+        ensureLineEdit();
+        widget = lineEdit;
+    }
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">inputWidget</span> <span class="o">==</span> <span class="n">comboBox</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">_q_textChanged</span><span class="p">(</span><span class="n">comboBox</span><span class="o">-&gt;</span><span class="n">currentText</span><span class="p">());</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">inputWidget</span> <span class="o">==</span> <span class="n">listView</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">_q_textChanged</span><span class="p">(</span><span class="n">listViewText</span><span class="p">());</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><h2 id="总结">总结</h2>
+    setInputWidget(widget);
+
+    if (inputWidget == comboBox) {
+        _q_textChanged(comboBox-&gt;currentText());
+    } else if (inputWidget == listView) {
+        _q_textChanged(listViewText());
+    }
+}
+</code></pre>
+
+<h2 id="总结">总结</h2>
+
 <p>源码分析上篇主要介绍 <code>QInputDialogPrivate</code> 提供的所有接口，这里有几个重点需要重新记录一下</p>
+
 <ul>
 <li><code>QInputDialogPrivate</code> 并不是在初始化出控件后直接显示到布局，而是通过 <code>setInputWidget(QWidget *widget)</code> 函数将控件赋值给 <code>QWidget *inputWidget</code> 在最后显示</li>
 <li><code>int</code>， <code>double</code> 可以从 <code>intSpinBox</code> 和 <code>doubleSpinBox</code> 控件中直接获取，但是 <code>QString</code> 对应的控件种类有点多，为了避免 <code>QInputDialog</code> 获取值需要判断具体应该从哪一种控件中取值， <code>QInputDialogPrivate</code> 将 <code>QString</code> 的值存储到成员变量 <code>QString textValue</code> 中, 简洁了获取值的判断</li>
 <li>获取值的方式简单，但是具体区分使用哪种显示 <code>QString</code> 控件，还是引入了很多枚举(这一部分会在下一篇博客中介绍)
+
 <ul>
 <li>区分是 <code>int</code> ， <code>double</code> ， <code>QString</code> 的 <strong><code>InputMode</code></strong></li>
 <li>区分 <code>QString</code> 具体使用哪种控件的 <strong><code>InputDialogOption</code></strong>， 而且从 <code>chooseRightTextInputWidget()</code> 可以看出，区分 <code>QComboBox</code> 和 其他控件( <code>plainTextEdit</code>, <code>lineEdit</code>) 竟然使用 <code>combobox</code> 是否初始化和列表中是否有值来判断的，既然使用了枚举，为何不完全区分开?</li>
+</ul></li>
 </ul>
-</li>
-</ul>
+
 <p>在源码分析下篇主要介绍 <code>QInputDialog</code> 类， 和我当时阅读源码过程中难度大的部分进行分析</p>
           </div>
 
@@ -968,7 +1054,7 @@ Five static convenience functions are provided: getText(), getMultiLineText(), g
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#_q_textchangedconst-qstring-text">
+						 					<a class="nav-link" href="#q-textchanged-const-qstring-text">
 												 _q_textChanged(const QString &amp;text)
 											</a>
 										</li>
@@ -994,7 +1080,7 @@ Five static convenience functions are provided: getText(), getMultiLineText(), g
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#_q_plaintextedittextchanged">
+						 					<a class="nav-link" href="#q-plaintextedittextchanged">
 												 _q_plainTextEditTextChanged()
 											</a>
 										</li>
@@ -1020,7 +1106,7 @@ Five static convenience functions are provided: getText(), getMultiLineText(), g
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#_q_currentrowchangedqmodelindexqmodelindex">
+						 					<a class="nav-link" href="#q-currentrowchanged-qmodelindex-qmodelindex">
 												 _q_currentRowChanged(QModelIndex,QModelIndex)
 											</a>
 										</li>
@@ -1068,7 +1154,7 @@ Five static convenience functions are provided: getText(), getMultiLineText(), g
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#setinputwidgetqwidget-widget">
+						 					<a class="nav-link" href="#setinputwidget-qwidget-widget">
 												 setInputWidget(QWidget *widget)
 											</a>
 										</li>

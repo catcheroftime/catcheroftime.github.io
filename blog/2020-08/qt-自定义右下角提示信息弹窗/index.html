@@ -13,8 +13,8 @@
 <meta property="og:description" content="偶然看到 web 端某个应用，右下角的错误信息弹窗配合上动画看起来很不错，于是想通过 Qt 自己实现一个类似的功能" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2020-08/qt-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%B3%E4%B8%8B%E8%A7%92%E6%8F%90%E7%A4%BA%E4%BF%A1%E6%81%AF%E5%BC%B9%E7%AA%97/" />
-<meta property="article:published_time" content="2020-08-11T00:15:00+08:00" />
-<meta property="article:modified_time" content="2020-08-11T00:15:00+08:00" />
+<meta property="article:published_time" content="2020-08-11T00:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-08-11T00:15:00&#43;08:00"/>
 
 
   <title>
@@ -285,26 +285,37 @@
 
           <div class="post-content markdown">
             <p>偶然看到 <code>web</code> 端某个应用，右下角的错误信息弹窗配合上动画看起来很不错，于是想通过 <code>Qt</code> 自己实现一个类似的功能</p>
+
 <h2 id="初定需求">初定需求</h2>
+
 <ol>
 <li>弹窗信息从右下角屏幕外，移动到右下角，停留 3s 左右后，逐渐消失</li>
 <li>鼠标悬浮在弹窗上时，即使弹窗已经停留了 3s，依旧不能消失， 等鼠标移出弹窗后，逐渐消失</li>
 <li>弹窗上添加超链接，用户点击的时候，可以有对应操作</li>
 <li>旧的弹窗信息没有消失时候，出现新的弹窗的话，新弹窗动画方式不变，旧的弹窗向上移动一个弹窗的单位</li>
 </ol>
+
 <p>先定这几个，以后想到可以在额外实现</p>
+
 <h2 id="功能的实现">功能的实现</h2>
+
 <p>先放一个最后实现的 gif，之后在逐步解释实现的过程</p>
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/popmessage/demo.gif" alt="创建"></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/popmessage/demo.gif" alt="创建" /></p>
+
 <h3 id="右下角动画弹出">右下角动画弹出</h3>
+
 <p>这个功能大概的逻辑</p>
+
 <ol>
 <li>初始化一个弹窗，移动到右下角的屏幕外</li>
 <li>一个 <code>m_showTimer</code> 定时器，每隔 1 ms, 弹窗向上移动 1 个单位，直到移动到指定位置</li>
 <li>移动到指定位置后，<code>m_stayTimer</code> 定时器，每隔 1000 ms 触发一次，3次之后，启动关闭的 <code>m_closeTimer</code> 的定时器</li>
 <li><code>m_closeTimer</code> 定时器， 每隔 100 ms, 窗口的透明度 (完全不透明为1) 减少 0.2，直到透明度为 0 时，关闭窗口</li>
 </ol>
+
 <p>messageshow.h</p>
+
 <pre><code>// 窗口最后稳定不动时的坐标
 QPoint end_showPoint;
 // 因为是从右下角滑出， x 方向是固定的，所以需要记录一下当前窗口的实时 y 坐标
@@ -320,7 +331,9 @@ int m_stayExeTime;
 // 记录当前窗口的透明度
 double m_transparent;
 </code></pre>
+
 <p>messageshow.cpp</p>
+
 <pre><code>// 所有定时器对应执行的信号槽
 connect(m_showTimer, SIGNAL(timeout()),  this, SLOT(slotMsgMove()));
 connect(m_stayTimer, SIGNAL(timeout()),  this, SLOT(slotMsgStay()));
@@ -394,9 +407,13 @@ void MessageShow::slotMsgClose()
     }
 }
 </code></pre>
+
 <p>这样，一个完整的从显示，到停留，到最后的消失，代码逻辑就完成</p>
+
 <h3 id="鼠标进入和离开的逻辑">鼠标进入和离开的逻辑</h3>
+
 <p>鼠标进入后，弹窗一直停留， 鼠标离开弹窗，停留 1s 后，逐渐淡化消失</p>
+
 <pre><code>void MessageShow::enterEvent(QEvent *event)
 {
     Q_UNUSED(event);
@@ -420,13 +437,19 @@ void MessageShow::leaveEvent(QEvent *event)
     m_stayTimer-&gt;start(1000);
 }
 </code></pre>
+
 <h3 id="弹窗上添加超链接">弹窗上添加超链接</h3>
+
 <p>上面介绍了完整的弹窗显示动画逻辑，现在只剩下设置弹窗中的内容设置</p>
+
 <p>messageshow.h</p>
+
 <pre><code>void setInfomation(QString titleInfo, QString msg);
 void setInfomation(QString titleInfo, QString msg, QString extraInfo);
 </code></pre>
+
 <p>messageshow.cpp</p>
+
 <pre><code>// ui 界面里简单用 label_titleInfo 显示 title 内容， label_msg 里显示具体的信息
 // 此接口主要显示简单的弹窗内容
 void MessageShow::setInfomation(QString titleInfo, QString msg)
@@ -442,21 +465,29 @@ void MessageShow::setInfomation(QString titleInfo, QString msg, QString extraInf
     ui-&gt;label_titleInfo-&gt;setText(titleInfo);
     ui-&gt;label_msg-&gt;setText(QString(&quot;&lt;a style='color: gray;'href=\&quot;&quot;) + extraInfo + QString(&quot;\&quot;&gt;&quot;)+msg);
     ui-&gt;label_msg-&gt;setToolTip(msg);
-    
+
     // void sigClickUrl(QString), 使用弹窗的对象捕获 sigClickUrl 信号，处理用户自定义的超链接
     connect(ui-&gt;label_msg,SIGNAL(linkActivated(QString)),this,SIGNAL(sigClickUrl(QString)));
 }
 </code></pre>
+
 <h3 id="多个弹窗同时出现的处理">多个弹窗同时出现的处理</h3>
+
 <p>涉及到对多个弹窗同时管理，这里使用 <strong>单例</strong> 的形式实现一个管理弹窗的管理类 <code>PopupManage</code> ，<code>PopupManage</code> 负责 <code>MessageShow</code> 对象的创建和销毁，现在的主要问题是，如何计算每个弹窗在稳定的时候位置</p>
+
 <p>先简单理一下逻辑</p>
+
 <ul>
 <li>第一个弹窗出现时，从右下角向上滑出，滑出到指定位置停留若干秒</li>
 <li>此时弹出第二个弹窗，第二个弹窗依旧从右下角向上滑出，但是此时第一个弹窗应该继续向上移动一个弹窗的身位</li>
 </ul>
+
 <p>所以，整体的代码逻辑可以这样，使用 <code>PopupManage</code> 创建一个新的 <code>MessageShow</code> 的弹窗， 将 <code>MessageShow</code> 对象存入 <code>QList&lt;MessageShow *&gt; m_popupList</code> 中, 当再次创建新的弹窗时，通知 <code>m_popupList</code> 中所有的 <code>MessageShow</code> 对象， 让它们向上移动一个弹窗的身位</p>
+
 <p>现在看一下简单的代码逻辑</p>
+
 <p>popupmanage.h</p>
+
 <pre><code>class PopupManage : public QObject
 {
     Q_OBJECT
@@ -488,7 +519,9 @@ private:
     QList&lt;MessageShow *&gt; m_popupList;
 }
 </code></pre>
+
 <p>popupmanage.cpp</p>
+
 <pre><code>// 创建 MessageShow 对象后，需要执行的一些操作
 void PopupManage::addMessageShow(MessageShow *popup)
 {
@@ -536,7 +569,9 @@ void PopupManage::setInfomation(QString titleInfo, QString msg, QString extraInf
     addMessageShow(popup);
 }
 </code></pre>
+
 <p>这里 <code>MessageShow</code> 有个函数 <code>updatePosition()</code>, 在创建 <code>MessageShow</code> 对象之后，直接调用了 <code>updatePosition()</code>, 所有这里的 <code>updatePosition()</code> 一方面的作用是在弹窗第一次显示的 <code>showMessage</code> 功能，另一方面是创建新的弹窗之后的改变位置功能</p>
+
 <pre><code>void MessageShow::updatePosition()
 {
     // 如果是第一次显示，调用 showMessage 函数， 否则是改变位置 
@@ -550,7 +585,9 @@ void PopupManage::setInfomation(QString titleInfo, QString msg, QString extraInf
     }
 }
 </code></pre>
+
 <p>这里 <code>PopupManage</code> 也可以这样实现</p>
+
 <pre><code>void PopupManage::setInfomation(QString titleInfo, QString msg)
 {
     MessageShow * popup = new MessageShow();
@@ -566,20 +603,28 @@ void PopupManage::setInfomation(QString titleInfo, QString msg, QString extraInf
     m_popupList.append(popup);
 }
 </code></pre>
+
 <p>这里 <code>updatePosition()</code> 就可以只是改变位置，因为在通知所有 <code>MessageShow</code> 对象改变位置的时候，新创建的对象还没有存储到 <code>m_popupList</code> 中</p>
+
 <h2 id="还可以优化的地方">还可以优化的地方</h2>
+
 <ul>
 <li>这里没有对弹窗的数量进行控制，可能会出现，弹窗超出界面的现象</li>
 <li>目前弹窗的样式和布局设置的最简单的方式，也可以进一步改进</li>
 </ul>
+
 <h2 id="一些疑问">一些疑问</h2>
+
 <p>不知道有没有注意到这里的弹窗用的显示方法是 <code>this-&gt;open()</code>， 而不是 <code>show()</code> 或者 <code>exec()</code></p>
+
 <ul>
 <li><code>exec()</code> 是模态的弹窗，这个肯定直接被 pass 了，不可能让一个弹窗阻塞了主窗口</li>
 <li>当当前焦点的窗口是 <code>QWidget</code> 等非模态窗口时， <code>show()</code> 和 <code>open()</code> 这两种显示的方法都可以，整体的弹窗功能都是完整</li>
 <li>但是当当前焦点窗口是模态窗口时，使用 <code>show()</code> 时， <code>MessageShow</code> 的对象是无法获取鼠标事件事件的，这个我们是懂得，模态窗口实际上是新创建了一个事件循环， <code>MessageShow</code> 的对象的鼠标事件肯定不能获取，但是 <code>open</code> 却可以，难道是新的事件循环里将 <code>MessageShow</code> 也添加里进来了? 这里自己不是很懂，先给自己挖个新一篇博客的坑，有时间好好研究一些 <code>Qt</code> 的事件循环机制</li>
 </ul>
+
 <h2 id="代码地址">代码地址</h2>
+
 <p>github 地址 ：<a href="https://github.com/catcheroftime/PopMessage">https://github.com/catcheroftime/PopMessage</a></p>
           </div>
 

@@ -13,8 +13,8 @@
 <meta property="og:description" content="在 飞扬青云 大佬的博客下,意外看到一款水波纹的进度条,整体看上去很美观,感觉适用的场景也很多 (1. 单纯的进度条显示 2. 当前状态的展示,例如CPU,内存之类使用的占比)，所以自己也尝试开发了一下." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-08/qt-%E8%BF%9B%E5%BA%A6%E6%9D%A1%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" />
-<meta property="article:published_time" content="2019-08-10T20:45:00+08:00" />
-<meta property="article:modified_time" content="2019-08-10T20:45:00+08:00" />
+<meta property="article:published_time" content="2019-08-10T20:45:00&#43;08:00"/>
+<meta property="article:modified_time" content="2019-08-10T20:45:00&#43;08:00"/>
 
 
   <title>
@@ -289,39 +289,58 @@
 
           <div class="post-content markdown">
             <p>在 <a href="https://www.cnblogs.com/feiyangqingyun/p/6128288.html">飞扬青云</a> 大佬的博客下,意外看到一款水波纹的进度条,整体看上去很美观,感觉适用的场景也很多 (1. 单纯的进度条显示 2. 当前状态的展示,例如CPU,内存之类使用的占比)，所以自己也尝试开发了一下.</p>
+
 <p>这篇文章主要介绍该插件的简单实现的逻辑,并且对一些使用的库和方法做一个简单的总结</p>
+
 <h2 id="实现逻辑">实现逻辑</h2>
+
 <p>接下来按照下面的顺序简单理一下实现的逻辑</p>
+
 <ul>
-<li>整体的大小, 外边框的形状,边框的宽度, 边框的颜色, 以及内部背景色</li>
-<li>中间显示百分比的字体的一些属性的设置,大小颜色字体种类以及显示的数值</li>
+<li>整体的大小, 外边框的形状,边框的宽度, 边框的颜色, 以及内部背景色<br /></li>
+<li>中间显示百分比的字体的一些属性的设置,大小颜色字体种类以及显示的数值<br /></li>
 <li>水波纹的实现, 水波纹的一个波的宽度和高度</li>
 </ul>
+
 <h3 id="边框">边框</h3>
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/waterprogress/linedemoshow.gif" alt="border_demoshow"></p>
-<p>目前设定的外边框形状只有2种圆形和正方形<br>
+
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/waterprogress/linedemoshow.gif" alt="border_demoshow" /></p>
+
+<p>目前设定的外边框形状只有2种圆形和正方形<br />
 QPainter 中 <code>drawEllipse</code> 以及 <code>drawRect</code> 这2个函数就可以实现
 至于边框的宽度,边框的颜色, 以及内部的颜色 QPainter 都可以设置</p>
+
 <pre><code>QPainter painter(this);
 painter.setPen(QPen(边框颜色,边框宽度));
 painter.setBrush( QBrush(背景颜色));
 </code></pre>
+
 <p>需要注意的一点是在绘制圆形和正方形, 需要提供绘图的初始位置点 (x,y), 以及绘制的宽度和高度, 因为我们边框形状只有圆形和正方形, 所有宽度和高度是一样的值, 如果调用 <code>drawEllipse</code> 时长宽不一致, 其实也就是椭圆了.</p>
+
 <p>因为我是从图像的左上角开始绘图, 所以起始点是 <code>(边框宽度/2, 边框宽度/2)</code>, 宽高的大小都是 <code>总的尺寸-边框宽度</code>, 这会存在一点问题, 因为像素是整数, 当宽度为奇数时, 会损失0.5像素, 虽然仔细看可以看出来, 但是感觉影响不大, 为了避免这个问题, 在设置边框宽度的时候添加必须为偶数的要求.</p>
+
 <h3 id="字体">字体</h3>
+
 <p>字体很简单, 使用 QPainter 的 <code>drawText</code> 函数便可以实现</p>
+
 <pre><code>QPainter painter(this);
 QFont font{字体样式种类, 字体大小};
 painter.setPen(字体颜色);
 painter.setFont(font);
 painter.drawText(this-&gt;rect(), Qt::AlignCenter, 显示的数值);
 </code></pre>
+
 <h3 id="水波纹">水波纹</h3>
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/waterprogress/wavedemoshow.gif" alt="wavedemoshow"></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/waterprogress/wavedemoshow.gif" alt="wavedemoshow" /></p>
+
 <p>因为水波纹的形状很像 <code>sin</code> 和 <code>cos</code> 函数的图像, 将 <code>x</code> 方向上值通过函数计算出 <code>y</code> 方向的数值, 将所有的点连起来, 现在先看一下不设置填充颜色, 仅是线条情况下大致的样式</p>
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/waterprogress/linedemo.png" alt="waveprogress_linedemo"></p>
-<p>边框内边距的线条 和 蓝色的水波为线条 两个区域相交的部分(intersected接口) 其实就是我们需要的水波纹区域<br>
+
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/waterprogress/linedemo.png" alt="waveprogress_linedemo" /></p>
+
+<p>边框内边距的线条 和 蓝色的水波为线条 两个区域相交的部分(intersected接口) 其实就是我们需要的水波纹区域<br />
 为了形成2层波浪的感觉, 再画一条水波, 调整它的偏移量, 在修改它颜色的透明度, 就能实现我们想要的结果</p>
+
 <pre><code>// m_size 为 整体尺寸
 // m_waveHeight 波的高度
 // m_waveWidth 波的宽度
@@ -360,13 +379,20 @@ painter.setPen(QPen(bg_waterwaveColor));
 QPainterPath new_path2 = borderpath.intersected(water_path2);
 painter.fillPath(new_path2, QBrush(bg_waterwaveColor));
 </code></pre>
+
 <h3 id="小结">小结</h3>
+
 <p>作为绘制这一部分就已经完成了, 最后只需要让他们动起来, 每隔一定时间调用 <code>update()</code> 重绘, 在绘制的波纹的函数中(连续的)改变偏移量数值就可以像水纹一样运动起来</p>
+
 <p>对于例如边框的宽度, 颜色, 或者说字体的大小样式等等, 可以通过用户设置值的传入来动态的修改整体的样式, 因为我们引入了自定义插件, 有的时候我们可能更希望这些参数是可以直接在UI界面直接填写的(designer中插件如下图), 让QT自动帮我们生成的 <code>ui_***.h</code> 中直接代码补全了, 所以接下来会简单介绍一下自定义插件下的 <code>Q_PROPERTY</code></p>
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/waterprogress/property.png" alt="property"></p>
-<h2 id="自定义插件下的-q_property-说明">自定义插件下的 Q_PROPERTY 说明</h2>
-<p>Q_PROPERTY()是一个宏，主要声明类中的一个属性, 一个属性行为类似于类里面的数据成员，它基于元对象系统，它还通过信号和插槽提供对象间通信。<br>
+
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/waterprogress/property.png" alt="property" /></p>
+
+<h2 id="自定义插件下的-q-property-说明">自定义插件下的 Q_PROPERTY 说明</h2>
+
+<p>Q_PROPERTY()是一个宏，主要声明类中的一个属性, 一个属性行为类似于类里面的数据成员，它基于元对象系统，它还通过信号和插槽提供对象间通信。<br />
 先简单看一下用法</p>
+
 <pre><code> Q_PROPERTY(type name
          (READ getFunction [WRITE setFunction] |
           MEMBER memberName [(READ getFunction | WRITE setFunction)])
@@ -380,41 +406,49 @@ painter.fillPath(new_path2, QBrush(bg_waterwaveColor));
          [CONSTANT]
          [FINAL])
 </code></pre>
-<p>其实可以直接阅读官方文档, 文档中有很详细的介绍:　https://doc.qt.io/qt-5/properties.html</p>
+
+<p>其实可以直接阅读官方文档, 文档中有很详细的介绍:　<a href="https://doc.qt.io/qt-5/properties.html">https://doc.qt.io/qt-5/properties.html</a></p>
+
 <p>QT 提供的 <code>type</code> 的类型已经够用, 额外需要注意的一点的是 <code>type</code> 类型是自定义的枚举时, 为了让 QT 可以识别, 需要调用 <code>Q_ENUM</code> 函数将自定义的枚举类型注册一下</p>
-<div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="k">class</span> <span class="nc">MyClass</span> <span class="o">:</span> <span class="k">public</span> <span class="n">QObject</span>
-<span class="p">{</span>
-    <span class="n">Q_OBJECT</span>
-    <span class="nf">Q_PROPERTY</span><span class="p">(</span><span class="n">Priority</span> <span class="n">priority</span> <span class="n">READ</span> <span class="n">priority</span> <span class="n">WRITE</span> <span class="n">setPriority</span> <span class="n">NOTIFY</span> <span class="n">priorityChanged</span><span class="p">)</span>
 
-<span class="k">public</span><span class="o">:</span>
-    <span class="n">MyClass</span><span class="p">(</span><span class="n">QObject</span> <span class="o">*</span><span class="n">parent</span> <span class="o">=</span> <span class="mi">0</span><span class="p">);</span>
-    <span class="o">~</span><span class="n">MyClass</span><span class="p">();</span>
+<pre><code class="language-c++">class MyClass : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(Priority priority READ priority WRITE setPriority NOTIFY priorityChanged)
 
-    <span class="k">enum</span> <span class="nc">Priority</span> <span class="p">{</span> <span class="n">High</span><span class="p">,</span> <span class="n">Low</span><span class="p">,</span> <span class="n">VeryHigh</span><span class="p">,</span> <span class="n">VeryLow</span> <span class="p">};</span>
-    <span class="n">Q_ENUM</span><span class="p">(</span><span class="n">Priority</span><span class="p">)</span>
+public:
+    MyClass(QObject *parent = 0);
+    ~MyClass();
 
-    <span class="kt">void</span> <span class="n">setPriority</span><span class="p">(</span><span class="n">Priority</span> <span class="n">priority</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">m_priority</span> <span class="o">=</span> <span class="n">priority</span><span class="p">;</span>
-        <span class="n">emit</span> <span class="nf">priorityChanged</span><span class="p">(</span><span class="n">priority</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="n">Priority</span> <span class="nf">priority</span><span class="p">()</span> <span class="k">const</span>
-    <span class="p">{</span> <span class="k">return</span> <span class="n">m_priority</span><span class="p">;</span> <span class="p">}</span>
+    enum Priority { High, Low, VeryHigh, VeryLow };
+    Q_ENUM(Priority)
 
-<span class="nl">signals</span><span class="p">:</span>
-    <span class="kt">void</span> <span class="n">priorityChanged</span><span class="p">(</span><span class="n">Priority</span><span class="p">);</span>
+    void setPriority(Priority priority)
+    {
+        m_priority = priority;
+        emit priorityChanged(priority);
+    }
+    Priority priority() const
+    { return m_priority; }
 
-<span class="k">private</span><span class="o">:</span>
-    <span class="n">Priority</span> <span class="n">m_priority</span><span class="p">;</span>
-<span class="p">};</span>
-</code></pre></div><h2 id="qpainterpath">QPainterPath</h2>
-<p>谷歌翻译一波(凑字数,可略过):<br>
+signals:
+    void priorityChanged(Priority);
+
+private:
+    Priority m_priority;
+};
+</code></pre>
+
+<h2 id="qpainterpath">QPainterPath</h2>
+
+<p>谷歌翻译一波(凑字数,可略过):<br />
 QPainterPath类为绘制操作提供了一个容器，可以构造和重用图形形状。
 路径是由许多图形构建块组成的对象，例如矩形，椭圆，线和曲线。构建块可以在闭合的子路径中连接，例如矩形或椭圆形。闭合路径具有重合的起点和终点。或者它们可以作为未闭合的子路径独立存在，例如线条和曲线。
 QPainterPath对象可用于填充，轮廓和剪切。要为给定的painter路径生成可填充的轮廓，请使用QPainterPathStroker类。画笔路径优于普通绘图操作的主要优点是复杂的形状只需要创建一次;然后只需调用QPainter :: drawPath（）函数就可以多次绘制它们。
 QPainterPath提供了一组函数，可用于获取有关路径及其元素的信息。此外，可以使用toReversed（）函数反转元素的顺序。还有几个函数可以将此路径对象转换为多边形表示。</p>
+
 <p>简单介绍一些常用的接口, 具体的接口说明直接查看官方文档</p>
+
 <ul>
 <li>(椭)圆形 <code>addEllipse</code></li>
 <li>正方形 <code>addRect</code></li>
@@ -424,23 +458,29 @@ QPainterPath提供了一组函数，可用于获取有关路径及其元素的�
 <li>字体 <code>addText</code></li>
 <li>自定义线条一般实现的方法  moveTo(线条的起始点), lineTo(添加额外点)</li>
 </ul>
+
 <p>还有几个函数需要注意一下:</p>
+
 <ul>
-<li>QPainterPath intersected(const QPainterPath &amp;p) const<br>
+<li>QPainterPath intersected(const QPainterPath &amp;p) const<br />
 计算两个 <code>QPainterPath</code> 区域相交的部分</li>
 <li>填充的规则
+
 <ul>
-<li>Qt::OddEvenFill (默认)<br>
+<li>Qt::OddEvenFill (默认)<br />
 指定使用奇数偶数填充规则填充区域。 使用此规则，我们使用以下方法确定点是否在形状内。 绘制从该点到形状外部位置的水平线，并计算交叉点的数量。 如果交叉点的数量是奇数，则该点在形状内。 此模式是默认模式。</li>
-<li>Qt::WindingFill<br>
+<li>Qt::WindingFill<br />
 指定使用非零缠绕规则填充区域。 使用此规则，我们使用以下方法确定点是否在形状内。 绘制从该点到形状外部位置的水平线。 确定每个交叉点处的线的方向是向上还是向下。 通过对每个交叉点的方向求和来确定绕组数。 如果数字不为零，则该点在形状内。 在大多数情况下，该填充模式也可以被认为是闭合形状的交叉。</li>
+</ul></li>
 </ul>
-</li>
-</ul>
+
 <p>官方文档介绍: <a href="https://doc.qt.io/qt-5/qpainterpath.html">https://doc.qt.io/qt-5/qpainterpath.html</a></p>
+
 <h2 id="代码地址">代码地址</h2>
+
 <p>虽然我知道根本没人看， 但是还是求 <code>Star</code></p>
-<p>github 地址 ：https://github.com/catcheroftime/WaterwaveProgressPlugin</p>
+
+<p>github 地址 ：<a href="https://github.com/catcheroftime/WaterwaveProgressPlugin">https://github.com/catcheroftime/WaterwaveProgressPlugin</a></p>
           </div>
 
           
@@ -660,7 +700,7 @@ QPainterPath提供了一组函数，可用于获取有关路径及其元素的�
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e8%87%aa%e5%ae%9a%e4%b9%89%e6%8f%92%e4%bb%b6%e4%b8%8b%e7%9a%84-q_property-%e8%af%b4%e6%98%8e">
+						 					<a class="nav-link" href="#%e8%87%aa%e5%ae%9a%e4%b9%89%e6%8f%92%e4%bb%b6%e4%b8%8b%e7%9a%84-q-property-%e8%af%b4%e6%98%8e">
 												 自定义插件下的 Q_PROPERTY 说明
 											</a>
 										</li>

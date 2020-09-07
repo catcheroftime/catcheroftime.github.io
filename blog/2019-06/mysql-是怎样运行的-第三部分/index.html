@@ -13,8 +13,8 @@
 <meta property="og:description" content="结束了第二部分对于 InnoDB 一个页存储数据详细的介绍，这一部分主要介绍由页组成的 B&#43;树 的总结，主要对应&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;上面的第七章和第八章" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-06/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86/" />
-<meta property="article:published_time" content="2019-06-19T14:11:00+08:00" />
-<meta property="article:modified_time" content="2019-06-19T14:11:00+08:00" />
+<meta property="article:published_time" content="2019-06-19T14:11:00&#43;08:00"/>
+<meta property="article:modified_time" content="2019-06-19T14:11:00&#43;08:00"/>
 
 
   <title>
@@ -285,79 +285,111 @@
 
           <div class="post-content markdown">
             <p>结束了第二部分对于 <code>InnoDB</code> 一个页存储数据详细的介绍，这一部分主要介绍由页组成的 <code>B+树</code> 的总结，主要对应<a href="https://juejin.im/book/5bffcbc9f265da614b11b731">&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;</a>上面的第七章和第八章</p>
-<h2 id="innodb的b树">InnoDB的B+树</h2>
+
+<h2 id="innodb的b-树">InnoDB的B+树</h2>
+
 <p><code>B+树</code> 实际上就是对数据库大量的 <code>页</code> 进行管理的一种方式， 第二部分中提到， 一个页中的记录很多的时候， 这些记录是按照主键大小的顺序形成的单链表， 再通过分组， 生成对应槽， 这样在查找以 <code>主键</code> 为搜索条件的时候， 先在 <code>页目录</code> 中使用 <code>二分法</code> 快速定位到对应的槽， 然后在遍历该槽对应分组中的记录， 就能快速找到指定记录。</p>
+
 <p>当由大量 <code>页</code> 的时候， 需要给这些页设计一个目录， 类比于生成 <code>槽</code> 的方式</p>
+
 <ul>
-<li><!-- raw HTML omitted -->下一个数据页中用户记录的主键值必须大于上一个页中用户记录的主键值<!-- raw HTML omitted -->，换句话而言， 页之间的数据需要按照主键大小顺序继续排列</li>
-<li><code>槽</code> 能对应分组位置以及可以使用对主键进行二分法查找， 那么 <code>目录项</code> 也需要有 <code>页</code> 的位置， 主键(索引)值信息。 所以 <!-- raw HTML omitted -->目录项中存储主键值和对应的页号<!-- raw HTML omitted --></li>
+<li><font color=red>下一个数据页中用户记录的主键值必须大于上一个页中用户记录的主键值</font>，换句话而言， 页之间的数据需要按照主键大小顺序继续排列</li>
+<li><code>槽</code> 能对应分组位置以及可以使用对主键进行二分法查找， 那么 <code>目录项</code> 也需要有 <code>页</code> 的位置， 主键(索引)值信息。 所以 <font color=red>目录项中存储主键值和对应的页号</font></li>
 <li>所有的 <code>槽</code> 最后存放在一块统一的区域 <code>Page Directory(页目录)</code> 中， 一个 <code>目录项</code> 相当于 <code>页</code> 中的一条用户记录，将大量的 <code>目录项</code> 类似于页的管理方式 生成新的页， 叫做 <code>目录项记录</code>, 它有普通 <code>用户记录</code> 中的数据结构。但是它和 <code>用户记录</code> 是有一定区别：
+
 <ul>
 <li>目录项记录的 <code>record_type</code> 值是1，而普通用户记录的 <code>record_type</code> 值是0。</li>
 <li>目录项记录只有主键值和页的编号两个列，而普通的用户记录的列是用户自己定义的，可能包含很多列，另外还有InnoDB自己添加的隐藏列。</li>
 <li><code>记录头信息</code> 中的 <code>min_rec_mask</code>，在存储 <code>目录项记录</code> 的页中的主键值最小的目录项记录的 <code>min_rec_mask</code> 值为1，其他别的记录的 <code>min_rec_mask</code> 值都是0。</li>
-</ul>
-</li>
+</ul></li>
 <li>当一个 <code>目录项记录</code> 记录不完页信息时， 生成新的 <code>目录项记录</code>，以双向链表串联起来。</li>
 <li>当有大量 <code>目录项记录</code> 页时， 可以再生成一个更高级的目录，就像是一个多级目录一样，大目录里嵌套小目录，小目录里才是实际的数据</li>
 </ul>
-<p><img src="https://catcheroftime.github.io/images/blog/mysql/B+%E6%A0%91%E7%BB%93%E6%9E%84.png" alt="B+树结构"></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/B+树结构.png" alt="B+树结构" /></p>
+
 <h3 id="聚簇索引">聚簇索引</h3>
+
 <ul>
 <li>使用记录主键值的大小进行记录和页的排序</li>
-<li>B+树的叶子节点存储的是完整的用户记录 <!-- raw HTML omitted -->所有完整的用户记录都存放在这个聚簇索引的叶子节点处。<!-- raw HTML omitted --></li>
+<li>B+树的叶子节点存储的是完整的用户记录 <font color=red>所有完整的用户记录都存放在这个聚簇索引的叶子节点处。</font></li>
 </ul>
-<p>在 <code>InnoDB</code> 存储引擎中，聚簇索引就是数据的存储方式（所有的用户记录都存储在了叶子节点），也就是所谓的<!-- raw HTML omitted -->索引即数据，数据即索引<!-- raw HTML omitted -->。</p>
+
+<p>在 <code>InnoDB</code> 存储引擎中，聚簇索引就是数据的存储方式（所有的用户记录都存储在了叶子节点），也就是所谓的<font color=red>索引即数据，数据即索引</font>。</p>
+
 <h3 id="二级索引">二级索引</h3>
+
 <p><code>聚簇索引</code> B+树中的数据都是按照主键顺序进行排序， 简单说明一下<code>二级索引</code>B+树的创建的规则</p>
+
 <ul>
 <li><code>二级索引</code> 页内的记录是按照索引列的大小顺序排列成单向链表，</li>
 <li>各个存放用户记录的页也是根据页中记录的索引列大小顺序排成一个双向链表。</li>
 <li>存放目录项记录的页分为不同的层次，在同一层次中的页也是根据页中目录项记录的索引列大小顺序排成一个双向链表。</li>
 </ul>
+
 <p>回顾一下二级索引 B+ 树的格式</p>
+
 <ul>
-<li><!-- raw HTML omitted -->二级索引的叶子节点存储的并不是完整的用户记录，而只是二级索引值+主键这两个列的值<!-- raw HTML omitted -->。</li>
-<li>由于二级索引字段可以重复， 所以目录项记录的内容是由 <!-- raw HTML omitted -->索引列的值+主键值+页号<!-- raw HTML omitted --> 这3部分组成。</li>
+<li><font color=red>二级索引的叶子节点存储的并不是完整的用户记录，而只是二级索引值+主键这两个列的值</font>。</li>
+<li>由于二级索引字段可以重复， 所以目录项记录的内容是由 <font color=red>索引列的值+主键值+页号</font> 这3部分组成。</li>
 </ul>
+
 <p>当以二级索引为条件进行精确匹配时流程：</p>
+
 <ul>
 <li>确定 <code>目录项记录</code> 页</li>
 <li>通过 <code>目录项记录</code> 页确定用户记录真实所在的页。</li>
 <li>在真实存储用户记录的页中定位到具体的记录。</li>
-<li>再根据主键值去聚簇索引中再查找一遍完整的用户记录。<!-- raw HTML omitted -->(回表操作)<!-- raw HTML omitted --></li>
+<li>再根据主键值去聚簇索引中再查找一遍完整的用户记录。<font color=red>(回表操作)</font></li>
 </ul>
+
 <h3 id="联合索引">联合索引</h3>
+
 <p>联合索引可以参考 二级索引， 只是排序的方式稍微复杂一点， 例如B+树需要按照c2和c3列的大小进行排序：</p>
+
 <ul>
 <li>先把各个记录和页按照c2列进行排序。</li>
 <li>在记录的c2列相同的情况下，采用c3列进行排序</li>
 </ul>
-<p>此时 B+树叶子节点处的用户记录由c2、c3和主键c1列组成。<!-- raw HTML omitted -->本质还是一个二级索引<!-- raw HTML omitted --></p>
-<h2 id="innodb的b树索引的注意事项">InnoDB的B+树索引的注意事项</h2>
+
+<p>此时 B+树叶子节点处的用户记录由c2、c3和主键c1列组成。<font color=red>本质还是一个二级索引</font></p>
+
+<h2 id="innodb的b-树索引的注意事项">InnoDB的B+树索引的注意事项</h2>
+
 <h3 id="根页面位置固定">根页面位置固定</h3>
+
 <p>实际B+树形成过程：</p>
+
 <ul>
 <li>每当创建一个B+树索引， 会先创建一个 <code>根节点</code> 页面， 初始时为空。</li>
 <li>当插入数据时， 先把用户记录存储到这个 <code>根节点</code> 中。</li>
 <li>当 <code>根节点</code> 可用空间用完， 将其中所有记录复制到一个新分配的页。 而 <code>根节点</code> 升级为存储目录像记录的页。</li>
 </ul>
+
 <p>创建索引时，<code>根节点</code> 的页号会被记录到某个地方，然后凡是 <code>InnoDB</code> 存储引擎需要用到这个索引的时候，都会从那个固定的地方取出根节点的页号，从而来访问这个索引。</p>
+
 <h3 id="一个页面至少存储2条记录">一个页面至少存储2条记录</h3>
+
 <p>B+树的设计本质就是一个多层级目录， 每次经过一个目录， 会过滤掉很多无效的子目录。 为了避免一个大的目录下只存放一个子目录， 所以一个页面至少存储2条记录</p>
+
 <h2 id="myisam-中的索引">MyISAM 中的索引</h2>
-<p>简单说明一下 <!-- raw HTML omitted --><code>MyISAM</code> 中建立的索引相当于 <code>InnoDB</code> 中的二级索引<!-- raw HTML omitted --></p>
+
+<p>简单说明一下 <font color=red><code>MyISAM</code> 中建立的索引相当于 <code>InnoDB</code> 中的二级索引</font></p>
+
 <p>MyISAM 它是将索引和数据分开存储</p>
+
 <ul>
 <li>数据： 所有表中记录按照插入顺序单独存储在一个名为 <code>数据文件</code> 的文件中。 可以通过行号快速访问一条记录。</li>
 <li>索引： 索引信息另外存储在一个名为 <code>索引文件</code> 的文件中。
+
 <ul>
-<li><code>MyISAM</code> 会单独为表的主键创建一个索引，索引的叶子节点中存储的不是完整的用户记录，而是<!-- raw HTML omitted -->主键值 + 行号<!-- raw HTML omitted -->的组合。可以先通过索引找到对应的行号，再通过行号去找对应的记录</li>
-<li>非主键索引， 类似于 <code>InnoDB</code>, 叶子节点处存储的是<!-- raw HTML omitted -->相应的列 + 行号<!-- raw HTML omitted --></li>
+<li><code>MyISAM</code> 会单独为表的主键创建一个索引，索引的叶子节点中存储的不是完整的用户记录，而是<font color=red>主键值 + 行号</font>的组合。可以先通过索引找到对应的行号，再通过行号去找对应的记录</li>
+<li>非主键索引， 类似于 <code>InnoDB</code>, 叶子节点处存储的是<font color=red>相应的列 + 行号</font></li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<h2 id="b树总结">B+树总结</h2>
+
+<h2 id="b-树总结">B+树总结</h2>
+
 <ul>
 <li>每个索引都对应一棵 <code>B+树</code>，<code>B+树</code> 分为好多层，最下边一层是叶子节点，其余的是内节点。所有 <code>用户记录</code> 都存储在B+树的叶子节点，所有 <code>目录项记录</code> 都存储在内节点。</li>
 <li><code>InnoDB</code> 存储引擎会自动为主键（如果没有它会自动帮我们添加）建立 <code>聚簇索引</code>，聚簇索引的叶子节点包含完整的用户记录。</li>
@@ -365,10 +397,13 @@
 <li><code>B+树</code> 中每层节点都是按照索引列值从小到大的顺序排序而组成了 <code>双向链表</code>，而且每个页内的记录（不论是用户记录还是目录项记录）都是按照索引列的值从小到大的顺序而形成了一个 <code>单链表</code>。如果是 <code>联合索引</code> 的话，则页面和记录先按照联合索引前边的列排序，如果该列值相同，再按照联合索引后边的列排序。</li>
 <li>通过索引查找记录是从 <code>B+树</code> 的根节点开始，一层一层向下搜索。由于每个页面都按照索引列的值建立了 <code>Page Directory</code>（页目录），所以在这些页面中的查找非常快。</li>
 </ul>
-<h2 id="innodb的b树的使用">InnoDB的B+树的使用</h2>
+
+<h2 id="innodb的b-树的使用">InnoDB的B+树的使用</h2>
+
 <ul>
 <li>B+树索引在空间和时间上都有代价，别随意创建索引。</li>
 <li>B+树索引适用于下边这些情况：
+
 <ul>
 <li>全值匹配</li>
 <li>匹配左边的列</li>
@@ -376,9 +411,9 @@
 <li>精确匹配某一列并范围匹配另外一列</li>
 <li>用于排序</li>
 <li>用于分组</li>
-</ul>
-</li>
+</ul></li>
 <li>在使用索引时需要注意下边这些事项：
+
 <ul>
 <li>只为用于搜索、排序或分组的列创建索引</li>
 <li>为列的基数大的列创建索引</li>
@@ -388,8 +423,7 @@
 <li>为了尽可能少的让聚簇索引发生页面分裂和记录移位的情况，建议让主键拥有AUTO_INCREMENT属性。</li>
 <li>定位并删除表中的重复和冗余索引</li>
 <li>尽量使用覆盖索引进行查询，避免回表带来的性能损耗。</li>
-</ul>
-</li>
+</ul></li>
 </ul>
           </div>
 
@@ -481,7 +515,7 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#innodb%e7%9a%84b%e6%a0%91">
+						 					<a class="nav-link" href="#innodb%e7%9a%84b-%e6%a0%91">
 												 InnoDB的B&#43;树
 											</a>
 										</li>
@@ -581,7 +615,7 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#innodb%e7%9a%84b%e6%a0%91%e7%b4%a2%e5%bc%95%e7%9a%84%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a1%b9">
+						 					<a class="nav-link" href="#innodb%e7%9a%84b-%e6%a0%91%e7%b4%a2%e5%bc%95%e7%9a%84%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a1%b9">
 												 InnoDB的B&#43;树索引的注意事项
 											</a>
 										</li>
@@ -677,7 +711,7 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#b%e6%a0%91%e6%80%bb%e7%bb%93">
+						 					<a class="nav-link" href="#b-%e6%a0%91%e6%80%bb%e7%bb%93">
 												 B&#43;树总结
 											</a>
 										</li>
@@ -699,7 +733,7 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#innodb%e7%9a%84b%e6%a0%91%e7%9a%84%e4%bd%bf%e7%94%a8">
+						 					<a class="nav-link" href="#innodb%e7%9a%84b-%e6%a0%91%e7%9a%84%e4%bd%bf%e7%94%a8">
 												 InnoDB的B&#43;树的使用
 											</a>
 										</li>

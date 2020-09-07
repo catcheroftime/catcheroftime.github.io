@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>python on 一个懒散的程序猿</title>
@@ -26,7 +26,7 @@
       <pubDate>Mon, 15 Jul 2019 16:02:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/blog/2019-07/python-request%E5%BA%93opencv%E5%BA%93%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/</guid>
-      <description>&lt;p&gt;在使用 Python 编写测试脚本过程中， 进行服务端功能的测试&lt;br&gt;
+      <description>&lt;p&gt;在使用 Python 编写测试脚本过程中， 进行服务端功能的测试&lt;br /&gt;
 这个文档主要记录脚本中出现的库的安装方式和一些简单的使用说明&lt;/p&gt;</description>
     </item>
     

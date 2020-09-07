@@ -13,8 +13,8 @@
 <meta property="og:description" content="QInputDialog源码分析(上) 里主要针对 QInputDialogPrivate 类的实现做了很详细的介绍，第二部分主要就是介绍 QInputDialog 和看源码过程中一些其他知识点的总结" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2020-09/qinputdialog%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8B/" />
-<meta property="article:published_time" content="2020-09-03T00:15:00+08:00" />
-<meta property="article:modified_time" content="2020-09-03T00:15:00+08:00" />
+<meta property="article:published_time" content="2020-09-03T00:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-09-03T00:15:00&#43;08:00"/>
 
 
   <title>
@@ -285,14 +285,18 @@
 
           <div class="post-content markdown">
             <p><code>QInputDialog源码分析(上)</code> 里主要针对 <code>QInputDialogPrivate</code> 类的实现做了很详细的介绍，第二部分主要就是介绍 <code>QInputDialog</code> 和看源码过程中一些其他知识点的总结</p>
+
 <h2 id="qinputdialog">QInputDialog</h2>
+
 <h3 id="inputmode">InputMode</h3>
+
 <pre><code>enum InputMode {
     TextInput,
     IntInput,
     DoubleInput
 };
 </code></pre>
+
 <table>
 <thead>
 <tr>
@@ -301,17 +305,20 @@
 <th align="left">描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">QInputDialog::TextInput</td>
 <td align="left">0</td>
 <td align="left">Used to input text strings.</td>
 </tr>
+
 <tr>
 <td align="left">QInputDialog::IntInput</td>
 <td align="left">1</td>
 <td align="left">Used to input integers.</td>
 </tr>
+
 <tr>
 <td align="left">QInputDialog::DoubleInput</td>
 <td align="left">2</td>
@@ -319,7 +326,9 @@
 </tr>
 </tbody>
 </table>
+
 <p>InputMode 决定了最后从 QInputDialog 获取值时的类型，</p>
+
 <table>
 <thead>
 <tr>
@@ -329,6 +338,7 @@
 <th align="left">描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">QInputDialog::IntInput</td>
@@ -336,12 +346,14 @@
 <td align="left">int intValue() const;</td>
 <td align="left">返回值是从 QSpinBox 控件中获取值 <code>d-&gt;intSpinBox-&gt;value()</code>，默认是0</td>
 </tr>
+
 <tr>
 <td align="left">QInputDialog::DoubleInput</td>
 <td align="left">double</td>
 <td align="left">double doubleValue() const;</td>
 <td align="left">返回值是从 QDoubleSpinBox 空间中获取值<code>d-&gt;doubleSpinBox-&gt;value()</code>. 默认是 0</td>
 </tr>
+
 <tr>
 <td align="left">QInputDialog::TextInput</td>
 <td align="left">QString</td>
@@ -350,8 +362,11 @@
 </tr>
 </tbody>
 </table>
+
 <h3 id="inputdialogoption">InputDialogOption</h3>
+
 <p>看一个类需要先简单看一下它的枚举</p>
+
 <pre><code>enum InputDialogOption {
     NoButtons                    = 0x00000001,
     UseListViewForComboBoxItems  = 0x00000002,
@@ -360,6 +375,7 @@
 
 Q_DECLARE_FLAGS(InputDialogOptions, InputDialogOption)
 </code></pre>
+
 <table>
 <thead>
 <tr>
@@ -368,17 +384,20 @@ Q_DECLARE_FLAGS(InputDialogOptions, InputDialogOption)
 <th align="left">描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">QInputDialog::NoButtons</td>
 <td align="left">0x00000001</td>
 <td align="left">Don&rsquo;t display OK and Cancel buttons (useful for &ldquo;live dialogs&rdquo;).</td>
 </tr>
+
 <tr>
 <td align="left">QInputDialog::UseListViewForComboBoxItems</td>
 <td align="left">0x00000002</td>
 <td align="left">Use a QListView rather than a non-editable QComboBox for displaying the items set with setComboBoxItems().</td>
 </tr>
+
 <tr>
 <td align="left">QInputDialog::UsePlainTextEditForTextInput</td>
 <td align="left">0x00000004</td>
@@ -386,8 +405,11 @@ Q_DECLARE_FLAGS(InputDialogOptions, InputDialogOption)
 </tr>
 </tbody>
 </table>
+
 <h4 id="setoptions">setOptions</h4>
+
 <p>通过 setOptions 来设置 QInputDialog 的 opts;</p>
+
 <pre><code>void QInputDialog::setOptions(InputDialogOptions options)
 {
     Q_D(QInputDialog);
@@ -410,12 +432,19 @@ Q_DECLARE_FLAGS(InputDialogOptions, InputDialogOption)
         d-&gt;chooseRightTextInputWidget();
 }
 </code></pre>
+
 <p>这里涉及到2个比较关键的函数 <code>ensureLayout()</code>, 和 <code>chooseRightTextInputWidget()</code>, 这个后面会介绍。这里先简单总结一下枚举左右生效的条件</p>
+
 <h2 id="扩展">扩展</h2>
+
 <h3 id="mutable">mutable</h3>
+
 <p>被 <code>mutable</code> 修饰的成员变量( <code>mutable</code> 只能用于修饰类的非静态数据成员)，那么它就可以突破 <code>const</code> 的限制，在被 <code>const</code> 修饰的函数里面也能被修改。</p>
-<h3 id="q_private_slot">Q_PRIVATE_SLOT</h3>
+
+<h3 id="q-private-slot">Q_PRIVATE_SLOT</h3>
+
 <p><code>qinputdialog.cpp</code> 的类 <code>QInputDialogPrivate</code> 中的接口 <code>ensureLineEdit()</code> 信号槽很值得在看一眼</p>
+
 <pre><code>void QInputDialogPrivate::ensureLineEdit()
 {
     Q_Q(QInputDialog);
@@ -429,20 +458,30 @@ Q_DECLARE_FLAGS(InputDialogOptions, InputDialogOption)
     }
 }
 </code></pre>
+
 <p><code>QObject::connect()</code> 现在的需求是连接 <code>lineEdit</code> 的 <code>textChanged(QString)</code> 信号 和 <code>QInputDialogPrivate</code> 的 <code>_q_textChanged(QString)</code></p>
+
 <p>但是按照 <code>Qt4</code> 的风格, 槽函数必须放在由 <code>slots</code> 修饰的代码块中，并且要使用访问控制符进行访问控制。</p>
+
 <p>而 <code>QInputDialogPrivate</code> 里并没有对 <code>_q_textChanged(QString)</code> 做任何的修饰，所以 Qt4 的风格没办法直接建立信号槽，所以这里绑定的是 <code>q</code> 和 <code>SLOT(_q_textChanged(QString))</code>; 并且在 <code>qinputdialog.cpp</code> 文件中添加</p>
+
 <pre><code>#include &quot;moc_qinputdialog.cpp&quot; // 开个新坑，关于 Qt 的 MOC 会在下一篇博客中详细的介绍 
 </code></pre>
+
 <p>为了保证信号槽能正确使用，必须要再 <code>qinputdialog.h</code> 里用到 <code>Q_PRIVATE_SLOT</code> 的宏</p>
+
 <pre><code>Q_PRIVATE_SLOT(d_func(), void _q_textChanged(const QString&amp;))
 </code></pre>
-<p>大致意思就是在 <code>qinputdialog.h</code> 里生成一个 <code>_q_textChanged(QString)</code> 的槽函数<br>
+
+<p>大致意思就是在 <code>qinputdialog.h</code> 里生成一个 <code>_q_textChanged(QString)</code> 的槽函数<br />
 执行 <code>d_func()-&gt;_q_textChanged(QString);</code></p>
+
 <p>其实如果使用 Qt5 的 connect 方式是很简单的</p>
+
 <pre><code>QObject::connect(lineEdit, &amp;QLineEdit::textChanged, this, &amp;QInputDialogPrivate::_q_textChanged);
 QObject::connect(lineEdit, &amp;QLineEdit::textChanged, [this](QString text){_q_textChanged(text);});
 </code></pre>
+
 <p><code>Q_PRIVATE_SLOT</code> 的宏是仅仅只是为了兼容 <code>Qt4</code> 。对于 <code>Qt5</code> 是没有必要的</p>
           </div>
 
@@ -684,7 +723,7 @@ QObject::connect(lineEdit, &amp;QLineEdit::textChanged, [this](QString text){_q_
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#q_private_slot">
+						 					<a class="nav-link" href="#q-private-slot">
 												 Q_PRIVATE_SLOT
 											</a>
 										</li>

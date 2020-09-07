@@ -15,8 +15,8 @@
 特点如下： 1. 精度是可以放缩  2. 时间轴时间连续  3. 可以通过鼠标左右滑动改变时间轴显示时间。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-07/qt-%E6%97%B6%E9%97%B4%E8%BD%B42%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" />
-<meta property="article:published_time" content="2019-07-28T18:15:00+08:00" />
-<meta property="article:modified_time" content="2019-07-28T18:15:00+08:00" />
+<meta property="article:published_time" content="2019-07-28T18:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2019-07-28T18:15:00&#43;08:00"/>
 
 
   <title>
@@ -292,32 +292,47 @@
           <div class="post-content markdown">
             <p>这篇文章介绍的自定义插件比较简单，主要都是通过绘图完成的。
 特点如下： 1. 精度是可以放缩  2. 时间轴时间连续  3. 可以通过鼠标左右滑动改变时间轴显示时间。</p>
+
 <h2 id="思路逻辑">思路逻辑</h2>
+
 <h3 id="基本需求">基本需求</h3>
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline2/timeline2_overview.gif" alt="timeline2_overview"></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline2/timeline2_overview.gif" alt="timeline2_overview" /></p>
+
 <ul>
 <li>时间轴时间连续</li>
 <li>时间轴精度可以放缩</li>
 <li>时间轴可以左右滑动</li>
 </ul>
+
 <h3 id="简单的逻辑">简单的逻辑</h3>
+
 <ul>
 <li>考虑到时间轴精度放缩的时候是以时间轴中间的时间为基本(中间的时间位置不变，一直在视图中间)，所以所有的刻度生成都是基于时间轴中间的时间来计算</li>
 <li>假设提供一个中间时间，每次通过绘制当前中间时间在一定的时间精度等级下的图，当左右鼠标拖动时，改变中间时间值，再次重新绘制，这样基本就可以满足基本需求了</li>
 </ul>
+
 <h4 id="绘图">绘图</h4>
+
 <p>由于全是绘图事件。首先需要知道需要绘制哪些内容</p>
+
 <ol>
 <li>最简单的背景</li>
 <li>时间刻度</li>
 <li>中间的游标</li>
 <li>需要显示的内容</li>
 </ol>
+
 <h4 id="计算刻度数值">计算刻度数值</h4>
+
 <p>计算具体的时间刻度数值， 这一部分稍微麻烦一点。在已知中间的时间，通过像素和时间之间的比例，求出时间轴最左侧的起点时间，根据不同的精度，绘制完整的时间轴</p>
+
 <h2 id="代码逻辑">代码逻辑</h2>
+
 <h3 id="整体逻辑">整体逻辑</h3>
+
 <p>根据上面的逻辑， 在 <code>paintEvent(QPaintEvent *)</code> 函数中对每一部分需要做的做一个简单说明</p>
+
 <pre><code>void DrawTimeline::paintEvent(QPaintEvent *)
 {
     // 绘制背景
@@ -339,15 +354,22 @@
     drawTimeCursor(painter);
 }
 </code></pre>
+
 <p>接下来主要先把简单的内容先说明以下</p>
+
 <h3 id="中间位置时间">中间位置时间</h3>
-<p><code>m_currentDateTime</code> 记录当前的时间<br>
+
+<p><code>m_currentDateTime</code> 记录当前的时间<br />
 <code>m_midDisplayLabel</code> 是一个 <code>QLabel</code>, 主要就是显示 <code>m_currentDateTime</code> 时间， 位置在视图的中央</p>
+
 <h3 id="绘制中间游标">绘制中间游标</h3>
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline2/timeline2_cursor.png" alt="timeline2_cursor"></p>
-<p>中间的游标分为2部分<br>
-第一部分是一个红色的竖线，位置在视图中间位置，只需要确定y方向的高度<br>
+
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline2/timeline2_cursor.png" alt="timeline2_cursor" /></p>
+
+<p>中间的游标分为2部分<br />
+第一部分是一个红色的竖线，位置在视图中间位置，只需要确定y方向的高度<br />
 第二部分是一个类似标签一样的5边形，可以通过提供5个点的位置， 使用 <code>drawPolygon()</code> 函数直接绘制得到</p>
+
 <pre><code>void DrawTimeline::drawTimeCursor(QPainter &amp;painter)
 {
     painter.setPen( QPen{QColor{255,0,0,200},2});
@@ -363,14 +385,18 @@
     painter.drawPolygon(cursorPolygon);
 }
 </code></pre>
+
 <h3 id="绘制时间刻度">绘制时间刻度</h3>
-<p>在绘制时间刻度之前，首先需要总结大概需要的时间和距离的关系。<br>
+
+<p>在绘制时间刻度之前，首先需要总结大概需要的时间和距离的关系。<br />
 我的代码中，目前分为8个精度
-12个小时，6个小时，2个小时， 1个小时， 30分钟， 10分钟， 5分钟， 1分钟<br>
+12个小时，6个小时，2个小时， 1个小时， 30分钟， 10分钟， 5分钟， 1分钟<br />
 同时每个小的时间段(时间步长)对应的像素(像素步长)，我设置的比较随意， 50像素开始到120像素，每1级加10像素，这样在调整精确度的时候，有放缩的感觉。</p>
-<p>定义结构体 <code>TimeForDistance</code>, 存储时间步长和像素步长的关系<br>
-<code>QVector&lt;TimeForDistance&gt; m_vecStep</code> 存储我所有的精度信息<br>
+
+<p>定义结构体 <code>TimeForDistance</code>, 存储时间步长和像素步长的关系<br />
+<code>QVector&lt;TimeForDistance&gt; m_vecStep</code> 存储我所有的精度信息<br />
 <code>int m_sizeLevel</code> 存储当前绘图使用的精度等级(0-7),对应 <code>m_vecStep</code> 中的信息</p>
+
 <pre><code>struct TimeForDistance
 {
     int timestep;
@@ -379,20 +405,25 @@
 QVector&lt;TimeForDistance&gt; m_vecStep;   这个变量存储所有的像素和时间的关系
 int m_sizeLevel;
 </code></pre>
-<p>所有的准备工作都做好了，接下来就是绘制时间刻度<br>
-这边需要对刻度做一下简单的说明， 我以一小时的时间步长为例，时间刻度显示应该是完整的小时， 比如00:00， 01:00， 02:00，等等<br>
+
+<p>所有的准备工作都做好了，接下来就是绘制时间刻度<br />
+这边需要对刻度做一下简单的说明， 我以一小时的时间步长为例，时间刻度显示应该是完整的小时， 比如00:00， 01:00， 02:00，等等<br />
 总结以下 如果已知中间时间，如何绘制完整的时间轴</p>
+
 <ul>
 <li>已知中间时间，可以根据对应精度中每个像素代表多少时间，求出时间轴上起点的时间</li>
 <li>因为起点时间并不能作为时间轴上刻度，我们需要算出起点时间右侧的第一个刻度
+
 <ul>
 <li>我将起点时间全部换成秒为单位的数值，该数值除以步长的整数部分+1之后乘以步长就能得到右侧第一个刻度S的数值</li>
 <li>实际上我们只关心起点的位置信息， 计算起点时间和右侧第一个刻度的时间差值，在换成位置信息即可</li>
+</ul></li>
+<li>在算出第一个刻度位置后，之后的时间刻度累加像素步长，可以得到完整的时间轴
+<br /></li>
 </ul>
-</li>
-<li>在算出第一个刻度位置后，之后的时间刻度累加像素步长，可以得到完整的时间轴</li>
-</ul>
+
 <p>接下来简单看一下代码，代码就是按照这个逻辑实现的</p>
+
 <pre><code>void DrawTimeline::drawTimescale(QPainter &amp;painter)
 {
     // 绘制容纳时间的矩形
@@ -424,16 +455,21 @@ int m_sizeLevel;
     }
 }
 </code></pre>
+
 <h3 id="绘制具体的时间数据">绘制具体的时间数据</h3>
-<p><code>QVector&lt;TimeRange&gt; m_vecTimeRangeInfo</code> 存储所有的时间信息<br>
+
+<p><code>QVector&lt;TimeRange&gt; m_vecTimeRangeInfo</code> 存储所有的时间信息<br />
 结构体 <code>TimeRange</code> 中只记录每个时间信息的开始时间和结束时间</p>
+
 <pre><code>struct TimeRange
 {
     QDateTime starttime;
     QDateTime endtime;
 };
 </code></pre>
+
 <p>在得到开始时间和结束时间之后， 通过计算开始时间的位置，以及时间的长度，在时间轴中绘制一个矩形</p>
+
 <pre><code>void DrawTimeline::drawTimeRangeInfo(QPainter &amp;paint)
 {
     for (int i=0; i&lt;m_vecTimeRangeInfo.count(); ++i) {
@@ -456,22 +492,32 @@ int m_sizeLevel;
     }
 }
 </code></pre>
+
 <h3 id="左右滑动">左右滑动</h3>
+
 <p>这一部分比较简单主要重新实现以下几个函数</p>
+
 <pre><code>virtual void mousePressEvent(QMouseEvent *event);
 virtual void mouseReleaseEvent(QMouseEvent *event);
 virtual void mouseMoveEvent(QMouseEvent *event);
 </code></pre>
-<p>在鼠标点击的时候记录一个位置信息，和点击时的 <code>m_currentDateTime</code> 时间<br>
+
+<p>在鼠标点击的时候记录一个位置信息，和点击时的 <code>m_currentDateTime</code> 时间<br />
 在鼠标移动过程中计算移动的距离，通过当前的精度， 换算出新的 <code>m_currentDateTime</code> 值， 之后调用 <code>update()</code> 刷新绘图即可</p>
+
 <h3 id="精度的切换">精度的切换</h3>
+
 <p>之前通过 <code>m_sizeLevel</code> 来记录当前的精度等级，在放大和缩小精度的时候，对应改变它的值，之后调用 <code>update()</code> 刷新绘图即可</p>
+
 <h2 id="扩展">扩展</h2>
+
 <ul>
 <li>放大缩小可以引入鼠标滚轮事件 <code>void wheelEvent(QWheelEvent *event)</code></li>
 </ul>
+
 <h2 id="代码地址">代码地址</h2>
-<p>github 地址 ：https://github.com/catcheroftime/DrawTimelinePlugin</p>
+
+<p>github 地址 ：<a href="https://github.com/catcheroftime/DrawTimelinePlugin">https://github.com/catcheroftime/DrawTimelinePlugin</a></p>
           </div>
 
           

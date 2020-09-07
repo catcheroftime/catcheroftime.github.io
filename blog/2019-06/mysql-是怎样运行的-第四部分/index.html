@@ -13,8 +13,8 @@
 <meta property="og:description" content="这部分主要跟着大佬的脚步&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;，学习一下InnoDB、MyISAM 这样的存储引擎是如何把表存储在文件系统上的，也就是如何存储到磁盘上的。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-06/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86/" />
-<meta property="article:published_time" content="2019-06-20T15:45:00+08:00" />
-<meta property="article:modified_time" content="2019-06-20T15:45:00+08:00" />
+<meta property="article:published_time" content="2019-06-20T15:45:00&#43;08:00"/>
+<meta property="article:modified_time" content="2019-06-20T15:45:00&#43;08:00"/>
 
 
   <title>
@@ -285,94 +285,123 @@
 
           <div class="post-content markdown">
             <p>这部分主要跟着大佬的脚步<a href="https://juejin.im/book/5bffcbc9f265da614b11b731">&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;</a>，学习一下<code>InnoDB</code>、<code>MyISAM</code> 这样的存储引擎是如何把表存储在文件系统上的，也就是如何存储到磁盘上的。</p>
+
 <h2 id="mysql数据目录">MySQL数据目录</h2>
+
 <h3 id="数据目录位置">数据目录位置</h3>
-<p>查看方式<br>
-<img src="https://catcheroftime.github.io/images/blog/mysql/datadir.png" alt="datadir"></p>
+
+<p>查看方式<br />
+<img src="https://catcheroftime.github.io/images/blog/mysql/datadir.png" alt="datadir" /></p>
+
 <h3 id="目录结构">目录结构</h3>
+
 <h4 id="数据库在文件系统中的表示">数据库在文件系统中的表示</h4>
+
 <p>每创建一个数据库</p>
+
 <ul>
 <li>在 <code>数据目录</code> 下创建一个和数据库名同名的子目录(或者说是文件夹)</li>
 <li>在该与数据库名同名的字幕侠创建一个名为 db.opt 的文件， 这个文件中包含该数据的各种属性， 比如字符集和比较规则。</li>
 </ul>
-<p><!-- raw HTML omitted -->每个数据库都对应数据目录下的一个子目录，或者说对应一个文件夹<!-- raw HTML omitted --></p>
+
+<p><font color =red>每个数据库都对应数据目录下的一个子目录，或者说对应一个文件夹</font></p>
+
 <h4 id="innodb表在文件系统中的表示">InnoDB表在文件系统中的表示</h4>
+
 <p>每创建一张表</p>
+
 <ul>
-<li><!-- raw HTML omitted -->表结构的定义<!-- raw HTML omitted --> ： 在对应的数据子目录下创建一个专门用于描述的表结构文件， 名为 <code>表名.frm</code></li>
-<li><!-- raw HTML omitted -->表中的数据<!-- raw HTML omitted -->
+<li><font color =red>表结构的定义</font> ： 在对应的数据子目录下创建一个专门用于描述的表结构文件， 名为 <code>表名.frm</code></li>
+
+<li><p><font color =red>表中的数据</font></p>
+
 <ul>
-<li>
-<p>系统表空间（system tablespace）<br>
-系统表空间可以对应文件系统上一个或多个实际的文件，默认情况下，<code>InnoDB</code> 会在数据目录下创建一个名为 <code>ibdata1</code>的自扩展文件。</p>
-</li>
-<li>
-<p>独立表空间(file-per-table tablespace)<br>
-为每一个表建立一个独立表空间，会在该表所属数据库对应的子目录下创建一个表示该独立表空间的文件，名为 <code>表名.ibd</code></p>
-</li>
-<li>
-<p>其他类型的表空间<br>
-如通用表空间（general tablespace）、undo表空间（undo tablespace）、临时表空间（temporary tablespace）等等</p>
-<p>我们可以指定使用 <code>系统表空间</code> 还是 <code>独立表空间</code> 来存储数据，这个功能由启动参数 <code>innodb_file_per_table</code>. 0为系统表空间， 1为独立表空间</p>
-</li>
+<li>系统表空间（system tablespace）<br />
+系统表空间可以对应文件系统上一个或多个实际的文件，默认情况下，<code>InnoDB</code> 会在数据目录下创建一个名为 <code>ibdata1</code>的自扩展文件。</li>
+<li>独立表空间(file-per-table tablespace)<br />
+为每一个表建立一个独立表空间，会在该表所属数据库对应的子目录下创建一个表示该独立表空间的文件，名为 <code>表名.ibd</code></li>
+<li>其他类型的表空间<br />
+如通用表空间（general tablespace）、undo表空间（undo tablespace）、临时表空间（temporary tablespace）等等
+<br /></li>
 </ul>
-</li>
+
+<p>我们可以指定使用 <code>系统表空间</code> 还是 <code>独立表空间</code> 来存储数据，这个功能由启动参数 <code>innodb_file_per_table</code>. 0为系统表空间， 1为独立表空间</p></li>
 </ul>
+
 <h4 id="myisam表在文件系统中的表示">MyISAM表在文件系统中的表示</h4>
+
 <p>每创建一张表, 会在对应的数据库子目录下创建三个文件</p>
+
 <pre><code>表名.frm      //表的结构文件
 表名.MYD      //表的数据文件
 表名.MYI      //表的索引文件
 </code></pre>
+
 <h4 id="其他文件">其他文件</h4>
+
 <ul>
-<li>服务器进程文件<br>
+<li>服务器进程文件<br />
 每运行一个MySQL服务器程序，会把自己的进程ID写入到一个文件中</li>
 <li>服务器日志文件</li>
 <li>默认生成的SSL和RSA证书和密钥文件</li>
 </ul>
+
 <h3 id="文件系统对数据库的影响">文件系统对数据库的影响</h3>
+
 <ul>
 <li>数据库名称和表名称不得超过文件系统所允许的最大长度。</li>
-<li>特殊字符的问题<br>
+<li>特殊字符的问题<br />
 MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有字符在文件名里都映射成 <code>@+编码值</code> 的形式作为文件名。</li>
 <li>文件长度受文件系统最大长度限制</li>
 </ul>
+
 <h2 id="mysql-系统数据库简介">MySQL 系统数据库简介</h2>
+
 <ul>
-<li>mysql<br>
+<li>mysql<br />
 存储了MySQL的用户账户和权限信息，一些存储过程、事件的定义信息，一些运行过程中产生的日志信息，一些帮助信息以及时区信息等。</li>
-<li>information_schema<br>
+<li>information_schema<br />
 维护的所有其他数据库的信息，比如有表、视图、触发器、列、索引等信息</li>
-<li>performance_schema<br>
+<li>performance_schema<br />
 运行过程中的一些状态信息，算是对MySQL服务器的一个性能监控。包括统计最近执行了哪些语句，在执行过程的每个阶段都花费了多长时间，内存的使用情况等等信息。</li>
-<li>sys<br>
+<li>sys<br />
 通过视图的形式把 <code>information_schema</code> 和 <code>performance_schema</code> 结合起来，让程序员可以更方便的了解MySQL服务器的一些性能信息。</li>
 </ul>
-<p>表空间可以理解成存放许多 <code>页</code> 的地方, 而之前介绍过 <a href="https://catcheroftime.github.io/blog/2019-06/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86/#/innodb%E6%95%B0%E6%8D%AE%E9%A1%B5%E7%BB%93%E6%9E%84"><code>页</code></a> 分为各种类型,但是他们都有通用的部分</p>
-<p><img src="https://catcheroftime.github.io/images/blog/mysql/%E9%80%9A%E7%94%A8%E9%A1%B5%E7%BB%93%E6%9E%84.png" alt="通用页结构"></p>
+
+<p>表空间可以理解成存放许多 <code>页</code> 的地方, 而之前介绍过 <a href="https://catcheroftime.github.io/blog/2019-06/mysql-是怎样运行的-第二部分/#/innodb数据页结构"><code>页</code></a> 分为各种类型,但是他们都有通用的部分</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/通用页结构.png" alt="通用页结构" /></p>
+
 <ul>
 <li>File Header：记录页面的一些通用信息
+
 <ul>
 <li><code>FIL_PAGE_OFFSET</code>(页号) 是由4个字节组成, 也就是最多有2³²个页, 1个页16KB, 最多支持64TB</li>
 <li><code>FIL_PAGE_INDEX</code>(索引类型)的页, 页之前使用双链表的形式串起来的, 所以可以根据 <code>FIL_PAGE_PREV</code> 和<code>FIL_PAGE_NEXT</code> 来存储上一个页和下一个页的页号, 其他类型的页不使用这2个字段.</li>
-</ul>
-</li>
+</ul></li>
 <li>File Trailer：校验页是否完整，保证从内存到磁盘刷新时内容的一致性。</li>
 </ul>
+
 <h2 id="独立表空间">独立表空间</h2>
+
 <p>所有设计的初衷: 提高向表插入数据的效率又不至于数据量少的表浪费空间</p>
-<p>1个 <!-- raw HTML omitted -->页<!-- raw HTML omitted --> 16KB, 连续64个 <code>页</code> 合为一个 <!-- raw HTML omitted -->区(extent)<!-- raw HTML omitted -->, 默认占用1MB, 每256个 <code>区</code> 划分成一个 <!-- raw HTML omitted -->组<!-- raw HTML omitted -->, 每个组的最开始的几个页面类型是固定的.</p>
+
+<p>1个 <font color=red>页</font> 16KB, 连续64个 <code>页</code> 合为一个 <font color=red>区(extent)</font>, 默认占用1MB, 每256个 <code>区</code> 划分成一个 <font color=red>组</font>, 每个组的最开始的几个页面类型是固定的.</p>
+
 <p><code>区</code> 的引入是为了当存在大量的数据时, 如果只是单纯以 <code>页</code> 为单位分配控件, 虽然是双链表, 但是相邻2个 <code>页</code> 可能物理地址很远扫描数据, 这就是所谓的 <code>随机I/O</code>. 所以分配空间的时候, 以 <code>区</code> 为单位分配, 尽量让链表中相邻的页的物理位置也相邻，这样进行范围查询的时候才可以使用所谓的 <code>顺序I/O</code>.</p>
-<p>因为B+树的 <code>页</code> 是分为2种类型 叶子节点和非叶子节点, 所以引入 <!-- raw HTML omitted -->段(segment)<!-- raw HTML omitted --> 的概念, <code>段</code> 是以 <code>区</code>为单位申请存储控件, 存放叶子节点的区是一个 <code>段</code>, 存放非叶子节点的区也是一个 <code>段</code>.<br>
-但是当数据很少的时候, 对于一个索引而言, 需要生成2个段, 也就是2M空间, 所以又引入 <!-- raw HTML omitted -->碎片区<!-- raw HTML omitted --> 的概念, 碎片区只属于表空间, 并不属于任何一个段.</p>
+
+<p>因为B+树的 <code>页</code> 是分为2种类型 叶子节点和非叶子节点, 所以引入 <font color=red>段(segment)</font> 的概念, <code>段</code> 是以 <code>区</code>为单位申请存储控件, 存放叶子节点的区是一个 <code>段</code>, 存放非叶子节点的区也是一个 <code>段</code>.<br />
+但是当数据很少的时候, 对于一个索引而言, 需要生成2个段, 也就是2M空间, 所以又引入 <font color=red>碎片区</font> 的概念, 碎片区只属于表空间, 并不属于任何一个段.</p>
+
 <p>某个段分配存储空间的策略是这样的：</p>
+
 <ul>
 <li>在刚开始向表中插入数据的时候，段是从某个碎片区以单个页面为单位来分配存储空间的。</li>
 <li>当某个段已经占用了32个碎片区页面之后，就会以完整的区为单位来分配存储空间。</li>
 </ul>
+
 <h3 id="区的分类">区的分类</h3>
+
 <table>
 <thead>
 <tr>
@@ -381,22 +410,26 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <th align="left">描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">FREE</td>
 <td align="left">空闲的区</td>
 <td align="left">现在还没有用到这个区中的任何页面。</td>
 </tr>
+
 <tr>
 <td align="left">FREE_FRAG</td>
 <td align="left">有剩余空间的碎片区</td>
 <td align="left">表示碎片区中还有可用的页面。</td>
 </tr>
+
 <tr>
 <td align="left">FULL_FRAG</td>
 <td align="left">没有剩余空间的碎片区</td>
 <td align="left">表示碎片区中的所有页面都被使用，没有空闲页面。</td>
 </tr>
+
 <tr>
 <td align="left">FSEG</td>
 <td align="left">附属于某个段的区</td>
@@ -404,7 +437,9 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 </tr>
 </tbody>
 </table>
+
 <p>为了管理区, 设计了<code>XDES Entry</code>的结构（全称就是Extent Descriptor Entry), 每个区都有的结构一共40个字节</p>
+
 <table>
 <thead>
 <tr>
@@ -413,22 +448,26 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <th align="left">描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">Segment ID</td>
 <td align="left">8个字节</td>
 <td align="left">表示就是该区所在的段</td>
 </tr>
+
 <tr>
 <td align="left">List Node</td>
 <td align="left">12个字节</td>
 <td align="left">将若干个XDES Entry结构串联成一个链</td>
 </tr>
+
 <tr>
 <td align="left">state</td>
 <td align="left">4个字节</td>
 <td align="left">这个字段表明区的状态</td>
 </tr>
+
 <tr>
 <td align="left">Page State Bitmap</td>
 <td align="left">16个字节</td>
@@ -436,7 +475,9 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 </tr>
 </tbody>
 </table>
+
 <p>其中 List Node 的结构如下</p>
+
 <table>
 <thead>
 <tr>
@@ -445,22 +486,26 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <th align="left">描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">Pre Node Page Number</td>
 <td align="left">4个字节</td>
 <td align="left"></td>
 </tr>
+
 <tr>
 <td align="left">Pre Node Offset</td>
 <td align="left">2个字节</td>
 <td align="left"></td>
 </tr>
+
 <tr>
 <td align="left">Next Node Page Number</td>
 <td align="left">4个字节</td>
 <td align="left"></td>
 </tr>
+
 <tr>
 <td align="left">Next Node Offset</td>
 <td align="left">2个字节</td>
@@ -468,27 +513,38 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 </tr>
 </tbody>
 </table>
+
 <p>如果我们想定位表空间内的某一个位置的话，只需指定页号以及该位置在指定页号中的页内偏移量</p>
+
 <ul>
 <li><code>Pre Node Page Number</code>和<code>Pre Node Offset</code>的组合就是指向前一个XDES Entry的指针</li>
 <li><code>Next Node Page Number</code>和<code>Next Node Offset</code>的组合就是指向后一个XDES Entry的指针。</li>
 </ul>
+
 <h3 id="xdes-entry链表">XDES Entry链表</h3>
+
 <p>直属于表空间的链表分为三种</p>
+
 <ul>
 <li>把状态为 <code>FREE</code> 的区对应的XDES Entry结构通过List Node来连接成一个链表，这个链表我们就称之为 <code>FREE链表</code>。</li>
 <li>把状态为 <code>FREE_FRAG</code> 的区对应的XDES Entry结构通过List Node来连接成一个链表，这个链表我们就称之为 <code>FREE_FRAG链表</code>。</li>
 <li>把状态为 <code>FULL_FRAG</code> 的区对应的XDES Entry结构通过List Node来连接成一个链表，这个链表我们就称之为 <code>FULL_FRAG链表</code>。</li>
 </ul>
+
 <p>每个段中的区对应的XDES Entry结构建立的链表也分为三种：</p>
+
 <ul>
 <li>FREE链表：同一个段中，所有页面都是空闲的区对应的XDES Entry结构会被加入到这个链表。注意和直属于表空间的FREE链表区别开了，此处的FREE链表是附属于某个段的。</li>
 <li>NOT_FULL链表：同一个段中，仍有空闲空间的区对应的XDES Entry结构会被加入到这个链表。</li>
 <li>FULL链表：同一个段中，已经没有空闲空间的区对应的XDES Entry结构会被加入到这个链表。</li>
 </ul>
-<p><!-- raw HTML omitted -->总结: 对于1张表而言, 每1个索引都对应2个段, 每个段维护3个链表, 另外还有直属于表空间的3个链表<!-- raw HTML omitted --></p>
+
+<p><font color=red>总结: 对于1张表而言, 每1个索引都对应2个段, 每个段维护3个链表, 另外还有直属于表空间的3个链表</font></p>
+
 <h3 id="链表基节点">链表基节点</h3>
+
 <p>为了找到链表, 为链表设计一种 <code>List Base Node</code> (16个字节) 结构, 放置在表空间中固定的位置，方便定位某个链表</p>
+
 <table>
 <thead>
 <tr>
@@ -497,27 +553,32 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <th align="left">描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">List Length</td>
 <td align="left">4个字节</td>
 <td align="left">表明该链表一共有多少节点</td>
 </tr>
+
 <tr>
 <td align="left">First Node Page Number</td>
 <td align="left">4个字节</td>
 <td align="left">和First Node Offset一起表明该链表的头节点在表空间中的位置。</td>
 </tr>
+
 <tr>
 <td align="left">First Node Offset</td>
 <td align="left">2个字节</td>
 <td align="left"></td>
 </tr>
+
 <tr>
 <td align="left">Last Node Page Number</td>
 <td align="left">4个字节</td>
 <td align="left">和Last Node Offset一起表明该链表的尾节点在表空间中的位置</td>
 </tr>
+
 <tr>
 <td align="left">Last Node Offset</td>
 <td align="left">2个字节</td>
@@ -525,9 +586,13 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 </tr>
 </tbody>
 </table>
+
 <h3 id="段的结构">段的结构</h3>
+
 <p>段是一些零散页面和一些完整的区的集合, 每个段都定义了一个 <code>INODE Entry</code> 结构来记录一下段中的属性</p>
-<p><img src="https://catcheroftime.github.io/images/blog/mysql/frag_node.png" alt="段的结构"></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/frag_node.png" alt="段的结构" /></p>
+
 <table>
 <thead>
 <tr>
@@ -535,32 +600,41 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <th align="left">描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">Segment ID</td>
 <td align="left">对应的段的编号</td>
 </tr>
+
 <tr>
 <td align="left">NOT_FULL_N_USED</td>
 <td align="left">在NOT_FULL链表中已经使用了多少个页面</td>
 </tr>
+
 <tr>
 <td align="left">3个List Base Node</td>
 <td align="left">指定的链表基节点</td>
 </tr>
+
 <tr>
 <td align="left">Magic Number</td>
 <td align="left">标记这个INODE Entry是否已经被初始化了, 如果这个数字是值的97937874，表明该INODE Entry已经初始化</td>
 </tr>
+
 <tr>
 <td align="left">Fragment Array Entry</td>
 <td align="left">结构一共4个字节，表示一个零散页面的页号</td>
 </tr>
 </tbody>
 </table>
+
 <h3 id="从组的层面观察">从组的层面观察</h3>
-<h4 id="第一个组的第一个页-fsp_hdr-16kb">第一个组的第一个页 (FSP_HDR 16KB)</h4>
+
+<h4 id="第一个组的第一个页-fsp-hdr-16kb">第一个组的第一个页 (FSP_HDR 16KB)</h4>
+
 <p>第一个组的第一个页面(表空间的第一个页面，页号为0), 主要存储了表空间的一些整体属性以及第一个组内256个区的对应的XDES Entry结构</p>
+
 <table>
 <thead>
 <tr>
@@ -570,6 +644,7 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <th>简单描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td>File Header</td>
@@ -577,24 +652,28 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <td>38字节</td>
 <td>页的一些通用信息</td>
 </tr>
+
 <tr>
 <td>File Space</td>
 <td>Header</td>
 <td>表空间头部</td>
 <td>112字节</td>
 </tr>
+
 <tr>
 <td>XDES Entry</td>
 <td>区描述信息</td>
 <td>10240字节</td>
 <td>存储本组256个区对应的属性信息</td>
 </tr>
+
 <tr>
 <td>Empty Space</td>
 <td>尚未使用空间</td>
 <td>5986字节</td>
 <td>用于页结构的填充，没啥实际意义</td>
 </tr>
+
 <tr>
 <td>File Trailer</td>
 <td>文件尾部</td>
@@ -603,7 +682,9 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 </tr>
 </tbody>
 </table>
-<p><img src="https://catcheroftime.github.io/images/blog/mysql/%E7%AC%AC%E4%B8%80%E7%BB%84%E7%AC%AC%E4%B8%80%E9%A1%B5.png" alt="第一组第一页"></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/第一组第一页.png" alt="第一组第一页" /></p>
+
 <table>
 <thead>
 <tr>
@@ -612,62 +693,74 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <th>描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td>Space ID</td>
 <td>4字节</td>
 <td>表空间的ID</td>
 </tr>
+
 <tr>
 <td>Not Used</td>
 <td>4字节</td>
 <td>这4个字节未被使用，可以忽略</td>
 </tr>
+
 <tr>
 <td>Size</td>
 <td>4字节</td>
 <td>当前表空间占有的页面数</td>
 </tr>
+
 <tr>
 <td>FREE Limit</td>
 <td>4字节</td>
 <td>尚未被初始化的最小页号，大于或等于这个页号的区对应的XDES Entry结构都没有被加入FREE链表</td>
 </tr>
+
 <tr>
 <td>Space Flags</td>
 <td>4字节</td>
 <td>表空间的一些占用存储空间比较小的属性</td>
 </tr>
+
 <tr>
 <td>FRAG_N_USED</td>
 <td>4字节</td>
 <td>FREE_FRAG链表中已使用的页面数量</td>
 </tr>
+
 <tr>
 <td>List Base Node for FREE List</td>
 <td>16字节</td>
 <td>FREE链表的基节点</td>
 </tr>
+
 <tr>
 <td>List Base Node for FREE_FRAG List</td>
 <td>16字节</td>
 <td>FREE_FREG链表的基节点</td>
 </tr>
+
 <tr>
 <td>List Base Node for FULL_FRAG List</td>
 <td>16字节</td>
 <td>FULL_FREG链表的基节点</td>
 </tr>
+
 <tr>
 <td>Next Unused Segment ID</td>
 <td>8字节</td>
 <td>当前表空间中下一个未使用的 Segment ID</td>
 </tr>
+
 <tr>
 <td>List Base Node for SEG_INODES_FULL List</td>
 <td>16字节</td>
 <td>SEG_INODES_FULL链表的基节点</td>
 </tr>
+
 <tr>
 <td>List Base Node for SEG_INODES_FREE List</td>
 <td>16字节</td>
@@ -675,14 +768,23 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 </tr>
 </tbody>
 </table>
+
 <h4 id="第二个组的第一个页-xdes-16kb">第二个组的第一个页 (XDES 16KB)</h4>
-<p><img src="https://catcheroftime.github.io/images/blog/mysql/%E7%AC%AC%E4%BA%8C%E7%BB%84%E7%AC%AC%E4%B8%80%E9%A1%B5.png" alt="第二组第一页"></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/第二组第一页.png" alt="第二组第一页" /></p>
+
 <p>简单总结一下和第一个组第一个页的区别 : 除了少了 <code>File Space Header</code> 部分之外，也就是除了少了记录表空间整体属性的部分之外，其余的部分是一样一样的</p>
-<h4 id="第一个组的第二个页-ibuf_bitmap-16kb">第一个组的第二个页 (IBUF_BITMAP 16KB)</h4>
+
+<h4 id="第一个组的第二个页-ibuf-bitmap-16kb">第一个组的第二个页 (IBUF_BITMAP 16KB)</h4>
+
 <p>太复杂</p>
+
 <h4 id="第一个组的第三个页-inode类型-16kb">第一个组的第三个页 (INODE类型 16KB)</h4>
-<p><img src="https://catcheroftime.github.io/images/blog/mysql/%E7%AC%AC%E4%B8%80%E7%BB%84%E7%AC%AC%E4%B8%89%E4%B8%AA%E9%A1%B5.png" alt="第一组第三个页"></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/第一组第三个页.png" alt="第一组第三个页" /></p>
+
 <p>这个页主要管理索引的段信息， 前面提到段的结构 <code>INODE Entry</code>， 这一部分主要就是存储 <code>INODE Entry</code> 结构</p>
+
 <table>
 <thead>
 <tr>
@@ -692,6 +794,7 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <th>简单描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td>File Header</td>
@@ -699,24 +802,28 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <td>38字节</td>
 <td>页的一些通用信息</td>
 </tr>
+
 <tr>
 <td>List Node for INODE Page List</td>
 <td>通用链表节点</td>
 <td>12字节</td>
 <td>存储上一个INODE页面和下一个INODE页面的指针</td>
 </tr>
+
 <tr>
 <td>INODE Entry</td>
 <td>段描述信息</td>
 <td>16320字节</td>
 <td>一个页面里可以存储<code>85</code>个这样的结构</td>
 </tr>
+
 <tr>
 <td>Empty Space</td>
 <td>尚未使用空间</td>
 <td>6字节</td>
 <td>用于页结构的填充，没啥实际意义</td>
 </tr>
+
 <tr>
 <td>File Trailer</td>
 <td>文件尾部</td>
@@ -725,14 +832,19 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 </tr>
 </tbody>
 </table>
+
 <p>由于这个页最多只能存储85个段信息， 超过之后， 为了方便管理， 将所有的 <code>INODE</code> 类型的页串联成2个不同的链表</p>
+
 <ul>
 <li><code>SEG_INODES_FULL</code>链表：该链表中的INODE类型的页面中已经没有空闲空间来存储额外的INODE Entry结构了。</li>
 <li><code>SEG_INODES_FREE</code>链表：该链表中的INODE类型的页面中还有空闲空间来存储额外的INODE Entry结构了。</li>
 </ul>
+
 <p>而第一个组的第一个页中保存链表的基节点信息.</p>
-<p>既然保存了段的信息, 现在需要知道哪些页归属于那个段, 所以在 <a href="https://catcheroftime.github.io/blog/2019-06/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86/#/page-header-%E9%A1%B5%E9%9D%A2%E5%A4%B4%E9%83%A8">页面头部</a> 中存在2个字段
+
+<p>既然保存了段的信息, 现在需要知道哪些页归属于那个段, 所以在 <a href="https://catcheroftime.github.io/blog/2019-06/mysql-是怎样运行的-第二部分/#/page-header-页面头部">页面头部</a> 中存在2个字段
 <code>PAGE_BTR_SEG_LEAF</code> 和 <code>PAGE_BTR_SEG_TOP</code> , 都是10个字节, 具体结构内容如下 (这个结构又称为 <code>Segment Header 结构</code>)</p>
+
 <table>
 <thead>
 <tr>
@@ -741,17 +853,20 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <th>描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td>Space ID of the INODE Entry</td>
 <td>4</td>
 <td>INODE Entry结构所在的表空间ID</td>
 </tr>
+
 <tr>
 <td>Page Number of the INODE Entry</td>
 <td>4</td>
 <td>INODE Entry结构所在的页面页号</td>
 </tr>
+
 <tr>
 <td>Byte Offset of the INODE Ent</td>
 <td>2</td>
@@ -759,10 +874,15 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 </tr>
 </tbody>
 </table>
+
 <h2 id="系统表空间">系统表空间</h2>
+
 <p>这是小册微信交流群里的一个大佬整理的一个系统表的全局图</p>
-<p><img src="https://catcheroftime.github.io/images/blog/mysql/%E7%B3%BB%E7%BB%9F%E8%A1%A8%E6%80%BB%E8%A7%88.png" alt="系统表总览"></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/mysql/系统表总览.png" alt="系统表总览" /></p>
+
 <p>相比于独立表表空间, 第一个组的3~7的页面时系统表空间独有的. 另外系统表空间的extent 1和extent 2这两个区，也就是页号从64~191这128个页面被称为Doublewrite buffer，也就是双写缓冲区</p>
+
 <table>
 <thead>
 <tr>
@@ -772,6 +892,7 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <th>描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td>3</td>
@@ -779,24 +900,28 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <td>Insert Buffer Header</td>
 <td>存储Insert Buffer的头部信息</td>
 </tr>
+
 <tr>
 <td>4</td>
 <td>INDEX</td>
 <td>Insert Buffer Root</td>
 <td>存储Insert Buffer的根页面</td>
 </tr>
+
 <tr>
 <td>5</td>
 <td>TRX_SYS</td>
 <td>Transction System</td>
 <td>事务系统的相关信息</td>
 </tr>
+
 <tr>
 <td>6</td>
 <td>SYS</td>
 <td>First Rollback Segment</td>
 <td>第一个回滚段的页面</td>
 </tr>
+
 <tr>
 <td>7</td>
 <td>SYS</td>
@@ -805,13 +930,17 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 </tr>
 </tbody>
 </table>
+
 <p>MySQL除了保存用户的数据外, 为了更好的管理我们这些用户数据而不得已引入的一些额外数据，这些数据也称为 <code>元数据</code></p>
+
 <ul>
 <li>表相关信息 列的类型, 索引, 引擎啊,排序方式等等</li>
 <li>表与表之间的关系, 外键</li>
 <li>等等等</li>
 </ul>
+
 <p>InnoDB存储引擎特意定义了一些列的内部系统表（internal system table）来记录这些这些<code>元数据</code>, 这些系统表也被称为<code>数据字典</code>，它们都是以B+树的形式保存在系统表空间的某些页面中</p>
+
 <table>
 <thead>
 <tr>
@@ -819,46 +948,57 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 <th>描述</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td>SYS_TABLES</td>
 <td>整个InnoDB存储引擎中所有的表的信息</td>
 </tr>
+
 <tr>
 <td>SYS_COLUMNS</td>
 <td>整个InnoDB存储引擎中所有的列的信息</td>
 </tr>
+
 <tr>
 <td>SYS_INDEXES</td>
 <td>整个InnoDB存储引擎中所有的索引的信息</td>
 </tr>
+
 <tr>
 <td>SYS_FIELDS</td>
 <td>整个InnoDB存储引擎中所有的索引对应的列的信息</td>
 </tr>
+
 <tr>
 <td>SYS_FOREIGN</td>
 <td>整个InnoDB存储引擎中所有的外键的信息</td>
 </tr>
+
 <tr>
 <td>SYS_FOREIGN_COLS</td>
 <td>整个InnoDB存储引擎中所有的外键对应列的信息</td>
 </tr>
+
 <tr>
 <td>SYS_TABLESPACES</td>
 <td>整个InnoDB存储引擎中所有的表空间信息</td>
 </tr>
+
 <tr>
 <td>SYS_DATAFILES</td>
 <td>整个InnoDB存储引擎中所有的表空间对应文件系统的文件路径信息</td>
 </tr>
+
 <tr>
 <td>SYS_VIRTUAL</td>
 <td>整个InnoDB存储引擎中所有的虚拟生成列的信息</td>
 </tr>
 </tbody>
 </table>
+
 <p>这些表的详细介绍, 大家去看原文, 我不想总结了(抄了)</p>
+
 <p>因为这些表都是InnoDB 内部系统表, 不能直接访问, MySQL在 <code>information_schema</code> 系统数据库中提供了一些以 <code>innodb_sys</code>开头的表,
 这些以 <code>INNODB_SYS</code> 开头的表并不是真正的内部系统表,而是在存储引擎启动时读取这些以 <code>SYS</code> 开头的系统表，然后填充到这些以 <code>INNODB_SYS</code> 开头的表中,以 <code>INNODB_SYS</code> 开头的表和以 <code>SYS</code> 开头的表中的字段并不完全一样.</p>
           </div>
@@ -1349,7 +1489,7 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e7%ac%ac%e4%b8%80%e4%b8%aa%e7%bb%84%e7%9a%84%e7%ac%ac%e4%b8%80%e4%b8%aa%e9%a1%b5-fsp_hdr-16kb">
+						 					<a class="nav-link" href="#%e7%ac%ac%e4%b8%80%e4%b8%aa%e7%bb%84%e7%9a%84%e7%ac%ac%e4%b8%80%e4%b8%aa%e9%a1%b5-fsp-hdr-16kb">
 												 第一个组的第一个页 (FSP_HDR 16KB)
 											</a>
 										</li>
@@ -1409,7 +1549,7 @@ MySQL会把数据库名和表名中所有除数字和拉丁字母以外的所有
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e7%ac%ac%e4%b8%80%e4%b8%aa%e7%bb%84%e7%9a%84%e7%ac%ac%e4%ba%8c%e4%b8%aa%e9%a1%b5-ibuf_bitmap-16kb">
+						 					<a class="nav-link" href="#%e7%ac%ac%e4%b8%80%e4%b8%aa%e7%bb%84%e7%9a%84%e7%ac%ac%e4%ba%8c%e4%b8%aa%e9%a1%b5-ibuf-bitmap-16kb">
 												 第一个组的第二个页 (IBUF_BITMAP 16KB)
 											</a>
 										</li>

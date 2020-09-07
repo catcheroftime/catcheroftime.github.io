@@ -13,8 +13,8 @@
 <meta property="og:description" content="在查看 QT 源码的过程中，QT 无处不在的 Q_D, Q_Q 宏，在看源码过程中可能需要先理解，才能更好的继续下去" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://catcheroftime.github.io/blog/2019-10/qt-d%E6%8C%87%E9%92%88q%E6%8C%87%E9%92%88/" />
-<meta property="article:published_time" content="2019-10-25T15:56:00+08:00" />
-<meta property="article:modified_time" content="2019-10-25T15:56:00+08:00" />
+<meta property="article:published_time" content="2019-10-25T15:56:00&#43;08:00"/>
+<meta property="article:modified_time" content="2019-10-25T15:56:00&#43;08:00"/>
 
 
   <title>
@@ -285,8 +285,10 @@
 
           <div class="post-content markdown">
             <p>在查看 <code>QT</code> 源码的过程中，QT 无处不在的 <code>Q_D</code>, <code>Q_Q</code> 宏，在看源码过程中可能需要先理解，才能更好的继续下去</p>
-<p>例如 <code>QWidget</code> 类, 查看它的头文件 <code>QWidget.h</code> 时能看见一个前置声明 <code>class QWidgetPrivate;</code> 以及 <code>Q_DECLARE_PRIVATE(QWidget)</code>，同时在头文件中也没有看到任何的成员变量<br>
+
+<p>例如 <code>QWidget</code> 类, 查看它的头文件 <code>QWidget.h</code> 时能看见一个前置声明 <code>class QWidgetPrivate;</code> 以及 <code>Q_DECLARE_PRIVATE(QWidget)</code>，同时在头文件中也没有看到任何的成员变量<br />
 此外以头文件中的 <code>public</code> 函数 <code>int x() const;</code> 为例, 查看它的实现源码</p>
+
 <pre><code>int QWidget::x() const
 {
     Q_D(const QWidget);
@@ -295,28 +297,43 @@
     return data-&gt;crect.x();
 }
 </code></pre>
+
 <p>可以看到 <code>Q_D</code> 的宏， 以及一个 <code>d</code> 的指针, 第一次接触的时候一脸懵逼， 完全不知道如何下手</p>
+
 <p>在解释这些问题的时候， 首先需要知道 <code>QT</code> 引入 <code>Q_D</code>, <code>Q_Q</code> 等宏的原因，和它设计的思路</p>
+
 <h2 id="二进制兼容性-和-piml">二进制兼容性 和 PIML</h2>
+
 <p><a href="https://community.kde.org/Policies/Binary_Compatibility_Issues_With_C%2B%2B">https://community.kde.org/Policies/Binary_Compatibility_Issues_With_C%2B%2B</a> (我对这篇文章做了翻译，翻译文章地址 <a href="https://catcheroftime.github.io/blog/2019-10/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98c-%E7%AD%96%E7%95%A5/">二进制兼容性问题C++策略</a>  )</p>
-<p>首先可以看一下这篇文章，这里面解释了什么是 <code>二进制兼容性</code>， 简单点说就是 <!-- raw HTML omitted -->用新版本的库替换掉程序中旧版本库， 程序仍然可以正常运行<!-- raw HTML omitted --><br>
+
+<p>首先可以看一下这篇文章，这里面解释了什么是 <code>二进制兼容性</code>， 简单点说就是 <font color=red>用新版本的库替换掉程序中旧版本库， 程序仍然可以正常运行</font><br />
 如果不支持 <code>二进制兼容性</code>，替换库之后，可能会在程序运行时用到这个库的时候程序异常崩溃和闪退，而解决这个问题， 一般情况是将所有依赖这个库的相关的库和程序全部重新编译，替换才能保证程序正常运行。</p>
+
 <p>简单点说，d指针的引入主要有以下的几个好处：</p>
+
 <ul>
 <li>隐藏了所有的实现的细节，仅仅开放了被调用的接口</li>
 <li>私有的结构体可以随意更改，仅仅只需要重新编译被更改的库，而不需要重新编译整个工程项目</li>
 </ul>
+
 <h2 id="理解d指针">理解D指针</h2>
+
 <p>首先看一下 <code>Q_D</code> 的宏定义</p>
+
 <pre><code>#define Q_D(Class) Class##Private * const d = d_func()
 </code></pre>
+
 <p>简单介绍一下 宏定义下的 <code>#</code> 和 <code>##</code> 的用法</p>
+
 <ul>
 <li><code>#</code> 是把宏参数变成一个字符串</li>
 <li><code>##</code> 是将2个宏参数连接在一起</li>
 </ul>
+
 <p>回头看一下 <code>Q_D(Class)</code> 的意思就是 ClassPrivate * const d = d_func()</p>
+
 <p>接下来看一下 <code>d_func()</code> 函数的具体实现， 同样是在 <code>qglobal.h</code>的文件中：</p>
+
 <pre><code>template &lt;typename T&gt; static inline T *qGetPtrHelper(T *ptr) { return ptr; }
 template &lt;typename Wrapper&gt; static inline typename Wrapper::pointer qGetPtrHelper(const Wrapper &amp;p) { return p.data(); }
 
@@ -332,15 +349,21 @@ template &lt;typename Wrapper&gt; static inline typename Wrapper::pointer qGetPt
 
 #define Q_D(Class) Class##Private * const d = d_func()
 </code></pre>
-<p><code>d_func()</code> 函数实际上就是返回了一个 <code>ClassPrivate</code> 类型的指针<br>
+
+<p><code>d_func()</code> 函数实际上就是返回了一个 <code>ClassPrivate</code> 类型的指针<br />
 可以这样理解，以 <code>QWidget</code> 为例</p>
+
 <ul>
 <li><code>QWidget</code> 通过 <code>Q_DECLARE_PRIVATE(QWidget)</code> 定义了一个 d_func() 的函数， 可以通过 <code>d_func()</code> 获取 <code>QWidgetPrivate</code> 对象的指针</li>
 <li><code>QWidgetPrivate</code> 中实现了 <code>QWidget</code> 中所有的真正功能， 而 <code>QWidgetPrivate</code> 真正的实现在文件 <code>qwidget_p.h</code> 中</li>
 </ul>
+
 <p>现在剩下的就是理解 <code>d_ptr</code> 是在哪里初始化的，还是以 <code>QWidget</code> 为例</p>
+
 <p>先简单看一次 QWidget 的源码，这里只保留了继承关系和构造，析构函数</p>
+
 <p>qwidget.h 文件</p>
+
 <pre><code>class Q_WIDGETS_EXPORT QWidget : public QObject, public QPaintDevice
 {
     Q_OBJECT
@@ -350,7 +373,9 @@ template &lt;typename Wrapper&gt; static inline typename Wrapper::pointer qGetPt
     ~QWidget();
 }
 </code></pre>
+
 <p>qwidget.cpp 文件</p>
+
 <pre><code>QWidget::QWidget(QWidget *parent, Qt::WindowFlags f)
     : QObject(*new QWidgetPrivate, 0), QPaintDevice()
 {
@@ -370,8 +395,11 @@ QWidget::~QWidget()
     // All this widget's children are deleted first. The application exits if this widget is the main widget.
 }
 </code></pre>
+
 <p>这里可以看到 <code>QWidget</code> 构造函数中 <code>new</code> 了一个 <code>QWidgetPrivate</code> 指针,创建了一个 <code>QWidgetPrivate</code> 传递给父类 <code>QObject</code>， 接下来需要看一下 <code>QObject</code> 中的实现</p>
+
 <p>qobject.h 文件</p>
+
 <pre><code>class Q_CORE_EXPORT QObject
 {
     Q_OBJECT
@@ -388,7 +416,9 @@ protected:
     QScopedPointer&lt;QObjectData&gt; d_ptr;
 }
 </code></pre>
+
 <p>qobject.cpp 文件</p>
+
 <pre><code>QObject::QObject(QObject *parent)
     : d_ptr(new QObjectPrivate)
 {
@@ -411,15 +441,21 @@ QObject::QObject(QObjectPrivate &amp;dd, QObject *parent)
     ...
 }
 </code></pre>
+
 <p>看完这段省略的代码可以看出，<code>d_ptr</code> 实际上就是一个 <code>QScopedPointer&lt;QObjectData&gt;</code> 的智能指针，也就是一个指向 <code>QObjectData</code> 的智能指针</p>
+
 <p>简单点说就是</p>
+
 <ul>
 <li><code>QWidget</code> 在构造的时候生成的 <code>QWidgetPrivate</code> 指针最终被写到基类 <code>QObject</code> 的 <code>d_ptr</code> 中</li>
 <li>这样就可以在声明 <code>Q_DECLARE_PRIVATE(QWidget)</code> 之后，通过 <code>Q_D(QWidget)</code> 返回 <code>QWidgetPrivate</code> 指针，通过指针，对数据直接进行修改。</li>
 <li>这里使用的 <code>d_ptr</code> 实际类型是 <code>QObjectData</code> 的智能指针，指针指向 <code>QWidgetPrivate</code> 指针指向的地址， 所有通过 <code>reinterpret_cast</code> 可以直接拿到 <code>QWidgetPrivate</code> 指针</li>
 </ul>
+
 <h2 id="理解q指针">理解Q指针</h2>
+
 <p>理解完D指针，Q指针理解起来会很简单，首先看一下 <code>QObjectData</code> 的结构体以及 QObject 的构造</p>
+
 <pre><code>class Q_CORE_EXPORT QObjectData {
 public:
     virtual ~QObjectData() = 0;
@@ -448,8 +484,10 @@ QObject::QObject(QObjectPrivate &amp;dd, QObject *parent)
     ...
 }
 </code></pre>
-<p>还是以 <code>QWidget</code> 为例，<code>QWidget</code> 构造的时候, 将生成的 <code>QWidgetPrivate</code> 指针最终写到基类 <code>QObject</code> 的 <code>d_ptr</code> 中， 同时为 <code>d_ptr</code> 中的指针 <code>q_ptr</code> 赋值 <code>d_ptr-&gt;q_ptr = this</code>,这里的 <code>q_ptr</code> 其实就是 Q指针。<br>
+
+<p>还是以 <code>QWidget</code> 为例，<code>QWidget</code> 构造的时候, 将生成的 <code>QWidgetPrivate</code> 指针最终写到基类 <code>QObject</code> 的 <code>d_ptr</code> 中， 同时为 <code>d_ptr</code> 中的指针 <code>q_ptr</code> 赋值 <code>d_ptr-&gt;q_ptr = this</code>,这里的 <code>q_ptr</code> 其实就是 Q指针。<br />
 这里 <code>q_ptr</code> 被赋予 <code>QObject</code> 的地址，也就是父类的地址，通过 <code>static_cast</code> 转换之后就能拿到 <code>QWidget</code> 指针了， 这里 QT 提供一个宏：如下</p>
+
 <pre><code>#define Q_DECLARE_PUBLIC(Class)                                    \
     inline Class* q_func() { return static_cast&lt;Class *&gt;(q_ptr); } \
     inline const Class* q_func() const { return static_cast&lt;const Class *&gt;(q_ptr); } \
@@ -457,13 +495,17 @@ QObject::QObject(QObjectPrivate &amp;dd, QObject *parent)
 
 #define Q_Q(Class) Class * const q = q_func()
 </code></pre>
+
 <p>简单点说：</p>
+
 <ul>
 <li>通过 <code>Q_D(QWidget)</code>, <code>QWidget</code> 类中可以拿到 <code>QWidgetPrivate</code> 指针</li>
 <li>通过 <code>Q_Q(QWidget)</code>, <code>QWidgetPrivate</code> 类中可以拿到 <code>QWidget</code> 指针</li>
 </ul>
+
 <h2 id="总结">总结</h2>
-<p>QT 通过 <strong>D指针,Q指针</strong> 的形式，很好的将它的实现封装了起来，对外仅仅暴露需要被调用的接口，对内将数据和接口拆开<br>
+
+<p>QT 通过 <strong>D指针,Q指针</strong> 的形式，很好的将它的实现封装了起来，对外仅仅暴露需要被调用的接口，对内将数据和接口拆开<br />
 以 <code>QWidget</code>为例， <code>QWidgetPrivate</code> 也就是 <code>d_ptr</code> 相当于一个数据类，其中有所有的数据信息，而 <code>QWidget</code> 更倾向于一个对外的接口或者说View类，当 <code>QWidgetPrivate</code> 需要使用到一些 <code>QWidget</code> 的数据的时候，可以通过 <code>q_func()</code> 获取 <code>QWidget</code> 指针, 相反 <code>QWidget</code> 可以通过 <code>d_func()</code> 获取 <code>QWidgetPrivate</code> 指针，很大程度上减少了二者之间的耦合</p>
           </div>
 
