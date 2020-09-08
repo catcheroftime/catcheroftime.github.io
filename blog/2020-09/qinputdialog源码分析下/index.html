@@ -288,34 +288,6 @@
 
 <p>这篇文章主要根据 <code>QInputDialog</code> 类提供的接口，按照我的理解将这些源码分成以下几个部分分析</p>
 
-<ul>
-<li><a href="#枚举">枚举</a>
-
-<ul>
-<li><a href="#inputmode">InputMode</a></li>
-<li><a href="#setinputmode">setInputMode()</a></li>
-<li><a href="#inputmode-1">inputMode()</a></li>
-<li><a href="#inputdialogoption">InputDialogOption</a></li>
-<li><a href="#setoptions">setOptions</a></li>
-<li><a href="#options">options()</a></li>
-<li><a href="#枚举的作用">枚举的作用</a></li>
-</ul></li>
-<li><a href="#控件初始化和属性操作">控件初始化和属性操作</a></li>
-<li><a href="#父类的重载函数">父类的重载函数</a>
-
-<ul>
-<li><a href="#setvisible">setVisible()</a></li>
-<li><a href="#opne">opne()</a></li>
-</ul></li>
-<li><a href="#静态函数">静态函数</a></li>
-<li><a href="#额外的知识">额外的知识</a>
-
-<ul>
-<li><a href="#mutable">mutable</a></li>
-<li><a href="#q_private_slot">Q_PRIVATE_SLOT</a></li>
-</ul></li>
-</ul>
-
 <h2 id="枚举">枚举</h2>
 
 <h3 id="inputmode">InputMode</h3>
@@ -636,9 +608,26 @@ int QInputDialog::intStep() const
 
 <h2 id="父类的重载函数">父类的重载函数</h2>
 
-<p>因为真正展示的控件主要是 <code>QLabel</code>, <code>QDialogButtonBox</code>, <code>QVBoxLayout</code>, <code>inputWidget</code> 这4个， 但是用户不一定有对这些控件进行设置，也就是说没有 <code>d-&gt;ensureLayout();</code> 初始化这些控件，为了保证最后可以正常展示，对父类的一些接口进行重载，保证控件进行过初始化</p>
+<p>因为真正展示的控件主要是 <code>QLabel</code>, <code>QDialogButtonBox</code>, <code>QVBoxLayout</code>, <code>inputWidget</code> 这4个<br />
+但是用户不一定有对这些控件进行设置，也就是说没有 <code>d-&gt;ensureLayout();</code> 初始化这些控件，为了保证最后可以正常展示，对父类的一些接口进行重载，保证控件进行过初始化</p>
 
 <h3 id="setvisible">setVisible()</h3>
+
+<p><code>QInputDialog</code> 不管是调用 <code>exec()</code> ，<code>show()</code> 还是 <code>open()</code> 来显示界面(开个新坑，之后会有一篇关于 <code>QDialog</code> 这3个显示方法的源码分析), 因为类的继承关系，最后都会调用 <code>QWidget::show()</code></p>
+
+<pre><code class="language-C++">void QWidget::show()
+{
+    Qt::WindowState defaultState = QGuiApplicationPrivate::platformIntegration()-&gt;defaultWindowState(data-&gt;window_flags);
+    if (defaultState == Qt::WindowFullScreen)
+        showFullScreen();
+    else if (defaultState == Qt::WindowMaximized)
+        showMaximized();
+    else
+        setVisible(true);
+}
+</code></pre>
+
+<p>因为子类重新实现了这个虚函数，最后会调用 <code>QInputDialog</code> 的 <code>setVisible()</code> 的函数</p>
 
 <pre><code class="language-C++">void QInputDialog::setVisible(bool visible)
 {
@@ -660,45 +649,164 @@ int QInputDialog::intStep() const
 }
 </code></pre>
 
-<h3 id="opne">opne()</h3>
+<blockquote>
+<p>setFocus() : 将键盘输入焦点赋予该窗口小部件<br />
+selectAll() : 选择所有文本然后将光标移到末尾</p>
+</blockquote>
 
-<h2 id="静态函数">静态函数</h2>
+<p>从这里可以看出，又调用了 <code>d-&gt;ensureLayout();</code> , 确保控件都有正确初始化，因为 <code>ensureLayout()</code> 有判断 <code>inputWidget</code> 是否为空，为空的话默认创建 <code>QLineEdit</code>, 所有一定能保证界面可以正常显示，即使用户仅仅只是创建了一个对象之后，未做任何设置之后，直接 show()， 也不会出现控件没有初始化的问题</p>
 
-<table>
-<thead>
-<tr>
-<th align="left">静态函数</th>
-<th align="left">描述</th>
-</tr>
-</thead>
+<pre><code class="language-C++">QInputDialog *dialog = new QInputDialog{this, Qt::WindowCloseButtonHint};
+dialog-&gt;exec();
+</code></pre>
 
-<tbody>
-<tr>
-<td align="left">getText()</td>
-<td align="left">获取普通字符串</td>
-</tr>
+<h3 id="open">open()</h3>
 
-<tr>
-<td align="left">getMultiLineText()</td>
-<td align="left">获取富文本字符串</td>
-</tr>
+<p>其实这个 open() 不是重载了父类的函数，而是实现了一个新的接口 <code>void open(QObject *receiver, const char *member);</code></p>
 
-<tr>
-<td align="left">getInt()</td>
-<td align="left">获取 int 型</td>
-</tr>
+<pre><code class="language-C++">void QInputDialog::open(QObject *receiver, const char *member)
+{
+    Q_D(QInputDialog);
+    connect(this, signalForMember(member), receiver, member);
+    d-&gt;receiverToDisconnectOnClose = receiver;
+    d-&gt;memberToDisconnectOnClose = member;
+    QDialog::open();
+}
+</code></pre>
 
-<tr>
-<td align="left">getDouble()</td>
-<td align="left">获取 double 型</td>
-</tr>
+<p>这一部分的代码其实也挺有意思，<code>connect</code> 将一个信号和用户输入的对象和槽函数绑定，并将这些信息存入 <code>QInputDialogPrivate</code> 的成员变量中，首先需要知道 <code>connect</code> 到底用的信号是什么</p>
 
-<tr>
-<td align="left">getItem()</td>
-<td align="left">获取给定条目中的某一条</td>
-</tr>
-</tbody>
-</table>
+<pre><code class="language-C++">static const char *signalForMember(const char *member)
+{
+    QByteArray normalizedMember(QMetaObject::normalizedSignature(member));
+
+    for (int i = 0; i &lt; NumCandidateSignals; ++i)
+        if (QMetaObject::checkConnectArgs(candidateSignal(i), normalizedMember))
+            return candidateSignal(i);
+
+    // otherwise, use fit-all accepted signal:
+    return SIGNAL(accepted());
+}
+</code></pre>
+
+<blockquote>
+<p><code>static bool checkConnectArgs(const char *signal, const char *method)</code> 这个函数如果 signal 和 method 参数兼容，则返回true；否则返回false。</p>
+</blockquote>
+
+<p>这里面还有一个 <code>candidateSignal(i)</code> 还需要看一下这一部分源码</p>
+
+<pre><code class="language-C++">enum CandidateSignal {
+    TextValueSelectedSignal,
+    IntValueSelectedSignal,
+    DoubleValueSelectedSignal,
+
+    NumCandidateSignals
+};
+
+static const char *candidateSignal(int which)
+{
+    switch (CandidateSignal(which)) {
+    case TextValueSelectedSignal:   return SIGNAL(textValueSelected(QString));
+    case IntValueSelectedSignal:    return SIGNAL(intValueSelected(int));
+    case DoubleValueSelectedSignal: return SIGNAL(doubleValueSelected(double));
+
+    case NumCandidateSignals:       ; // fall through
+    };
+    Q_UNREACHABLE();
+    return Q_NULLPTR;
+}
+</code></pre>
+
+<p><code>candidateSignal(i)</code> 就是获取一个信号<br />
+所以 <code>signalForMember()</code> 这个函数主要作用就是从 <code>textValueSelected(QString)</code>, <code>intValueSelected(int)</code>, <code>doubleValueSelected(double)</code>, <code>accepted()</code> 这4个信号里选出一个参数值和用户输入槽函数中参数是一致的信号，进行绑定， 现在最后的问题就是这些信号何时才会触发，看下一部分的源码可以得到答案</p>
+
+<h3 id="done">done()</h3>
+
+<p>当窗口关闭时触发时，调用的函数</p>
+
+<p>我简单介绍一下流程，这一部分源码展开有点多</p>
+
+<p>当点击确定按钮会触发按钮的 <code>accepted()</code> 的信号，<code>QDialog</code> 会调用 <code>accept()</code> 的槽函数</p>
+
+<pre><code class="language-C++">enum DialogCode { Rejected, Accepted };
+void QDialog::accept()
+{
+    done(Accepted);
+}
+</code></pre>
+
+<p>因为 <code>QInputDialog</code> 对于 <code>done(int result)</code> 的重新实现，所以会触发下面一段代码</p>
+
+<pre><code class="language-C++">void QInputDialog::done(int result)
+{
+    Q_D(QInputDialog);
+    QDialog::done(result);
+    if (result) {
+        InputMode mode = inputMode();
+        switch (mode) {
+        case DoubleInput:
+            emit doubleValueSelected(doubleValue());
+            break;
+        case IntInput:
+            emit intValueSelected(intValue());
+            break;
+        default:
+            Q_ASSERT(mode == TextInput);
+            emit textValueSelected(textValue());
+        }
+    }
+    if (d-&gt;receiverToDisconnectOnClose) {
+        disconnect(this, signalForMember(d-&gt;memberToDisconnectOnClose),
+                   d-&gt;receiverToDisconnectOnClose, d-&gt;memberToDisconnectOnClose);
+        d-&gt;receiverToDisconnectOnClose = 0;
+    }
+    d-&gt;memberToDisconnectOnClose.clear();
+}
+</code></pre>
+
+<p>先简单看一下父类 <code>QDialog</code> 的这个函数的实现</p>
+
+<pre><code class="language-C++">void QDialog::done(int r)
+{
+    Q_D(QDialog);
+    hide();
+    setResult(r);
+
+    d-&gt;close_helper(QWidgetPrivate::CloseNoEvent);
+    d-&gt;resetModalitySetByOpen();
+
+    emit finished(r);
+    if (r == Accepted)
+        emit accepted();
+    else if (r == Rejected)
+        emit rejected();
+}
+</code></pre>
+
+<p>因为 <code>r</code> 就是枚举里的 <code>Accepted</code> 也就是 <code>1(true)</code>, 父类 <code>QDialog</code> 会触发 <code>accepted()</code> 信号<br />
+然后我们在看回 <code>QInputDialog::done(int result)</code>, 根据 <code>inputMode</code> 的类型，发送对应的信号
+因为窗口关闭，最后断开信号槽，清空数据</p>
+
+<p>举个具体的例子</p>
+
+<pre><code class="language-C++">    QInputDialog *dialog = new QInputDialog{this, Qt::WindowCloseButtonHint};
+    dialog-&gt;setInputMode(TextInput);
+    dialog-&gt;open(this, SLOT(test(QString)));
+</code></pre>
+
+<p>例子中的槽函数是 <code>text(QString)</code>, 根据跟信号的参数匹配，绑定信号 <code>textValueSelected(QString)</code>, 当窗口点击确定关闭的时候就会触发 <code>text(QString)</code> 这个函数
+如果 <code>dialog-&gt;open(this, SLOT(test()));</code> 此时绑定信号 <code>accepted()</code>, 如果想要从 <code>dialog</code> 中获取值, 此时的槽函数实现应该如下:</p>
+
+<pre><code class="language-C++">void MainWindow::test()
+{
+    QInputDialog * dialog = qobject_cast&lt;QInputDialog *&gt; (sender());
+    qDebug() &lt;&lt; dialog-&gt;textValue();
+    // 这个 dialog 的资源创建在堆上，关闭窗口后需要 delete
+    dialog-&gt;deleteLater();
+}
+</code></pre>
+
+<p>源码读到这里，<code>QInputDialog</code> 的源码基本算是全部看完了，后面只剩下一个静态函数，这一部分的代码很简单，就不做详细介绍了</p>
 
 <h2 id="额外的知识">额外的知识</h2>
 
@@ -735,7 +843,7 @@ int QInputDialog::intStep() const
 <pre><code class="language-C++">#include &quot;moc_qinputdialog.cpp&quot; // 开个新坑，关于 Qt 的 MOC 会在下一篇博客中详细的介绍
 </code></pre>
 
-<p>为了保证信号槽能正确使用，必须要再 <code>qinputdialog.h</code> 里用到 <code>Q_PRIVATE_SLOT</code> 的宏</p>
+<p>为了保证信号槽能正确使用，必须要在 <code>qinputdialog.h</code> 里用到 <code>Q_PRIVATE_SLOT</code> 的宏</p>
 
 <pre><code class="language-C++">Q_PRIVATE_SLOT(d_func(), void _q_textChanged(const QString&amp;))
 </code></pre>
@@ -1128,8 +1236,8 @@ QObject::connect(lineEdit, &amp;QLineEdit::textChanged, [this](QString text){_q_
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#opne">
-												 opne()
+						 					<a class="nav-link" href="#open">
+												 open()
 											</a>
 										</li>
 						 
@@ -1149,15 +1257,19 @@ QObject::connect(lineEdit, &amp;QLineEdit::textChanged, [this](QString text){_q_
 								
 									<ul class="nav">
 								
+									<ul class="nav">
+								
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e9%9d%99%e6%80%81%e5%87%bd%e6%95%b0">
-												 静态函数
+						 					<a class="nav-link" href="#done">
+												 done()
 											</a>
 										</li>
 						 
 								
+								
+									</ul>
 								
 									</ul>
 								
