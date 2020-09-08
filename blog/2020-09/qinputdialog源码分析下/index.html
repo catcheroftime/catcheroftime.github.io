@@ -286,11 +286,41 @@
           <div class="post-content markdown">
             <p><code>QInputDialog源码分析(上)</code> 里主要针对 <code>QInputDialogPrivate</code> 类的实现做了很详细的介绍，第二部分主要就是介绍 <code>QInputDialog</code> 和看源码过程中一些其他知识点的总结</p>
 
-<h2 id="qinputdialog">QInputDialog</h2>
+<p>这篇文章主要根据 <code>QInputDialog</code> 类提供的接口，按照我的理解将这些源码分成以下几个部分分析</p>
+
+<ul>
+<li><a href="#枚举">枚举</a>
+
+<ul>
+<li><a href="#inputmode">InputMode</a></li>
+<li><a href="#setinputmode">setInputMode()</a></li>
+<li><a href="#inputmode-1">inputMode()</a></li>
+<li><a href="#inputdialogoption">InputDialogOption</a></li>
+<li><a href="#setoptions">setOptions</a></li>
+<li><a href="#options">options()</a></li>
+<li><a href="#枚举的作用">枚举的作用</a></li>
+</ul></li>
+<li><a href="#控件初始化和属性操作">控件初始化和属性操作</a></li>
+<li><a href="#父类的重载函数">父类的重载函数</a>
+
+<ul>
+<li><a href="#setvisible">setVisible()</a></li>
+<li><a href="#opne">opne()</a></li>
+</ul></li>
+<li><a href="#静态函数">静态函数</a></li>
+<li><a href="#额外的知识">额外的知识</a>
+
+<ul>
+<li><a href="#mutable">mutable</a></li>
+<li><a href="#q_private_slot">Q_PRIVATE_SLOT</a></li>
+</ul></li>
+</ul>
+
+<h2 id="枚举">枚举</h2>
 
 <h3 id="inputmode">InputMode</h3>
 
-<pre><code>enum InputMode {
+<pre><code class="language-C++">enum InputMode {
     TextInput,
     IntInput,
     DoubleInput
@@ -327,7 +357,7 @@
 </tbody>
 </table>
 
-<p>InputMode 决定了最后从 QInputDialog 获取值时的类型，</p>
+<p><code>InputMode</code> 决定了需要初始化哪一种控件，而根据控件的不同，从 <code>QInputDialog</code> 获取值时的方法也是不同的</p>
 
 <table>
 <thead>
@@ -363,16 +393,65 @@
 </tbody>
 </table>
 
+<p>接下来主要看一下这个类型的 <strong>设置set</strong> 和 <strong>获取get</strong> 的函数</p>
+
+<h4 id="setinputmode">setInputMode()</h4>
+
+<p>根据 <code>InputMode</code> 的类型，初始化对应的控件，最后在通过 <code>QInputDialogPrivate</code> 的 <code>setInputWidget(widget)</code> 来对 <code>inputwidget</code> 赋值</p>
+
+<pre><code class="language-C++">void QInputDialog::setInputMode(InputMode mode)
+{
+    Q_D(QInputDialog);
+
+    QWidget *widget;
+    switch (mode) {
+    case IntInput:
+        d-&gt;ensureIntSpinBox();
+        widget = d-&gt;intSpinBox;
+        break;
+    case DoubleInput:
+        d-&gt;ensureDoubleSpinBox();
+        widget = d-&gt;doubleSpinBox;
+        break;
+    default:
+        Q_ASSERT(mode == TextInput);
+        d-&gt;chooseRightTextInputWidget();
+        return;
+    }
+
+    d-&gt;setInputWidget(widget);
+}
+</code></pre>
+
+<h4 id="inputmode-1">inputMode()</h4>
+
+<p>根据 <code>inputWidget</code> 的类型来决定返回的 <code>QInputDialog::InputMode</code></p>
+
+<pre><code class="language-C++">QInputDialog::InputMode QInputDialog::inputMode() const
+{
+    Q_D(const QInputDialog);
+
+    if (d-&gt;inputWidget) {
+        if (d-&gt;inputWidget == d-&gt;intSpinBox) {
+            return IntInput;
+        } else if (d-&gt;inputWidget == d-&gt;doubleSpinBox) {
+            return DoubleInput;
+        }
+    }
+
+    return TextInput;
+}
+</code></pre>
+
 <h3 id="inputdialogoption">InputDialogOption</h3>
 
 <p>看一个类需要先简单看一下它的枚举</p>
 
-<pre><code>enum InputDialogOption {
+<pre><code class="language-C++">enum InputDialogOption {
     NoButtons                    = 0x00000001,
     UseListViewForComboBoxItems  = 0x00000002,
     UsePlainTextEditForTextInput = 0x00000004
 };
-
 Q_DECLARE_FLAGS(InputDialogOptions, InputDialogOption)
 </code></pre>
 
@@ -406,11 +485,19 @@ Q_DECLARE_FLAGS(InputDialogOptions, InputDialogOption)
 </tbody>
 </table>
 
+<p>QInputDialog源码分析的上篇里提到呈现 <code>QString</code> 的控件有4种 <code>QListView</code>,<code>QComboBox</code>,<code>QPlainTextEdit</code>,<code>QLineEidt</code></p>
+
+<ul>
+<li>默认使用 <code>QLineEidt</code></li>
+<li><code>InputDialogOption::UseListViewForComboBoxItems</code> 来区分 <code>QListView</code> 和 <code>QComboBox</code>，而区分这个这个还有一个前提，是通过 <code>setComboBoxItems()</code> 设置了条目</li>
+<li><code>InputDialogOption::UsePlainTextEditForTextInput</code> 来使用 <code>QPlainTextEdit</code></li>
+</ul>
+
 <h4 id="setoptions">setOptions</h4>
 
-<p>通过 setOptions 来设置 QInputDialog 的 opts;</p>
+<p>设置 <code>QInputDialogPrivate</code> 的 <code>opts</code>; 然后根据 <code>opts</code> 是否改变以及设置的值才设置展示的控件</p>
 
-<pre><code>void QInputDialog::setOptions(InputDialogOptions options)
+<pre><code class="language-C++">void QInputDialog::setOptions(InputDialogOptions options)
 {
     Q_D(QInputDialog);
 
@@ -420,10 +507,11 @@ Q_DECLARE_FLAGS(InputDialogOptions, InputDialogOption)
         return;
 
     d-&gt;opts = options;
+
     // 初始化布局
     d-&gt;ensureLayout();
 
-    // 根据影响对话框外观的各种选项 options, 来设置对话框 
+    // 根据影响对话框外观的各种选项 options, 来设置对话框
     if (changed &amp; NoButtons)
         d-&gt;buttonBox-&gt;setVisible(!(options &amp; NoButtons));
     if ((changed &amp; UseListViewForComboBoxItems) &amp;&amp; inputMode() == TextInput)
@@ -433,19 +521,198 @@ Q_DECLARE_FLAGS(InputDialogOptions, InputDialogOption)
 }
 </code></pre>
 
-<p>这里涉及到2个比较关键的函数 <code>ensureLayout()</code>, 和 <code>chooseRightTextInputWidget()</code>, 这个后面会介绍。这里先简单总结一下枚举左右生效的条件</p>
+<p><code>chooseRightTextInputWidget()</code> 函数会根据 <code>opts</code> 的值，选择初始化控件，以及展示的控件，具体的代码在上篇里有详细的介绍</p>
 
-<h2 id="扩展">扩展</h2>
+<h4 id="options">options()</h4>
+
+<p>因为 <code>QInputDialog</code> 将很多数据对象都封装在 <code>QInputDialogPrivate</code> 中， 所以获取值的操作大部分都是从 <code>D指针</code> 中获取</p>
+
+<pre><code class="language-C++">QInputDialog::InputDialogOptions QInputDialog::options() const
+{
+    Q_D(const QInputDialog);
+    return d-&gt;opts;
+}
+</code></pre>
+
+<h3 id="枚举的作用">枚举的作用</h3>
+
+<ul>
+<li><code>InputMode</code> 决定初始化 <code>int</code>, <code>double</code> 还是 <code>string</code> 类型的控件</li>
+<li><code>InputDialogOption</code> 主要是为了决定初始化具体的哪一种 <code>string</code> 的控件,其实也可以理解成呈现 <code>string</code> 的样式 (<code>NoButtons</code>也是一种样式)</li>
+</ul>
+
+<p>初始化之后，设置最后呈现的控件函数是 <code>QInputDialogPrivate</code> 的 <code>setInputWidget(QWidget *widget)</code> ,为 <code>inputWidget</code> 赋值和一些信号槽的创建</p>
+
+<ul>
+<li><code>setInputMode()</code> 中调用了此函数</li>
+<li><code>setOptions()</code> 中的 <code>chooseRightTextInputWidget()</code> 函数中也调用了此函数</li>
+</ul>
+
+<h2 id="控件初始化和属性操作">控件初始化和属性操作</h2>
+
+<p>这一部分的代码其实很简单,在需要对控件进行属性设置的时候，先确保控件已经初始化，然后直接对控件进行操作(设置属性或者获取值信息等)</p>
+
+<p>关于控件的初始化和属性设置和获取其实可以分为3部分</p>
+
+<ul>
+<li><code>inputwidget</code> 显示值的设置，因为需要保证对应的控件已经初始化，需要调用 <code>setInputMode()</code> 函数(需要初始化控件并对<code>inputwidget</code>赋值)， 主要就是以下3个函数</li>
+</ul>
+
+<pre><code class="language-C++">void QInputDialog::setIntValue(int value)
+{
+    Q_D(QInputDialog);
+    setInputMode(IntInput);
+    d-&gt;intSpinBox-&gt;setValue(value);
+}
+
+void QInputDialog::setDoubleValue(double value)
+{
+    Q_D(QInputDialog);
+    setInputMode(DoubleInput);
+    d-&gt;doubleSpinBox-&gt;setValue(value);
+}
+
+void QInputDialog::setTextValue(const QString &amp;text)
+{
+    Q_D(QInputDialog);
+
+    setInputMode(TextInput);
+    if (d-&gt;inputWidget == d-&gt;lineEdit) {
+        d-&gt;lineEdit-&gt;setText(text);
+    } else if (d-&gt;inputWidget == d-&gt;plainTextEdit) {
+        d-&gt;plainTextEdit-&gt;setPlainText(text);
+    } else if (d-&gt;inputWidget == d-&gt;comboBox) {
+        d-&gt;setComboBoxText(text);
+    } else {
+        d-&gt;setListViewText(text);
+    }
+}
+</code></pre>
+
+<ul>
+<li><code>QLabel</code>, <code>QDialogButtonBox</code>, <code>QVBoxLayout</code> 这类界面上必须呈现的控件属性设置, 调用 <code>ensureLayout()</code> 后设置属性</li>
+</ul>
+
+<pre><code class="language-C++">// 设置
+void QInputDialog::setOkButtonText(const QString &amp;text)
+{
+    Q_D(const QInputDialog);
+    d-&gt;ensureLayout();
+    d-&gt;buttonBox-&gt;button(QDialogButtonBox::Ok)-&gt;setText(text);
+}
+// 获取
+QString QInputDialog::okButtonText() const
+{
+    Q_D(const QInputDialog);
+    d-&gt;ensureLayout();
+    return d-&gt;buttonBox-&gt;button(QDialogButtonBox::Ok)-&gt;text();
+}
+</code></pre>
+
+<ul>
+<li>只对显示值的控件属性操作，例如 <code>QSpinBox</code>， <code>QDoubleSpinBox</code> 最大值最小值属性设置等，调用对应的初始化接口， 例如 <code>ensureIntSpinBox()</code>, <code>ensureDoubleSpinBox()</code> 等后直接对控件设置</li>
+</ul>
+
+<pre><code class="language-C++">// 设置
+void QInputDialog::setIntStep(int step)
+{
+    Q_D(QInputDialog);
+    d-&gt;ensureIntSpinBox();
+    d-&gt;intSpinBox-&gt;setSingleStep(step);
+}
+
+// 获取只需要判断对应的插件是否初始化了即可
+// 因为用户可能初始化了text的控件，却错误的调用int控件的属性接口，此时没有必要初始化int接口，直接判断是否存在后，返回默认值即可
+int QInputDialog::intStep() const
+{
+    Q_D(const QInputDialog);
+    if (d-&gt;intSpinBox) {
+        return d-&gt;intSpinBox-&gt;singleStep();
+    } else {
+        return 1;
+    }
+}
+</code></pre>
+
+<h2 id="父类的重载函数">父类的重载函数</h2>
+
+<p>因为真正展示的控件主要是 <code>QLabel</code>, <code>QDialogButtonBox</code>, <code>QVBoxLayout</code>, <code>inputWidget</code> 这4个， 但是用户不一定有对这些控件进行设置，也就是说没有 <code>d-&gt;ensureLayout();</code> 初始化这些控件，为了保证最后可以正常展示，对父类的一些接口进行重载，保证控件进行过初始化</p>
+
+<h3 id="setvisible">setVisible()</h3>
+
+<pre><code class="language-C++">void QInputDialog::setVisible(bool visible)
+{
+    Q_D(const QInputDialog);
+    if (visible) {
+        d-&gt;ensureLayout();
+        d-&gt;inputWidget-&gt;setFocus();
+        if (d-&gt;inputWidget == d-&gt;lineEdit) {
+            d-&gt;lineEdit-&gt;selectAll();
+        } else if (d-&gt;inputWidget == d-&gt;plainTextEdit) {
+            d-&gt;plainTextEdit-&gt;selectAll();
+        } else if (d-&gt;inputWidget == d-&gt;intSpinBox) {
+            d-&gt;intSpinBox-&gt;selectAll();
+        } else if (d-&gt;inputWidget == d-&gt;doubleSpinBox) {
+            d-&gt;doubleSpinBox-&gt;selectAll();
+        }
+    }
+    QDialog::setVisible(visible);
+}
+</code></pre>
+
+<h3 id="opne">opne()</h3>
+
+<h2 id="静态函数">静态函数</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left">静态函数</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">getText()</td>
+<td align="left">获取普通字符串</td>
+</tr>
+
+<tr>
+<td align="left">getMultiLineText()</td>
+<td align="left">获取富文本字符串</td>
+</tr>
+
+<tr>
+<td align="left">getInt()</td>
+<td align="left">获取 int 型</td>
+</tr>
+
+<tr>
+<td align="left">getDouble()</td>
+<td align="left">获取 double 型</td>
+</tr>
+
+<tr>
+<td align="left">getItem()</td>
+<td align="left">获取给定条目中的某一条</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="额外的知识">额外的知识</h2>
 
 <h3 id="mutable">mutable</h3>
+
+<p><code>QInputDialogPrivate</code> 的成员变量都使用了 <code>mutable</code> 来修饰，简单了解一下 <code>mutable</code> 的作用</p>
 
 <p>被 <code>mutable</code> 修饰的成员变量( <code>mutable</code> 只能用于修饰类的非静态数据成员)，那么它就可以突破 <code>const</code> 的限制，在被 <code>const</code> 修饰的函数里面也能被修改。</p>
 
 <h3 id="q-private-slot">Q_PRIVATE_SLOT</h3>
 
-<p><code>qinputdialog.cpp</code> 的类 <code>QInputDialogPrivate</code> 中的接口 <code>ensureLineEdit()</code> 信号槽很值得在看一眼</p>
+<p><code>qinputdialog.cpp</code> 的类 <code>QInputDialogPrivate</code> 中的接口 <code>ensureLineEdit()</code> 信号槽上篇中没有详细介绍，这里单独拿出来说一下</p>
 
-<pre><code>void QInputDialogPrivate::ensureLineEdit()
+<pre><code class="language-C++">void QInputDialogPrivate::ensureLineEdit()
 {
     Q_Q(QInputDialog);
     if (!lineEdit) {
@@ -465,12 +732,12 @@ Q_DECLARE_FLAGS(InputDialogOptions, InputDialogOption)
 
 <p>而 <code>QInputDialogPrivate</code> 里并没有对 <code>_q_textChanged(QString)</code> 做任何的修饰，所以 Qt4 的风格没办法直接建立信号槽，所以这里绑定的是 <code>q</code> 和 <code>SLOT(_q_textChanged(QString))</code>; 并且在 <code>qinputdialog.cpp</code> 文件中添加</p>
 
-<pre><code>#include &quot;moc_qinputdialog.cpp&quot; // 开个新坑，关于 Qt 的 MOC 会在下一篇博客中详细的介绍 
+<pre><code class="language-C++">#include &quot;moc_qinputdialog.cpp&quot; // 开个新坑，关于 Qt 的 MOC 会在下一篇博客中详细的介绍
 </code></pre>
 
 <p>为了保证信号槽能正确使用，必须要再 <code>qinputdialog.h</code> 里用到 <code>Q_PRIVATE_SLOT</code> 的宏</p>
 
-<pre><code>Q_PRIVATE_SLOT(d_func(), void _q_textChanged(const QString&amp;))
+<pre><code class="language-C++">Q_PRIVATE_SLOT(d_func(), void _q_textChanged(const QString&amp;))
 </code></pre>
 
 <p>大致意思就是在 <code>qinputdialog.h</code> 里生成一个 <code>_q_textChanged(QString)</code> 的槽函数<br />
@@ -478,7 +745,7 @@ Q_DECLARE_FLAGS(InputDialogOptions, InputDialogOption)
 
 <p>其实如果使用 Qt5 的 connect 方式是很简单的</p>
 
-<pre><code>QObject::connect(lineEdit, &amp;QLineEdit::textChanged, this, &amp;QInputDialogPrivate::_q_textChanged);
+<pre><code class="language-C++">QObject::connect(lineEdit, &amp;QLineEdit::textChanged, this, &amp;QInputDialogPrivate::_q_textChanged);
 QObject::connect(lineEdit, &amp;QLineEdit::textChanged, [this](QString text){_q_textChanged(text);});
 </code></pre>
 
@@ -569,8 +836,8 @@ QObject::connect(lineEdit, &amp;QLineEdit::textChanged, [this](QString text){_q_
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#qinputdialog">
-												 QInputDialog
+						 					<a class="nav-link" href="#%e6%9e%9a%e4%b8%be">
+												 枚举
 											</a>
 										</li>
 						 
@@ -599,6 +866,66 @@ QObject::connect(lineEdit, &amp;QLineEdit::textChanged, [this](QString text){_q_
 										</li>
 						 
 								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#setinputmode">
+												 setInputMode()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#inputmode-1">
+												 inputMode()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
 								
 									</ul>
 								
@@ -670,11 +997,185 @@ QObject::connect(lineEdit, &amp;QLineEdit::textChanged, [this](QString text){_q_
 								
 									<ul class="nav">
 								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e6%89%a9%e5%b1%95">
-												 扩展
+						 					<a class="nav-link" href="#options">
+												 options()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9e%9a%e4%b8%be%e7%9a%84%e4%bd%9c%e7%94%a8">
+												 枚举的作用
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8e%a7%e4%bb%b6%e5%88%9d%e5%a7%8b%e5%8c%96%e5%92%8c%e5%b1%9e%e6%80%a7%e6%93%8d%e4%bd%9c">
+												 控件初始化和属性操作
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%88%b6%e7%b1%bb%e7%9a%84%e9%87%8d%e8%bd%bd%e5%87%bd%e6%95%b0">
+												 父类的重载函数
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#setvisible">
+												 setVisible()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#opne">
+												 opne()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%9d%99%e6%80%81%e5%87%bd%e6%95%b0">
+												 静态函数
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%a2%9d%e5%a4%96%e7%9a%84%e7%9f%a5%e8%af%86">
+												 额外的知识
 											</a>
 										</li>
 						 
