@@ -336,7 +336,7 @@
 <tr>
 <th align="left">InputMode</th>
 <th align="left">类型</th>
-<th align="left">接口</th>
+<th align="left">对应的获取值的接口</th>
 <th align="left">描述</th>
 </tr>
 </thead>
@@ -360,7 +360,7 @@
 <td align="left">QInputDialog::TextInput</td>
 <td align="left">QString</td>
 <td align="left">QString textValue() const;</td>
-<td align="left">从控件 QLineEdit，QPlainTextEdit，QComboBox 中获取的都是 QString 类型，这些控件在值改变时，触发信号，改变一个QInputDialogPrivate的成员变量textValue， QInputDialog 获取值时 <code>d-&gt;textValue</code></td>
+<td align="left">从控件 QLineEdit，QPlainTextEdit，QComboBox 中获取的都是 QString 类型 </br> 这些控件在值改变时，触发信号，改变一个QInputDialogPrivate的成员变量textValue， QInputDialog 获取值时 <code>d-&gt;textValue</code></td>
 </tr>
 </tbody>
 </table>
@@ -594,7 +594,7 @@ void QInputDialog::setIntStep(int step)
 }
 
 // 获取只需要判断对应的插件是否初始化了即可
-// 因为用户可能初始化了text的控件，却错误的调用int控件的属性接口，此时没有必要初始化int接口，直接判断是否存在后，返回默认值即可
+// 因为开发者可能初始化了text的控件，却错误的调用int控件的属性接口，此时没有必要初始化int接口，直接判断是否存在后，返回默认值即可
 int QInputDialog::intStep() const
 {
     Q_D(const QInputDialog);
@@ -609,7 +609,7 @@ int QInputDialog::intStep() const
 <h2 id="父类的重载函数">父类的重载函数</h2>
 
 <p>因为真正展示的控件主要是 <code>QLabel</code>, <code>QDialogButtonBox</code>, <code>QVBoxLayout</code>, <code>inputWidget</code> 这4个<br />
-但是用户不一定有对这些控件进行设置，也就是说没有 <code>d-&gt;ensureLayout();</code> 初始化这些控件，为了保证最后可以正常展示，对父类的一些接口进行重载，保证控件进行过初始化</p>
+但是开发者不一定有对这些控件进行设置，也就是说没有 <code>d-&gt;ensureLayout();</code> 初始化这些控件，为了保证最后可以正常展示，对父类的一些接口进行重载，保证控件进行过初始化</p>
 
 <h3 id="setvisible">setVisible()</h3>
 
@@ -654,7 +654,7 @@ int QInputDialog::intStep() const
 selectAll() : 选择所有文本然后将光标移到末尾</p>
 </blockquote>
 
-<p>从这里可以看出，又调用了 <code>d-&gt;ensureLayout();</code> , 确保控件都有正确初始化，因为 <code>ensureLayout()</code> 有判断 <code>inputWidget</code> 是否为空，为空的话默认创建 <code>QLineEdit</code>, 所有一定能保证界面可以正常显示，即使用户仅仅只是创建了一个对象之后，未做任何设置之后，直接 show()， 也不会出现控件没有初始化的问题</p>
+<p>从这里可以看出，又调用了 <code>d-&gt;ensureLayout();</code> , 确保控件都有正确初始化，因为 <code>ensureLayout()</code> 有判断 <code>inputWidget</code> 是否为空，为空的话默认创建 <code>QLineEdit</code>, 所有一定能保证界面可以正常显示，即使开发者仅仅只是创建了一个对象之后，未做任何设置之后，直接 show()， 也不会出现控件没有初始化的问题</p>
 
 <pre><code class="language-C++">QInputDialog *dialog = new QInputDialog{this, Qt::WindowCloseButtonHint};
 dialog-&gt;exec();
@@ -674,7 +674,7 @@ dialog-&gt;exec();
 }
 </code></pre>
 
-<p>这一部分的代码其实也挺有意思，<code>connect</code> 将一个信号和用户输入的对象和槽函数绑定，并将这些信息存入 <code>QInputDialogPrivate</code> 的成员变量中，首先需要知道 <code>connect</code> 到底用的信号是什么</p>
+<p>这一部分的代码其实也挺有意思，<code>connect</code> 将一个信号和开发者输入的对象和槽函数绑定，并将这些信息存入 <code>QInputDialogPrivate</code> 的成员变量中，首先需要知道 <code>connect</code> 到底用的信号是什么</p>
 
 <pre><code class="language-C++">static const char *signalForMember(const char *member)
 {
@@ -717,8 +717,9 @@ static const char *candidateSignal(int which)
 }
 </code></pre>
 
-<p><code>candidateSignal(i)</code> 就是获取一个信号<br />
-所以 <code>signalForMember()</code> 这个函数主要作用就是从 <code>textValueSelected(QString)</code>, <code>intValueSelected(int)</code>, <code>doubleValueSelected(double)</code>, <code>accepted()</code> 这4个信号里选出一个参数值和用户输入槽函数中参数是一致的信号，进行绑定， 现在最后的问题就是这些信号何时才会触发，看下一部分的源码可以得到答案</p>
+<p><code>candidateSignal(i)</code> 就是获取一个信号</p>
+
+<p>所以 <code>signalForMember()</code> 这个函数主要作用就是从 <code>textValueSelected(QString)</code>, <code>intValueSelected(int)</code>, <code>doubleValueSelected(double)</code>, <code>accepted()</code> 这4个信号里选出一个参数值和开发者输入槽函数中参数是一致的信号，进行绑定， 现在最后的问题就是这些信号何时才会触发，看下一部分的源码可以得到答案</p>
 
 <h3 id="done">done()</h3>
 
@@ -806,7 +807,50 @@ void QDialog::accept()
 }
 </code></pre>
 
-<p>源码读到这里，<code>QInputDialog</code> 的源码基本算是全部看完了，后面只剩下一个静态函数，这一部分的代码很简单，就不做详细介绍了</p>
+<h2 id="提供的信号">提供的信号</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left">信号</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">void textValueChanged(const QString &amp;text);</td>
+<td align="left"><code>QString</code> 值改变的时候触发的信号</td>
+</tr>
+
+<tr>
+<td align="left">void textValueSelected(const QString &amp;text);</td>
+<td align="left">当窗口 <code>accpted()</code> 时并且 <code>inputMode()</code> 等于 <code>TextInput</code> 类型时触发</td>
+</tr>
+
+<tr>
+<td align="left">void intValueChanged(int value);</td>
+<td align="left"><code>int</code> 值改变的时候触发的信号</td>
+</tr>
+
+<tr>
+<td align="left">void intValueSelected(int value);</td>
+<td align="left">当窗口 <code>accpted()</code> 时并且 <code>inputMode()</code> 等于 <code>IntInput</code> 类型时触发</td>
+</tr>
+
+<tr>
+<td align="left">void doubleValueChanged(double value);</td>
+<td align="left"><code>double</code> 值改变的时候触发的信号</td>
+</tr>
+
+<tr>
+<td align="left">void doubleValueSelected(double value);</td>
+<td align="left">当窗口 <code>accpted()</code> 时并且 <code>inputMode()</code> 等于 <code>DoubleInput</code> 类型时触发</td>
+</tr>
+</tbody>
+</table>
+
+<p>源码读到这里，<code>QInputDialog</code> 的源码基本算是全部看完了，后面只剩下一个静态函数，这一部分的代码很简单，就不做介绍了</p>
 
 <h2 id="额外的知识">额外的知识</h2>
 
@@ -858,6 +902,34 @@ QObject::connect(lineEdit, &amp;QLineEdit::textChanged, [this](QString text){_q_
 </code></pre>
 
 <p><code>Q_PRIVATE_SLOT</code> 的宏是仅仅只是为了兼容 <code>Qt4</code> 。对于 <code>Qt5</code> 是没有必要的</p>
+
+<h2 id="总结">总结</h2>
+
+<ul>
+<li><code>QInputDialog</code> 的源码其实阅读起来感觉还行，主要是因为这个类整体的难度不是很大，没有用到一些特别复杂的代码，之后有时间会在选择一些难度比较大的类</li>
+<li><code>QInputDialog</code> 里其实有很多的宏我是不明白具体的用处的，比如 <code>QT_NO_PROPERTIES</code>,<code>QT_NO_SHORTCUT</code>,<code>QT_NO_IM</code> 等，可能是跨平台开发时用的?</li>
+<li>对于 <code>QInputDialog</code> 的 <code>InputDialogOption</code> 这个枚举的设计还是不太喜欢，在我的理解里，根据展示的数据类型引入 <code>InpputMode</code> 的枚举，再根据 <code>QString</code> 类型展示控件的选择引入枚举  <code>InputDialogOption</code>， 并且将一些其他的样式也归并在一起，但是既然都区分了，为什么不将 <code>QComboBox</code> ,<code>QListView</code>, <code>QLineEdit</code> 和 <code>QPlainTextEdit</code> 完全枚举出来? 后来又看了看代码，这样设计原因可能有以下几点：
+
+<ul>
+<li>默认 <code>TextInput</code> 下默认是使用 <code>QLineEdit</code> 控件，也就是说开发者不设置 <code>InputDialogOption</code>， 默认就用 <code>QLineEdit</code> 就完事了</li>
+<li><code>QComboBox</code> 和 <code>QListView</code> 使用的时候必须要初始化下拉框里的条目，这样自然就和 <code>QLineEdit</code> 和 <code>QPlainTextEdit</code> 区分开了，所以只需要额外添加一个 <code>InputDialogOption::UseListViewForComboBoxItems</code> 枚举就行</li>
+<li>再此基础上也就在添加一个枚举 <code>InputDialogOption::UsePlainTextEditForTextInput</code> 区分 <code>QLineEdit</code> 和 <code>QPlainTextEdit</code> 就行</li>
+</ul></li>
+</ul>
+
+<p>另外在看源码的过程中，又开始对其他部分的源码产生一些兴趣</p>
+
+<ul>
+<li>Qt 的事件循环到底是怎样运行的?</li>
+<li>Qt 的 <code>MOC</code> 到底作用是什么，它和信号槽的关系是什么?</li>
+<li>窗口 <code>show()</code> , <code>exec()</code>, <code>open()</code> 这个的区别都知道，但是代码到底是怎么实现的?</li>
+<li>窗口 <code>show()</code> 又是怎样在电脑上展示出来的?</li>
+<li>等等等</li>
+</ul>
+
+<p>问题还是有点多的，我在开发过程中大多都是知其然，具体怎么用其实都很了解，但是不知其所以然，想在自己的公众号里以写成文章的形式一步一步记录下来，做一些完整的知识输出，让自己有更深的理解</p>
+
+<p>望加油!</p>
           </div>
 
           
@@ -1286,6 +1358,28 @@ QObject::connect(lineEdit, &amp;QLineEdit::textChanged, [this](QString text){_q_
 								
 
 										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8f%90%e4%be%9b%e7%9a%84%e4%bf%a1%e5%8f%b7">
+												 提供的信号
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
 						 					<a class="nav-link" href="#%e9%a2%9d%e5%a4%96%e7%9a%84%e7%9f%a5%e8%af%86">
 												 额外的知识
 											</a>
@@ -1344,6 +1438,28 @@ QObject::connect(lineEdit, &amp;QLineEdit::textChanged, [this](QString text){_q_
 								
 								
 									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
 								
 									</ul>
 								
