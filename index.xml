@@ -6,10 +6,19 @@
     <description>Recent content on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Thu, 03 Sep 2020 00:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 16 Sep 2020 20:15:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>观察者模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-09/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Wed, 16 Sep 2020 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-09/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;最近在研究 &lt;code&gt;Qt&lt;/code&gt; 信号槽的源码实现，在看源码的过程中发现 &lt;code&gt;Qt&lt;/code&gt; 信号槽很类似于观察者模式，所以先整理一篇观察者模式的文章&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>QInputDialog源码分析(下)</title>
