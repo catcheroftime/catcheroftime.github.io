@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="书接上文观察者模式，今天介绍一个目的和观察者模式一样，但是在代码结构的上存在一定区别的设计模式&ndash;发布订阅模式">
+  
+  <meta property="og:title" content="发布订阅模式" />
+<meta property="og:description" content="书接上文观察者模式，今天介绍一个目的和观察者模式一样，但是在代码结构的上存在一定区别的设计模式&ndash;发布订阅模式" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-09/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2020-09-19T20:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-09-19T20:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       发布订阅模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-09/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">发布订阅模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Sep 19, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>书接上文观察者模式，今天介绍一个目的和观察者模式一样，但是在代码结构的上存在一定区别的设计模式&ndash;发布订阅模式</p>
+
+<h2 id="相似点">相似点</h2>
+
+<p>前提：当一个对象的改变需要同时改变其他对象，而且它不知道具体有多少对象有待改变时<br />
+目的：解除具体观察者或具体被观察的主题之间的耦合，让耦合的双方都依赖于抽象，而不是依赖于具体，从而使各自的变化都不会影响另一边的变化</p>
+
+<h2 id="区别">区别</h2>
+
+<p>先看一下2种模式结构上的区别</p>
+
+<p>观察者模式</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/pubsub/observer.png" alt="观察者模式" /></p>
+
+<p>发布订阅模式</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/pubsub/pubsub.png" alt="发布订阅模式" /></p>
+
+<p>其实从这个里可以直接看出最明显的区别是：</p>
+
+<ul>
+<li>发布订阅模式在结构上比观察者模式多了一个<strong>中间件</strong></li>
+<li>观察者订阅的对象也是存在区别
+
+<ul>
+<li>观察者是<strong>直接</strong>关注主题，由主题<strong>直接</strong>通知</li>
+<li>发布订阅模式观察者是<strong>向中间件订阅</strong>，由中间件将消息发送给感兴趣的的观察者</li>
+</ul></li>
+</ul>
+
+<h2 id="引入中间件的原因">引入中间件的原因</h2>
+
+<h3 id="进一步的解耦合">进一步的解耦合</h3>
+
+<p>观察者模式的主题和观察者已经实现了<strong>松耦合</strong>，主题依赖于抽象的观察者，通过调用抽象观察者定义的通知接口，而不需要关心具体观察者这个借口是如何实现的</p>
+
+<p>而在发布订阅模式中，将消息的发送者和观察者<strong>完全解耦</strong>了，发送者和观察者只需要知道中间件即可，发送者完全不知道有哪些观察者, 这就意味着，发布者的代码不需要维护观察者队列，也就不需要继承抽象的主题</p>
+
+<h3 id="因为系统的复杂度">因为系统的复杂度</h3>
+
+<p>上篇观察者模式<code>思考+2</code>里提到一种情况</p>
+
+<blockquote>
+<p>门卫看到老板来了通知所有员工，看到员工迟到了通知老板甚至更复杂的情况通知时</p>
+</blockquote>
+
+<p>我当时的想法是用 <code>map&lt;string, list&lt;Observer *&gt;&gt;</code>  这样类似的方式，来管理情况和需要通知的对象， 观察者将被观察事件注册上来 <code>doorman.Attach(&quot;老板来了&quot;，closepriview);</code>,事件发生变更时，这个 <code>map</code> 对象里寻找已注册该事件的观察者，将消息发送给对应的观察者。</p>
+
+<p>这里的 <code>map&lt;string, list&lt;Observer *&gt;&gt;</code> 其实就是 <strong>中间件</strong>，观察者模式将这一部分的实现放置在被观察的主题对象的代码中了，发布订阅模式是将这部分管理的、调度的部分抽象成 <strong>中间件</strong>， 所以<font color=red>两种模式没有本质性的区别</font>, 观察者部分的设计是一样的，发布者+中间件 约等于 主题</p>
+
+<p>再举个例子：</p>
+
+<blockquote>
+<p>现在观察者需要同时关注多个主题，比如老板这个观察者，门卫看到员工迟到通知老板，人事看到有人应聘通知老板，财务一到月底告诉老板公司营收状况</p>
+</blockquote>
+
+<p>这里存在3个主题，每个主题都维护了一个观察者的列表，这一部分代码其实是重复的，结合可能更复杂的消息管理，将这个复杂的消息管理抽象成一个 <code>中间件</code> ，从而主题只要关心在状态发改变时，向中间件发送消息即可</p>
+
+<p>整理一下之后得到的结论是：</p>
+
+<p>复杂的消息分发的规则抽象成对象&ndash;<code>中间件</code>，所有的发布者和观察者都向中间件发布消息和注册，从而简化逻辑</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/pubsub/nvn.png" alt="多对多" /></p>
+
+<h3 id="不是原因的原因">不是原因的原因</h3>
+
+<p>一个观察者关注多个主题这个例子中，此时抽象观察者接口就不能使用 <code>virtual void Update() = 0;</code>， 此时 <code>Update()</code> 就需要传参了告诉观察者具体是什么发生了改变，假设这里用字符串或者枚举当参数<code>virtual void Update(string mode) = 0;</code>，到这里2种模式还是一样的，但是注册接口调用的位置变了</p>
+
+<p>观察者模式是在初始化好主题和观察者的类里，比如在 <code>main()</code> 的代码里完成观察者向主题的注册行为，此时对观察者而言，注册行为不太可控</p>
+
+<p>发布订阅模式里观察者明确知道中间件的存在，观察者调用中间件的接口向中间件订阅自己感兴趣的内容，而且在 <code>Update(string mode)</code> 处理的时候也是根据自己订阅的内容有针对的处理，在自己观察者这个里，代码显得更加完整，可读性更高</p>
+
+<h2 id="应用场景的思考">应用场景的思考</h2>
+
+<p>其实引入中间件的原因里其实将应用场景也解释的差不多了：</p>
+
+<ul>
+<li>系统越复杂，消息通知的种类越复杂，可以使用 <code>发布订阅模式</code></li>
+<li>中间件管理消息分发，此时可以在上面添加更多功能
+
+<ul>
+<li>收到的消息进行预处理，比如权限的验证等等</li>
+<li>类似于 <code>rabbitmq</code> 的功能, 1.管理一个消息队列，失败了再次发送给观察者 2. 定时发送给观察者 等等</li>
+</ul></li>
+</ul>
+
+<h2 id="怎么写">怎么写</h2>
+
+<p>还是以一个简单的例子说明：</p>
+
+<blockquote>
+<p>公司的门卫在看到老板回来之后，通知所有的划水的员工<br />
+员工A 关闭了打开的直播界面<br />
+员工B 放下了手上的手机</p>
+</blockquote>
+
+<p>先简单解释一下，观察者模式里，老板回来了是门卫的一个状态，门卫的状态变成老板来了，通知员工<br />
+这里如果用发布订阅模式引入中间件形式的话，门卫就相当于一个中间件，老板来了，跟门卫打声招呼，然后，门卫通知员工</p>
+
+<p>跟观察者模式一样，需要一个抽象的观察者</p>
+
+<p>abstractclass.h</p>
+
+<pre><code class="language-C++">class Observer
+{
+public:
+    virtual void Update() = 0;
+};
+</code></pre>
+
+<p>先实现门卫的代码，门卫这个中间件，需要管理观察者，以及提供发布消息的接口</p>
+
+<p>doorman.h</p>
+
+<pre><code class="language-C++">#include &quot;abstractclass.h&quot;
+#include &lt;iostream&gt;
+#include &lt;list&gt;
+
+using namespace std;
+
+class DoorMan
+{
+public:
+    void Attach(Observer *pObserver);
+    void Detach(Observer *pObserver);
+
+    void Publish(string info);
+
+private:
+    void Notify();
+
+private:
+    std::list&lt;Observer *&gt; m_ObserverList;
+};
+
+void DoorMan::Attach(Observer *pObserver)
+{
+    m_ObserverList.push_back(pObserver);
+}
+
+void DoorMan::Detach(Observer *pObserver)
+{
+    m_ObserverList.remove(pObserver);
+}
+
+void DoorMan::Notify()
+{
+    std::list&lt;Observer *&gt;::iterator it = m_ObserverList.begin();
+    while (it != m_ObserverList.end())
+    {
+        (*it)-&gt;Update();
+        ++it;
+    }
+}
+
+void DoorMan::Publish(string info)
+{
+    if (info == &quot;老板来了&quot;) {
+        std::cout &lt;&lt; &quot;老板来了，赶紧通知&quot; &lt;&lt; std::endl;
+        Notify();
+    }
+    else
+        std::cout &lt;&lt; info &lt;&lt;&quot;, 不是老板来了，不用通知了&quot;&lt;&lt; std::endl;
+}
+</code></pre>
+
+<p>现在实现老板的代码，老板需要门卫打声招呼</p>
+
+<p>boss.h</p>
+
+<pre><code class="language-C++">#include &quot;doorman.h&quot;
+
+class Boss{
+public:
+    Boss(DoorMan *doorman): m_pDoorman(doorman){}
+
+    void leaveCompany()
+    {
+        if (m_pDoorman)
+            m_pDoorman-&gt;Publish(&quot;老板回家了&quot;);
+    }
+
+    void comeCompany()
+    {
+        if (m_pDoorman)
+            m_pDoorman-&gt;Publish(&quot;老板来了&quot;);
+    }
+
+private:
+    DoorMan * m_pDoorman;
+};
+</code></pre>
+
+<p>员工的代码也很简单，主要是需要向门卫吱一声</p>
+
+<p>concreteobserver.h</p>
+
+<pre><code class="language-C++">#include &quot;abstractclass.h&quot;
+#include &quot;doorman.h&quot;
+#include &lt;iostream&gt;
+
+using namespace std;
+
+class ConcreteObserverA : public Observer
+{
+public:
+    ConcreteObserverA(DoorMan *doorman){ doorman-&gt;Attach(this);}
+
+    void Update()
+    {
+        std::cout &lt;&lt; &quot;看直播的，赶忙关闭了直播界面&quot; &lt;&lt; std::endl;
+    }
+
+};
+
+class ConcreteObserverB : public Observer
+{
+public:
+    ConcreteObserverB(DoorMan *doorman){ doorman-&gt;Attach(this);}
+
+    void Update()
+    {
+        std::cout &lt;&lt; &quot;玩手机的，放下了手上的手机&quot; &lt;&lt; std::endl;
+    }
+};
+</code></pre>
+
+<p>最后看一下 main() 里的代码</p>
+
+<pre><code class="language-C++">#include &quot;boss.h&quot;
+#include &quot;doorman.h&quot;
+#include &quot;concreteobserver.h&quot;
+int main()
+{
+    DoorMan doorman{};
+
+    ConcreteObserverA employeeA{&amp;doorman};
+    ConcreteObserverB employeeB{&amp;doorman};
+
+    Boss boss{&amp;doorman};
+
+    boss.comeCompany();
+    boss.leaveCompany();
+
+    return 0;
+}
+</code></pre>
+
+<p>最后的运行结果</p>
+
+<pre><code class="language-C++">老板来了，赶紧通知
+看直播的，赶忙关闭了直播界面
+玩手机的，放下了手上的手机
+老板回家了, 不是老板来了，不用通知了
+</code></pre>
+
+<h2 id="总结">总结</h2>
+
+<ul>
+<li>本质上观察者模式和发布订阅模式是一样的，发布订阅模式是在规模和复杂度变化的情况下采取的新方案而已</li>
+<li>发布订阅模式其实很类似于 <code>MVC</code>，<code>M</code> 是发布者， <code>V</code> 是观察者， <code>C</code> 是中间件，有时间在搞一篇 <code>MVC</code> 的文章</li>
+<li>在例子中，老板和员工对象初始化的时候都传入 <code>doorman</code> 对象，但是门卫作为一个唯一实例，可以用 <strong>单例</strong> 的形式实现，很开心，下周又有新的内容了</li>
+</ul>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-09/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>观察者模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%9b%b8%e4%bc%bc%e7%82%b9">
+												 相似点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8c%ba%e5%88%ab">
+												 区别
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%bc%95%e5%85%a5%e4%b8%ad%e9%97%b4%e4%bb%b6%e7%9a%84%e5%8e%9f%e5%9b%a0">
+												 引入中间件的原因
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%bf%9b%e4%b8%80%e6%ad%a5%e7%9a%84%e8%a7%a3%e8%80%a6%e5%90%88">
+												 进一步的解耦合
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%9b%a0%e4%b8%ba%e7%b3%bb%e7%bb%9f%e7%9a%84%e5%a4%8d%e6%9d%82%e5%ba%a6">
+												 因为系统的复杂度
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%8d%e6%98%af%e5%8e%9f%e5%9b%a0%e7%9a%84%e5%8e%9f%e5%9b%a0">
+												 不是原因的原因
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af%e7%9a%84%e6%80%9d%e8%80%83">
+												 应用场景的思考
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%8e%e4%b9%88%e5%86%99">
+												 怎么写
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
