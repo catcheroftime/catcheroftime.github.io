@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="QT 下类似于 std::unique_ptr 的 QScopedPointer 智能指针源码分析">
+  
+  <meta property="og:title" content="QScopedPointer源码分析" />
+<meta property="og:description" content="QT 下类似于 std::unique_ptr 的 QScopedPointer 智能指针源码分析" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-09/qscopedpointer%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" />
+<meta property="article:published_time" content="2020-09-23T00:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-09-23T00:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       QScopedPointer源码分析 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-09/qscopedpointer%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Qt源码阅读 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">QScopedPointer源码分析</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Sep 23, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p><code>QT</code> 下类似于 <code>std::unique_ptr</code> 的 <code>QScopedPointer</code> 智能指针源码分析</p>
+
+<p>因为手动管理分配到堆的对象非常困难且容易出错，常见结果就是代码的内存泄漏并且难以维护，<code>QScopedPointer</code> 是 Qt 中一个小型实用程序类，它将堆上申请的资源归属权交给了栈上内存管理，而栈上的资源会在生命周期结束后，主动调用析构函数，保证了资源的安全可靠。</p>
+
+<h2 id="用法总结">用法总结</h2>
+
+<p>关于 <code>QScopedPointer</code> 如何使用，可以直接官方的说明文档 <a href="https://doc.qt.io/qt-5/qscopedpointer.html">https://doc.qt.io/qt-5/qscopedpointer.html</a>，我这里简单介绍一下用法和一些可能需要注意的细节</p>
+
+<h3 id="额外说明">额外说明</h3>
+
+<ul>
+<li>它是非引用计数的 <strong>独享资源</strong> 的 <strong>强类型</strong> 指针，它是线程安全的。</li>
+<li><code>QScopedPointer</code> 的拷贝构造和赋值操作都是私有的， 所以该对象不能被拷贝或者被赋值，含有 <code>QScopedPointer</code> 成员变量的类也就禁止拷贝和赋值了</li>
+</ul>
+
+<pre><code class="language-C++">QScopedPointer&lt;int&gt; sp1(new int(20));
+QScopedPointer&lt;int&gt; sp2(sp1);          // 错误，不支持拷贝
+QScopedPointer&lt;int&gt; sp3;
+sp3 = sp2                              // 错误，不支持赋值
+</code></pre>
+
+<ul>
+<li><p>如果想重新赋值需要使用 <code>void QScopedPointer::reset(T *other = Q_NULLPTR)</code></p></li>
+
+<li><p>如果想要返回 <code>QScopedPointer</code> 里的指针</p></li>
+</ul>
+
+<pre><code class="language-C++">QWidget * newWidget()
+{
+    QScopedPointer&lt;QWidget&gt; spWidget(new QWidget());
+//    return spWidget.data();  // 错误写法
+    return  spWidget.take(); // 正确写法
+}
+</code></pre>
+
+<p><code>T *QScopedPointer::data() const</code> 返回的指针，<code>QScopedPointer</code> 仍对其有所有权，所以出了作用域还是会被析构，导致野指针<br />
+<code>T *QScopedPointer::take()</code>, 不会在拥有对象的所有权，但是此时返回的指针需要开发者自己管理</p>
+
+<h3 id="析构">析构</h3>
+
+<ul>
+<li><code>QScopedPointerDeleter</code> 默认，调用 <code>delete</code> 析构</li>
+<li><code>QScopedPointerArrayDeleter</code> 调用 <code>delete[]</code> 析构</li>
+<li><code>QScopedPointerPodDeleter</code>  调用 <code>free()</code> 析构</li>
+<li><code>QScopedPointerDeleteLater 使用</code> 调用 <code>deleteLater</code> 析构</li>
+<li>自定义 重新实现公共的静态函数 <code>void cleanup(T *pointer)</code></li>
+</ul>
+
+<pre><code class="language-C++">// this QScopedPointer deletes its data using the delete[] operator:
+QScopedPointer&lt;int, QScopedPointerArrayDeleter&lt;int&gt; &gt; arrayPointer(new int[42]);
+
+// this QScopedPointer frees its data using free():
+QScopedPointer&lt;int, QScopedPointerPodDeleter&gt; podPointer(reinterpret_cast&lt;int *&gt;(malloc(42)));
+
+// this struct calls &quot;myCustomDeallocator&quot; to delete the pointer
+struct ScopedPointerCustomDeleter
+{
+    static inline void cleanup(MyCustomClass *pointer)
+    {
+        myCustomDeallocator(pointer);
+    }
+};
+
+// QScopedPointer using a custom deleter:
+QScopedPointer&lt;MyCustomClass, ScopedPointerCustomDeleter&gt; customPointer(new MyCustomClass);
+</code></pre>
+
+<h2 id="源码解析">源码解析</h2>
+
+<h3 id="从析构的方式看起">从析构的方式看起</h3>
+
+<p>前面提到关于析构的时候有几个不同方式</p>
+
+<ul>
+<li><code>QScopedPointerDeleter</code> 默认</li>
+<li><code>QScopedPointerArrayDeleter</code></li>
+<li><code>QScopedPointerPodDeleter</code></li>
+<li><code>QScopedPointerDeleteLater 使用</code></li>
+<li>自定义</li>
+</ul>
+
+<p>这里先只以 <code>QScopedPointerDeleter</code> 为例</p>
+
+<pre><code class="language-C++">template &lt;typename T&gt;
+struct QScopedPointerDeleter
+{
+    static inline void cleanup(T *pointer)
+    {
+        typedef char IsIncompleteType[ sizeof(T) ? 1 : -1 ];
+        (void) sizeof(IsIncompleteType);
+
+        delete pointer;
+    }
+};
+</code></pre>
+
+<p>这段代码的功能很好理解，定义了一个模板，用 <code>struct</code> 封装了一个静态函数 <code>cleanup</code>,  <code>cleanup</code> 函数删除指针</p>
+
+<pre><code class="language-C++">typedef char IsIncompleteType[ sizeof(T) ? 1 : -1 ];
+(void) sizeof(IsIncompleteType);
+</code></pre>
+
+<p>这2行，主要就是在做 <strong>不完全类型检测</strong><br />
+<code>typedef char IsIncompleteType[ sizeof(T) ? 1 : -1 ];</code> 这句话其实就是定义了一个数组名为 <code>IsIncompleteType</code>， 数组大小为 <code>sizeof(T)?1:-1</code><br />
+换句话就是如果 <code>T</code> 是不完全类型，这个定义就变成了 <code>typedef char IsIncompleteType[-1]</code></p>
+
+<p><code>(void)sizeof(IsIncompleteType)</code> 时，因为数组的长度不能为负数，在编译期间就会报错<br />
+而<code>(void)</code> 强制类型转换，其实只是为了消除编译器对未使用sizeof返回值的警告</p>
+
+<p>那么现在又有问题了，什么是不完全类型，那为什么 <code>delete</code> 前，需要添加这一步不完全类型检测</p>
+
+<p>不完全类型的定义是</p>
+
+<blockquote>
+<p>已经声明但是尚未定义的类型。不完全类型不能用于定义变量或者类的成员，但是用不完全类型定义指针或者引用是合法的。</p>
+</blockquote>
+
+<p>简单点说，不完全类型 就是 尚未定义完全的类型。编译器知道这个类型(引用声明)，但不知道给该类型对象分配多大内存</p>
+
+<p>而在C++中，<code>delete</code> 一个类型不完整的类对象的指针,编译器会发出警告，但是不会报错</p>
+
+<p>对于一个不完全类型，编译器看不到 <code>T</code> 的完整类型，没办法确定两件事情：</p>
+
+<ul>
+<li><code>T</code> 有没有自定义的析构函数（准确的说，有没有non-trivial的析构函数）。</li>
+<li><code>T</code> 有没有自定义的operator delete函数。</li>
+</ul>
+
+<p>在不确定这两件事情的情况下，编译器只能按最普通的方式去处理 <code>delete T</code>：</p>
+
+<ul>
+<li>不调用任何析构函数。</li>
+<li>调用全局的operator delete</li>
+</ul>
+
+<p>本来编译器应该在析构函数调用之前先调用基类的析构函数和成员的析构函数，但是现在基类和成员都无法确定，因此只有不调用,所以最后的结果就是：只释放指针所指的内存，不调用析构函数，也不调用基类和成员的析构函数。换句话说，delete T，实际上已经变成了delete (void*)T。后面一种写法的危险性是显而易见的。所以为了避免这种风险，增加了不完全类型检测</p>
+
+<p><code>QScopedPointerDeleter</code> 这种析构算是解释清楚了，其他三种基本一样的，不做详细解释了，下面开始正餐</p>
+
+<h3 id="qscopedpointer类">QScopedPointer类</h3>
+
+<h4 id="解构造函数和析构函数">解构造函数和析构函数</h4>
+
+<pre><code class="language-C++">template &lt;typename T, typename Cleanup = QScopedPointerDeleter&lt;T&gt; &gt;
+class QScopedPointer
+{
+public:
+    explicit inline QScopedPointer(T *p = Q_NULLPTR) : d(p)
+    {
+    }
+
+    inline ~QScopedPointer()
+    {
+        T *oldD = this-&gt;d;
+        Cleanup::cleanup(oldD);
+    }
+
+protected:
+    T *d;
+
+private:
+    Q_DISABLE_COPY(QScopedPointer)
+};
+</code></pre>
+
+<p>整体的结构可以看出用 <code>T *d</code> 保存需要代理的指针，创建时直接传入需要代理的指针，同时禁止拷贝和赋值 <code>Q_DISABLE_COPY(QScopedPointer)</code></p>
+
+<pre><code class="language-C++"># define Q_DECL_EQ_DELETE = delete
+# define Q_DISABLE_COPY(Class) \
+    Class(const Class &amp;) Q_DECL_EQ_DELETE;\
+    Class &amp;operator=(const Class &amp;) Q_DECL_EQ_DELETE;
+</code></pre>
+
+<h4 id="其他接口">其他接口</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">接口</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">T *data() const</td>
+<td align="left">返回此对象引用的指针的值。 </br>QScopedPointer仍然拥有所指向的对象。</td>
+</tr>
+
+<tr>
+<td align="left">bool isNull() const</td>
+<td align="left">如果此对象持有的指针为null，则返回true。</td>
+</tr>
+
+<tr>
+<td align="left">void reset(T *other = Q_NULLPTR)</td>
+<td align="left">删除它指向的现有对象，并将其指针设置为other。 </br>QScopedPointer现在拥有other，并将在其析构函数中将其删除。</td>
+</tr>
+
+<tr>
+<td align="left">void swap(QScopedPointer<T, Cleanup> &amp;other)</td>
+<td align="left">将该指针与其他交换。</td>
+</tr>
+
+<tr>
+<td align="left">T *take()</td>
+<td align="left">返回此对象引用的指针的值。 此QScopedPointer对象的指针将重置为null。 </br> 该函数的调用者获得指针的所有权。</td>
+</tr>
+</tbody>
+</table>
+
+<pre><code class="language-C++">inline T *data() const
+{
+    return d;
+}
+
+inline bool isNull() const
+{
+    return !d;
+}
+
+inline void reset(T *other = Q_NULLPTR)
+{
+    if (d == other)
+        return;
+    T *oldD = d;
+    d = other;
+    Cleanup::cleanup(oldD);
+}
+
+inline T *take()
+{
+    T *oldD = d;
+    d = Q_NULLPTR;
+    return oldD;
+}
+
+void swap(QScopedPointer&lt;T, Cleanup&gt; &amp;other) Q_DECL_NOTHROW
+{
+    qSwap(d, other.d);
+}
+</code></pre>
+
+<p>这一部分的实现结合功能描述很简单，难度不大， 这里需要注意一个地方 关于 <code>isNull</code>， 指针值是可以隐式转换为 <code>bool</code>，如果指针为空，转换为 <code>false</code>，否则转换为 <code>true</code>, 同时 <code>bool</code>型也可以隐式转换为算术类型时，<code>true</code> 转换为 <code>1</code> ，<code>false</code>转换为 <code>0</code> 。 这个先记一下，这个对后面有帮助</p>
+
+<pre><code class="language-C++">template &lt;typename T&gt;
+inline void qSwap(T &amp;value1, T &amp;value2)
+    noexcept(noexcept(QtPrivate::SwapExceptionTester::checkSwap(value1)))
+{
+    using std::swap;
+    swap(value1, value2);
+}
+</code></pre>
+
+<h4 id="重载操作符-2个类之间操作">重载操作符(2个类之间操作)</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">接口</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">==</td>
+<td align="left">判断2个 <code>QScopedPointer</code> 指针的值是否相等</td>
+</tr>
+
+<tr>
+<td align="left">!=</td>
+<td align="left">判断2个 <code>QScopedPointer</code> 指针的值是否不相等</td>
+</tr>
+
+<tr>
+<td align="left">swap</td>
+<td align="left">交换2个 <code>QScopedPointer</code> 对象交换</td>
+</tr>
+</tbody>
+</table>
+
+<pre><code class="language-C++">template &lt;class T, class Cleanup&gt;
+inline bool operator==(const QScopedPointer&lt;T, Cleanup&gt; &amp;lhs, const QScopedPointer&lt;T, Cleanup&gt; &amp;rhs)
+{
+    return lhs.data() == rhs.data();
+}
+
+template &lt;class T, class Cleanup&gt;
+inline bool operator!=(const QScopedPointer&lt;T, Cleanup&gt; &amp;lhs, const QScopedPointer&lt;T, Cleanup&gt; &amp;rhs)
+{
+    return lhs.data() != rhs.data();
+}
+
+template &lt;class T, class Cleanup&gt;
+inline void swap(QScopedPointer&lt;T, Cleanup&gt; &amp;p1, QScopedPointer&lt;T, Cleanup&gt; &amp;p2) Q_DECL_NOTHROW
+{ p1.swap(p2); }
+</code></pre>
+
+<h4 id="重载操作符-类本身">重载操作符(类本身)</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">接口</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">operator bool()</td>
+<td align="left">如果此对象不为null，则返回true。 此函数适用于if，例如：if (scopedPointer) {},简单点说就是提供一个本类型对象到bool的隐式转换</td>
+</tr>
+
+<tr>
+<td align="left">bool operator!() const</td>
+<td align="left">如果此对象引用的指针为null，则返回true，否则返回false。</td>
+</tr>
+
+<tr>
+<td align="left">T &amp;operator*() const</td>
+<td align="left">提供对作用域指针对象的访问。指针可能为null，用前建议判断</td>
+</tr>
+
+<tr>
+<td align="left">T *operator-&gt;() const</td>
+<td align="left">提供对作用域指针对象的访问。指针可能为null，用前建议判断</td>
+</tr>
+</tbody>
+</table>
+
+<pre><code class="language-C++">inline T &amp;operator*() const
+{
+    Q_ASSERT(d);
+    return *d;
+}
+
+inline T *operator-&gt;() const
+{
+    Q_ASSERT(d);
+    return d;
+}
+
+inline bool operator!() const
+{
+    return !d;
+}
+</code></pre>
+
+<pre><code class="language-C++">#if defined(Q_QDOC)
+    inline operator bool() const
+    {
+        return isNull() ? Q_NULLPTR : &amp;QScopedPointer::d;
+    }
+#else
+    typedef T *QScopedPointer:: *RestrictedBool;
+    inline operator RestrictedBool() const
+    {
+        return isNull() ? Q_NULLPTR : &amp;QScopedPointer::d;
+    }
+#endif
+</code></pre>
+
+<p>为了先解释一下 <code>Q_QDOC</code></p>
+
+<blockquote>
+<p><code>Q_QDOC</code> 宏是在生产文档时才会被设置。也就是说，<code>operator bool() const</code> 只有在提取文档时才使用了这个签名，而实际的 <code>Qt</code> 库中并没有这个函数,实际上用的是就是 <code>else</code> 里的部分<br />
+引入 <code>Q_QDOC</code> 宏的目的可能只是为了让文档中比较复杂难看的函数签名变得更好看吧</p>
+</blockquote>
+
+<p><code>!</code>, <code>*</code>. <code>-&gt;</code> 这3个的实现很好理解，但是 <code>operator bool()</code> 隐式转换这个不太好理解，简单点说就是</p>
+
+<pre><code class="language-C++">QScopedPointer&lt;int&gt; sp{new int(20)};
+if (sp) {}      // 可以
+if (sp &lt; 1) {}  // 不可以
+</code></pre>
+
+<p>而这一部分设计的原因我会单独写在另一篇文章中，详细解释为什么这样设计，这篇文章就先写到这里了，除了隐式转换，其他部分算是理解透了。</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt" role="button">Qt </a></li>
+      
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB" role="button">Qt源码阅读 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-09/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>发布订阅模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%94%a8%e6%b3%95%e6%80%bb%e7%bb%93">
+												 用法总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%a2%9d%e5%a4%96%e8%af%b4%e6%98%8e">
+												 额外说明
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9e%90%e6%9e%84">
+												 析构
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%ba%90%e7%a0%81%e8%a7%a3%e6%9e%90">
+												 源码解析
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bb%8e%e6%9e%90%e6%9e%84%e7%9a%84%e6%96%b9%e5%bc%8f%e7%9c%8b%e8%b5%b7">
+												 从析构的方式看起
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#qscopedpointer%e7%b1%bb">
+												 QScopedPointer类
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%a7%a3%e6%9e%84%e9%80%a0%e5%87%bd%e6%95%b0%e5%92%8c%e6%9e%90%e6%9e%84%e5%87%bd%e6%95%b0">
+												 解构造函数和析构函数
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%b6%e4%bb%96%e6%8e%a5%e5%8f%a3">
+												 其他接口
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%87%8d%e8%bd%bd%e6%93%8d%e4%bd%9c%e7%ac%a6-2%e4%b8%aa%e7%b1%bb%e4%b9%8b%e9%97%b4%e6%93%8d%e4%bd%9c">
+												 重载操作符(2个类之间操作)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%87%8d%e8%bd%bd%e6%93%8d%e4%bd%9c%e7%ac%a6-%e7%b1%bb%e6%9c%ac%e8%ba%ab">
+												 重载操作符(类本身)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
