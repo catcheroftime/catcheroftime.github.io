@@ -328,6 +328,10 @@
 
   
 
+  
+
+  
+
 
 
 
@@ -369,7 +373,7 @@
             
             <li class="py-1">
               <a href="https://catcheroftime.github.io/categories/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB">
-                <span>Qt源码阅读 (5)</span>
+                <span>Qt源码阅读 (7)</span>
               </a>
             </li>           
           
@@ -511,6 +515,10 @@
 
   
 
+  
+
+  
+
 
 
 
@@ -531,16 +539,16 @@
         
         
         
+            <li><a href="https://catcheroftime.github.io/tags/qt" role="button"><span>qt (13)</span></a></li>
+          
+        
             <li><a href="https://catcheroftime.github.io/tags/mysql" role="button"><span>mysql (11)</span></a></li>
           
         
-            <li><a href="https://catcheroftime.github.io/tags/qt" role="button"><span>qt (11)</span></a></li>
+            <li><a href="https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB" role="button"><span>qt源码阅读 (7)</span></a></li>
           
         
             <li><a href="https://catcheroftime.github.io/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6" role="button"><span>自定义插件 (6)</span></a></li>
-          
-        
-            <li><a href="https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB" role="button"><span>qt源码阅读 (5)</span></a></li>
           
         
             <li><a href="https://catcheroftime.github.io/tags/python" role="button"><span>python (4)</span></a></li>
@@ -699,6 +707,114 @@
 </ul>
 
           </div>
+
+          
+              <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://catcheroftime.github.io/blog/2020-10/qscopedpointer%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E8%BF%99%E6%A0%B7%E7%9A%84/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">QScopedPointer为什么是这样的</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>Oct 9, 2020</li>
+        
+    
+        
+      </ul>
+    </div>
+    
+
+    
+      上一篇 QScopedPointer源码解析 详细介绍了代码层次的实现，同时也留下了一个代码上的问题 隐式类型转换这样设计的原因 // Qt 封装的 QScopedPointer 提供的隐式转换代码 typedef T *QScopedPointer:: *RestrictedBool; inline operator RestrictedBool() const { return isNull() ? Q_NULLPTR : &amp;QScopedPointer::d; } 旧问题解读 如果有看过前2天发布的一篇翻译的话，现在这一部分代码应该是很好理解的，如果还没有看，我在重复总结一下： 不直接返回 bool 类型是因为 bool 类型可以隐式转换为算术类型如整型，浮点型等，所以较易被误用 所以先转换成一个中间过......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+        
+          <li><a href="https://catcheroftime.github.io/categories/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Qt源码阅读 </a></li>
+        
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt" role="button">Qt </a></li>
+      
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB" role="button">Qt源码阅读 </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+              <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://catcheroftime.github.io/blog/2020-10/%E5%AE%89%E5%85%A8%E7%9A%84%E5%B8%83%E5%B0%94%E7%B1%BB%E5%9E%8B%E8%BD%AC%E5%8C%96/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">安全的布尔类型转化</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>Oct 6, 2020</li>
+        
+    
+        
+      </ul>
+    </div>
+    
+
+    
+      学习如何将一个对象转换成 bool对象的同时不引入任何不利的影响 本篇文章主要是对下面这篇英文博客的翻译，并且 补充 了一些额外的注释 https://www.artima.com/cppsource/safebool.html 在 C&#43;&#43; 中，有很多方式可以为一个类提供布尔检测， 而提供这种支持是为了让类使用起来变得更加直观，支持通用编程，或者二者兼顾。我们将研究四种主流的方式来实现布尔检测这个功能。并且提供一种新的解决方案，该方案没有其他四种潜在的陷阱和危险。 目标 一些类型，类似于指针，允许我们以布尔的形......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+        
+          <li><a href="https://catcheroftime.github.io/categories/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Qt源码阅读 </a></li>
+        
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt" role="button">Qt </a></li>
+      
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB" role="button">Qt源码阅读 </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
               <div class="post-wrapper white-bg post-card">
@@ -1126,110 +1242,6 @@
   <div class="tags-sm">
     
       <li><a href="https://catcheroftime.github.io/tags/qt%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98" role="button">Qt常见问题 </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-              <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://catcheroftime.github.io/blog/2020-04/qt-%E4%B8%AD%E6%96%87%E9%97%AE%E9%A2%98%E5%92%8C%E8%B7%AF%E5%BE%84%E4%B8%AD%E7%A9%BA%E6%A0%BC%E9%97%AE%E9%A2%98/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading"> QT 中文问题和路径中空格问题</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>Apr 2, 2020</li>
-        
-    
-        
-      </ul>
-    </div>
-    
-
-    
-      记录在使用 QT 开发过程中碰到的关于 QSetting 编写配置文件读写中文的问题，QProcess command 路径中存在中文的问题，以及使用 QString 转 std::string 时，原QString携带中文的问题
-......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-        
-          <li><a href="https://catcheroftime.github.io/categories/qt"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Qt </a></li>
-        
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://catcheroftime.github.io/tags/qt%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98" role="button">Qt常见问题 </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-              <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://catcheroftime.github.io/blog/2020-03/c-11%E6%96%B0%E7%89%B9%E6%80%A7%E6%95%B4%E7%90%86/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">C&#43;&#43;11新特性整理</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>Mar 10, 2020</li>
-        
-    
-        
-      </ul>
-    </div>
-    
-
-    
-      简单整理了 C&#43;&#43;11 的新特性
-......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-        
-          <li><a href="https://catcheroftime.github.io/categories/c&#43;&#43;"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> C&#43;&#43; </a></li>
-        
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://catcheroftime.github.io/tags/c&#43;&#43;" role="button">C&#43;&#43; </a></li>
       
     
   </div>

@@ -15,7 +15,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://catcheroftime.github.io/" />
 
-<meta property="og:updated_time" content="2020-09-23T00:15:00&#43;08:00"/>
+<meta property="og:updated_time" content="2020-10-09T12:15:00&#43;08:00"/>
 
 
   <title>
@@ -366,6 +366,10 @@
 
   
 
+  
+
+  
+
 
 
 
@@ -407,7 +411,7 @@
             
             <li class="py-1">
               <a href="https://catcheroftime.github.io/categories/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB">
-                <span>Qt源码阅读 (5)</span>
+                <span>Qt源码阅读 (7)</span>
               </a>
             </li>           
           
@@ -559,6 +563,10 @@
 
   
 
+  
+
+  
+
 
 
 
@@ -579,16 +587,16 @@
         
         
         
+            <li><a href="https://catcheroftime.github.io/tags/qt" role="button"><span>qt (13)</span></a></li>
+          
+        
             <li><a href="https://catcheroftime.github.io/tags/mysql" role="button"><span>mysql (11)</span></a></li>
           
         
-            <li><a href="https://catcheroftime.github.io/tags/qt" role="button"><span>qt (11)</span></a></li>
+            <li><a href="https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB" role="button"><span>qt源码阅读 (7)</span></a></li>
           
         
             <li><a href="https://catcheroftime.github.io/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6" role="button"><span>自定义插件 (6)</span></a></li>
-          
-        
-            <li><a href="https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB" role="button"><span>qt源码阅读 (5)</span></a></li>
           
         
             <li><a href="https://catcheroftime.github.io/tags/python" role="button"><span>python (4)</span></a></li>
@@ -660,6 +668,114 @@
         
           
           <div>
+              
+                  <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://catcheroftime.github.io/blog/2020-10/qscopedpointer%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E8%BF%99%E6%A0%B7%E7%9A%84/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">QScopedPointer为什么是这样的</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>Oct 9, 2020</li>
+        
+    
+        
+      </ul>
+    </div>
+    
+
+    
+      上一篇 QScopedPointer源码解析 详细介绍了代码层次的实现，同时也留下了一个代码上的问题 隐式类型转换这样设计的原因 // Qt 封装的 QScopedPointer 提供的隐式转换代码 typedef T *QScopedPointer:: *RestrictedBool; inline operator RestrictedBool() const { return isNull() ? Q_NULLPTR : &amp;QScopedPointer::d; } 旧问题解读 如果有看过前2天发布的一篇翻译的话，现在这一部分代码应该是很好理解的，如果还没有看，我在重复总结一下： 不直接返回 bool 类型是因为 bool 类型可以隐式转换为算术类型如整型，浮点型等，所以较易被误用 所以先转换成一个中间过......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+        
+          <li><a href="https://catcheroftime.github.io/categories/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Qt源码阅读 </a></li>
+        
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt" role="button">Qt </a></li>
+      
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB" role="button">Qt源码阅读 </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
+
+              
+                  <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://catcheroftime.github.io/blog/2020-10/%E5%AE%89%E5%85%A8%E7%9A%84%E5%B8%83%E5%B0%94%E7%B1%BB%E5%9E%8B%E8%BD%AC%E5%8C%96/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">安全的布尔类型转化</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>Oct 6, 2020</li>
+        
+    
+        
+      </ul>
+    </div>
+    
+
+    
+      学习如何将一个对象转换成 bool对象的同时不引入任何不利的影响 本篇文章主要是对下面这篇英文博客的翻译，并且 补充 了一些额外的注释 https://www.artima.com/cppsource/safebool.html 在 C&#43;&#43; 中，有很多方式可以为一个类提供布尔检测， 而提供这种支持是为了让类使用起来变得更加直观，支持通用编程，或者二者兼顾。我们将研究四种主流的方式来实现布尔检测这个功能。并且提供一种新的解决方案，该方案没有其他四种潜在的陷阱和危险。 目标 一些类型，类似于指针，允许我们以布尔的形......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+        
+          <li><a href="https://catcheroftime.github.io/categories/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Qt源码阅读 </a></li>
+        
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt" role="button">Qt </a></li>
+      
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB" role="button">Qt源码阅读 </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
+
               
                   <div class="post-wrapper white-bg post-card">
   
@@ -1606,126 +1722,6 @@
 
     
       在 飞扬青云 大佬的博客下,意外看到一款水波纹的进度条,整体看上去很美观,感觉适用的场景也很多 (1. 单纯的进度条显示 2. 当前状态的展示,例如CPU,内存之类使用的占比)，所以自己也尝试开发了一下.
-......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-        
-          <li><a href="https://catcheroftime.github.io/categories/qt"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Qt </a></li>
-        
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://catcheroftime.github.io/tags/qt" role="button">Qt </a></li>
-      
-    
-      <li><a href="https://catcheroftime.github.io/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6" role="button">自定义插件 </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-              
-                  <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://catcheroftime.github.io/blog/2019-07/qt-%E6%97%B6%E9%97%B4%E8%BD%B42%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Qt-时间轴2插件开发</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>Jul 28, 2019</li>
-        
-    
-        
-      </ul>
-    </div>
-    
-    
-      <div class="view">
-        <img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline2/timeline2_demo.png" />
-      </div>
-    
-
-    
-      这篇文章介绍的自定义插件比较简单，主要都是通过绘图完成的。 特点如下： 1. 精度是可以放缩 2. 时间轴时间连续 3. 可以通过鼠标左右滑动改变时间轴显示时间。
-......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-        
-          <li><a href="https://catcheroftime.github.io/categories/qt"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Qt </a></li>
-        
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://catcheroftime.github.io/tags/qt" role="button">Qt </a></li>
-      
-    
-      <li><a href="https://catcheroftime.github.io/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6" role="button">自定义插件 </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-              
-                  <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://catcheroftime.github.io/blog/2019-07/qt-%E6%97%B6%E9%97%B4%E8%BD%B41%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Qt-时间轴1插件开发</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>Jul 17, 2019</li>
-        
-    
-        
-      </ul>
-    </div>
-    
-    
-      <div class="view">
-        <img src="https://catcheroftime.github.io/images/blog/qt_plugin/timeline1/timecell_overview.png" />
-      </div>
-    
-
-    
-      通过前面一节提到的 Qt 自定义插件的开发，开发出一个类似于统计一天不同时间段的插件，这种插件在摄像头的计划中能很频繁看到，例如0点到9点做录像任务， 9点到下午5点做行为检测任务， 晚上10点到12点继续做录像计划这种场景。而这篇文章主要记录一下自己开发过程中的一些思路和简单的代码解释，以及目前还存在问题。
 ......
     
   </a>

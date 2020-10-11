@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="上一篇 QScopedPointer源码解析 详细介绍了代码层次的实现，同时也留下了一个代码上的问题 隐式类型转换这样设计的原因 // Qt 封装的 QScopedPointer 提供的隐式转换代码 typedef T *QScopedPointer:: *RestrictedBool; inline operator RestrictedBool() const { return isNull() ? Q_NULLPTR : &amp;QScopedPointer::d; } 旧问题解读 如果有看过前2天发布的一篇翻译的话，现在这一部分代码应该是很好理解的，如果还没有看，我在重复总结一下： 不直接返回 bool 类型是因为 bool 类型可以隐式转换为算术类型如整型，浮点型等，所以较易被误用 所以先转换成一个中间过">
+  
+  <meta property="og:title" content="QScopedPointer为什么是这样的" />
+<meta property="og:description" content="上一篇 QScopedPointer源码解析 详细介绍了代码层次的实现，同时也留下了一个代码上的问题 隐式类型转换这样设计的原因 // Qt 封装的 QScopedPointer 提供的隐式转换代码 typedef T *QScopedPointer:: *RestrictedBool; inline operator RestrictedBool() const { return isNull() ? Q_NULLPTR : &amp;QScopedPointer::d; } 旧问题解读 如果有看过前2天发布的一篇翻译的话，现在这一部分代码应该是很好理解的，如果还没有看，我在重复总结一下： 不直接返回 bool 类型是因为 bool 类型可以隐式转换为算术类型如整型，浮点型等，所以较易被误用 所以先转换成一个中间过" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-10/qscopedpointer%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E8%BF%99%E6%A0%B7%E7%9A%84/" />
+<meta property="article:published_time" content="2020-10-09T12:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-10-09T12:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       QScopedPointer为什么是这样的 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-10/qscopedpointer%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E8%BF%99%E6%A0%B7%E7%9A%84/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Qt源码阅读 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">QScopedPointer为什么是这样的</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Oct 9, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            
+
+<p>上一篇 <code>QScopedPointer源码解析</code> 详细介绍了代码层次的实现，同时也留下了一个代码上的问题</p>
+
+<blockquote>
+<p>隐式类型转换这样设计的原因</p>
+</blockquote>
+
+<pre><code class="language-C++">// Qt 封装的 QScopedPointer 提供的隐式转换代码
+typedef T *QScopedPointer:: *RestrictedBool;
+inline operator RestrictedBool() const
+{
+    return isNull() ? Q_NULLPTR : &amp;QScopedPointer::d;
+}
+</code></pre>
+
+<h2 id="旧问题解读">旧问题解读</h2>
+
+<p>如果有看过前2天发布的一篇翻译的话，现在这一部分代码应该是很好理解的，如果还没有看，我在重复总结一下：</p>
+
+<ul>
+<li>不直接返回 <code>bool</code> 类型是因为 <code>bool</code> 类型可以隐式转换为算术类型如整型，浮点型等，所以较易被误用<br /></li>
+<li>所以先转换成一个中间过渡的类型，然后从这个中间类型在隐式转换成 <code>bool</code> 类型，所以需要找一个可以隐式转换成 <code>bool</code> 类型的类型<br /></li>
+<li>根据C++标准中提到的：算术，枚举，指针，和指向成员指针的右值都可以转换成bool类型右值。又因为算数，枚举，指针类型更容易误用，所以最后选择了指向成员指针(指向成员函数指针，指向成员数据指针)<br /></li>
+<li>又因为编译器在处理指向成员函数指针速度相对于指向成员数据指针慢一些，所以最后选择指向成员数据指针，并将该成员对象设计成私有，避免成员被访问赋值等操作</li>
+</ul>
+
+<p>所以这一部分代码就可以这样理解了：</p>
+
+<p><code>typedef T *QScopedPointer:: *RestrictedBool</code> 定义了一个指向 <code>QScopedPointer</code> 类数据成员的指针 <code>RestrictedBool</code>, 该成员对象也是一个指针，类型是 <code>T</code><br />
+所以<code>operator RestrictedBool()</code> 函数中当 <code>isNull()</code> 不为空的时候，返回 <code>&amp;QScopedPointer::d</code>, 该指针可以隐式转换成布尔型的 <code>true</code>，反之，返回 <code>nullptr</code>, 也就是 <code>false</code></p>
+
+<h2 id="c-11新标准">C++11新标准</h2>
+
+<p>其实到在这里这个问题应该就算解决了，<strong>但是</strong>，我觉得代码的设计应该尽可能简洁，尽量少用一些奇技淫巧，而且我查阅资料的那篇文章 <code>The Safe Bool Idiom</code> 实际上是一篇2004年的文章，并且这篇文章提供了如何将一个对象转换成bool型的同时不引入一些可能存在的缺陷的技巧，我不相信 <code>C++</code> 经过这么多年发展没有提供另一条简洁明了的方法。</p>
+
+<p><code>QScopedPointer</code> 是非引用计数的 <strong>独享资源</strong> 的 <strong>强类型</strong> 指针，很类似于 <code>C++11</code> 里的 <code>unique_ptr</code>, 看一下它的隐式转换部分代码的实现</p>
+
+<pre><code class="language-C++">explicit operator bool() const noexcept
+{ return get() == pointer() ? false : true; }
+</code></pre>
+
+<p>很好，发现了不一样的地方 <code>explicit</code>, 在这里使用这个关键字是 <code>C++11</code> 中引入的新标准, <strong>显式的类型转换运算符</strong>，和显式的构造函数一样，编译器通常也不会将一个显示的类型转换运算符用于隐式类型转化</p>
+
+<p>举个例子，看一下这个用法, demo 里构造函数没有用 <code>explicit</code>修饰，类型转换函数用 <code>explicit</code> 修饰了：</p>
+
+<pre><code class="language-C+++">class test{
+public:
+    test(int i=0):val(i) {}
+    explicit operator int() const { return val;}
+private:
+    int val;
+};
+</code></pre>
+
+<p>测试一下具体的区别</p>
+
+<pre><code class="language-C++">test a = 1;                     // 构造函数并不是显式转换
+int b = a + 3;                  // 编译报错，此处需要隐式类型转化，但是类型转换运算符是显式的
+int c = static_cast&lt;int&gt; (a) + 3;  // 显式的请求类型转化
+</code></pre>
+
+<p>所以当类型转化运算符是显式的时候，我们必须通过显式的强制类型转化才可以，但是凡事也有例外，如果表达式被用作条件，则编译器会将显式的类型转换自动应用于它。可以具体看一下哪些例子：</p>
+
+<ul>
+<li>if, while, 及 do 语句的条件部分</li>
+<li>for 语句头的条件表达式</li>
+<li>逻辑非运算符(!), 逻辑或运算符(||), 逻辑与运算符(&amp;&amp;) 的运算对象</li>
+<li>条件运算符( ? : ) 的条件表达式</li>
+</ul>
+
+<p>根据这个例外，也就很好的可以实现在 <code>if</code> 判断中可以隐式转化为布尔，代码也变得更加简洁明了了</p>
+
+<h2 id="关于智能指针">关于智能指针</h2>
+
+<p>在看 <code>QScopedPointer</code> 源码过程中，也了解一些关于智能指针设计的思路</p>
+
+<blockquote>
+<p>《More Effective C++》 条款28：Smart Pointer(智能指针)里给了一个很有意思的定义<br />
+所谓 smart pointer , 是 “看起来，用起来，感觉起来都像内建指针，但提供更多机能” 的一种对象。它们有各式各样的用途，包括资源的管理以及自动的重复写码工作。</p>
+</blockquote>
+
+<p>智能指针希望可以完全替代内建指针的同时，代码可以最少范围进行改动，并且保留和内建指针相似的使用习惯</p>
+
+<p>所以 <code>QScopedPointer</code> 在接口设计的时候，重载了 <code>!</code>, <code>*</code>, <code>-&gt;</code>， <code>operator bool</code> 来保证使用习惯的一致性<br />
+智能指针间的比较，又引入了 <code>==</code>, <code>!=</code> 的重载</p>
+
+<h2 id="一些联想">一些联想</h2>
+
+<p>让他们看起来及感觉起来尽量想内建指针，而越接近这个目标，越会让人忘记他们正在使用智能指针</p>
+
+<h3 id="复制和赋值的问题">复制和赋值的问题</h3>
+
+<p>智能指针本身是管理一个内建指针，那就存在智能指针本身赋值和复制的问题</p>
+
+<blockquote>
+<p><code>auto_ptr</code> 因为其在被复制或被赋值的时候，其对指针的 <code>所有权</code> 会转移，在 <code>C++11</code> 中已经放弃 <code>auto_ptr</code> 转而推荐使用 <code>unique_ptr</code> 和 <code>shared_ptr</code>。</p>
+</blockquote>
+
+<p><code>unique_ptr</code> 和 <code>auto_ptr</code> 管理内建指针都是通过所有权的形式，但是 <code>unique_ptr</code> 索性则禁止了复制和赋值操作<br />
+<code>shared_ptr</code> 则使用的是引用计数的形式</p>
+
+<p>终究因为需要维护内建指针的 <code>对象所有权</code>， 不能让智能指针间的赋值拷贝变得更加随意</p>
+
+<h3 id="将智能指针转化为内建指针">将智能指针转化为内建指针</h3>
+
+<p><code>QScopedPointer</code> 提供了 <code>data()</code> 的接口，返回了内建指针</p>
+
+<pre><code class="language-C++">inline T *data() const
+{
+    return d;
+}
+</code></pre>
+
+<p>而当允许了开发者直接使用内建指针，你是不知道开发者可能会做哪些操作的，往往会导致灾难</p>
+
+<p>所以一旦一个对象使用智能指针管理后，就不该再使用原始裸指针去操作；</p>
+
+<h3 id="使用场景">使用场景</h3>
+
+<p>在我眼里，智能指针很好的解决了内建指针管理资源的生命周期问题，当存在复杂的逻辑处理时，可能导致我忘记delete时，也许我会使用智能指针吧。</p>
+
+<p>这篇就先到这里吧，接下来一周可能在整理一下 <code>编译器类型转换</code> 相关的知识，或者将 <code>shared_ptr</code>, <code>weak_ptr</code> 源码撸一撸?</p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt" role="button">Qt </a></li>
+      
+    
+      <li><a href="https://catcheroftime.github.io/tags/qt%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB" role="button">Qt源码阅读 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-10/%E5%AE%89%E5%85%A8%E7%9A%84%E5%B8%83%E5%B0%94%E7%B1%BB%E5%9E%8B%E8%BD%AC%E5%8C%96/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>安全的布尔类型转化</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%97%a7%e9%97%ae%e9%a2%98%e8%a7%a3%e8%af%bb">
+												 旧问题解读
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#c-11%e6%96%b0%e6%a0%87%e5%87%86">
+												 C&#43;&#43;11新标准
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%b3%e4%ba%8e%e6%99%ba%e8%83%bd%e6%8c%87%e9%92%88">
+												 关于智能指针
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%80%e4%ba%9b%e8%81%94%e6%83%b3">
+												 一些联想
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a4%8d%e5%88%b6%e5%92%8c%e8%b5%8b%e5%80%bc%e7%9a%84%e9%97%ae%e9%a2%98">
+												 复制和赋值的问题
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b0%86%e6%99%ba%e8%83%bd%e6%8c%87%e9%92%88%e8%bd%ac%e5%8c%96%e4%b8%ba%e5%86%85%e5%bb%ba%e6%8c%87%e9%92%88">
+												 将智能指针转化为内建指针
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bd%bf%e7%94%a8%e5%9c%ba%e6%99%af">
+												 使用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
