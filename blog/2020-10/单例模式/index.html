@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="单例模式可能是最简单，最常用的设计模式之一，这篇文章主要总结一些常用的实现方式">
+  
+  <meta property="og:title" content="单例模式" />
+<meta property="og:description" content="单例模式可能是最简单，最常用的设计模式之一，这篇文章主要总结一些常用的实现方式" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-10/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2020-10-19T10:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-10-19T10:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       单例模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-10/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">单例模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Oct 19, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>单例模式可能是最简单，最常用的设计模式之一，这篇文章主要总结一些常用的实现方式</p>
+
+<h2 id="单例是什么">单例是什么</h2>
+
+<blockquote>
+<p>单例模式(Singleton), 保证一个类仅有一个实例，并提供一个访问它的全局访问点。</p>
+</blockquote>
+
+<h2 id="应用场景">应用场景</h2>
+
+<p>当我们需要统一管理资源或者资源共享的时候都可以使用单例模式</p>
+
+<ul>
+<li>管理资源：多线程/数据库 线程池，资源管理器等等</li>
+<li>资源共享：读写应用配置，日志应用等等</li>
+</ul>
+
+<h2 id="代码实现说明">代码实现说明</h2>
+
+<ul>
+<li>为了保证全局只有一个实例，需要使用 static, 同时需要防止被外界创建和赋值，就需要私有化它的构造函数，并且禁止赋值和拷贝</li>
+<li>提供一个公有的静态方法获取该实例</li>
+</ul>
+
+<p>而关于什么时候初始化这个单例，实际上有分为2种</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">饿汉模式</td>
+<td align="left">变量在声明时便初始化</td>
+</tr>
+
+<tr>
+<td align="left">懒汉模式</td>
+<td align="left">先声明一个空变量，用户调用的时候才初始化</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="饿汉模式">饿汉模式</h2>
+
+<p>饿汉模式 像一个饿汉一样，不管需不需要用到实例都要去创建实例，变量在声明时便初始化，所以可以有以下的实现方法</p>
+
+<pre><code class="language-C++">class EagerSingleton
+{
+public:
+    static EagerSingleton&amp; getInstance(){return instance;}
+
+private:
+    EagerSingleton() { std::cout &lt;&lt; &quot;EagerSingleton create&quot; &lt;&lt; std::endl; }
+    ~EagerSingleton(){}
+    EagerSingleton(const EagerSingleton&amp;)=delete;
+    EagerSingleton&amp; operator=(const EagerSingleton&amp;)=delete;
+
+private:
+    static EagerSingleton instance;
+};
+
+EagerSingleton EagerSingleton::instance;
+</code></pre>
+
+<p>将构造，赋值，复制，析构都设置成私有函数，暴露一个 <code>getInstance</code> 接口，返回静态成员对象 <code>instance</code> 供开发人员调用</p>
+
+<p>当然这里静态变量 <code>instance</code> 也可以设计成指针, 只要保证在声明时初始化即可例如</p>
+
+<pre><code class="language-C++">class EagerSingleton
+{
+public:
+    static EagerSingleton* getInstance(){return instance;}
+    ...
+private:
+    static EagerSingleton* instance;
+};
+
+EagerSingleton* EagerSingleton::instance = new EagerSingleton;
+</code></pre>
+
+<p>由于在 <code>main()</code> 函数之前初始化，所以没有线程安全的问题，但是这里存在2个可能存在问题</p>
+
+<h3 id="过早的初始化">过早的初始化</h3>
+
+<p>因为从 <code>main()</code> 函数之前就初始化，但是程序可能全程没有用到 <code>EagerSingleton</code> 这个类，可以完全不用这么早初始化，等用的时候在初始化就可以</p>
+
+<p>之前看 <code>《More Effective C++》</code> 第17条款的时候，提到过 <code>lazy evaluation(缓式评估)</code>, 从效率而言，最好的运算是从未被执行的运算，如果没用到，完全可以不去做，能拖就拖，拖到必须做，必须迫切需要的时候再去执行，这就引入了单例的另一种实现&ndash;懒汉模式</p>
+
+<h3 id="non-local-static-引入的潜在风险">non-local static 引入的潜在风险</h3>
+
+<p>先看看什么是 <code>non-local static</code></p>
+
+<p>下面内容摘自 <code>《Effective C++》</code> 的条款04</p>
+
+<blockquote>
+<p>函数内的 <code>static</code> 对象称为 <code>local static</code> 对象(因为它们对函数而言是 local)，其他 <code>static</code> 对象被称为 <code>non-local static</code></p>
+</blockquote>
+
+<p>如果某个编译单元内某个 <code>non-local static</code> 对象的初始化动作使用了另一个编译单元的某个 <code>non-local static</code> 对象，它所用到的这个对象可能尚未被初始化, 因为 C++ 对 “定义于不同编译单元内的 <code>non-local static</code> 的初始化次序并无明确定义”， 主要是决定它们的初始化顺序相当困难，根本无解</p>
+
+<p>当然这种情况在实际编写代码的时候可能很少出现，并且书中也提出一个小小的设计来完全消除这个问题</p>
+
+<p><font color=red>以 local static 对象替换 non-local static 对象</font></p>
+
+<p>具体关于这种设计的说明，后面代码里有介绍，这里就先不展开了</p>
+
+<h2 id="懒汉模式">懒汉模式</h2>
+
+<p>懒汉模式，像一个懒汉一样，需要用到该对象的时候再去创建实例，不需要创建实例程序就“懒得”去创建实例，相对于饿汉模式还没开始(mian函数)就初始化显得更加合理</p>
+
+<p>从未被调用，就不用承担构造和析构的成，其实换句话可以这样理解</p>
+
+<ul>
+<li>饿汉模式是拿空间换时间做法</li>
+<li>懒汉模式是拿时间换空间做法</li>
+</ul>
+
+<h3 id="基础版">基础版</h3>
+
+<pre><code class="language-C++">class LazySingletonDemo
+{
+private:
+    static LazySingletonDemo* instance;
+
+private:
+    LazySingletonDemo() { std::cout &lt;&lt; &quot;LazySingletonDemo create&quot; &lt;&lt; std::endl;}
+    ~LazySingletonDemo() {}
+    LazySingletonDemo(const LazySingletonDemo&amp;)=delete;
+    LazySingletonDemo&amp; operator=(const LazySingletonDemo&amp;)=delete;
+public:
+    static LazySingletonDemo* getInstance()
+    {
+        if(instance == nullptr)
+            instance = new LazySingletonDemo();
+        return instance;
+    }
+};
+
+LazySingletonDemo* LazySingletonDemo::instance = nullptr;
+
+</code></pre>
+
+<p>调用的时候才初始化，程序单线程调用时是没有问题的，但是多线程系统中就存在不确定性了，可能因为多个线程同时请求初始化导致的内存泄漏问题</p>
+
+<p>所以问题来到了如何消除与初始化有关的 &ldquo;竞速形势&rdquo;</p>
+
+<p>最简单的就是初始化前加锁，保证创建这个过程是唯一的，好，就有下面这种改进版</p>
+
+<h3 id="双检查锁-double-checked-locking-pattern">双检查锁 Double-Checked Locking Pattern</h3>
+
+<pre><code class="language-C++">#include &lt;iostream&gt;
+#include &lt;mutex&gt;
+
+class LazySingletonMore
+{
+private:
+    static LazySingletonMore* instance;
+    static std::mutex mutex;
+
+private:
+    LazySingletonMore() { std::cout &lt;&lt; &quot;LazySingletonMore create&quot; &lt;&lt; std::endl;}
+    ~LazySingletonMore() {}
+    LazySingletonMore(const LazySingletonMore&amp;)=delete;
+    LazySingletonMore&amp; operator=(const LazySingletonMore&amp;)=delete;
+public:
+    static LazySingletonMore* getInstance()
+    {
+        if(instance == nullptr) {
+            std::lock_guard&lt;std::mutex&gt; lock(mutex);
+            if(instance == nullptr)
+                instance = new LazySingletonMore();
+        }
+
+        return instance;
+    }
+};
+
+LazySingletonMore* LazySingletonMore::instance = nullptr;
+std::mutex LazySingletonMore::mutex;
+</code></pre>
+
+<ul>
+<li>第一步判断，如果已经创建了，直接返回</li>
+<li>第二步加锁，如果多个线程同时进入了初始化环节，加锁保证同步线程
+
+<ul>
+<li>拿到锁的线程，因为未初始化，创建实例，创建结束，同步结束</li>
+<li>同步结束后，其他未执行初始化的线程，因为已经初始化了，就不用再创建了。</li>
+</ul></li>
+</ul>
+
+<h3 id="c-11推荐方式">C++11推荐方式</h3>
+
+<pre><code class="language-C++">#include &lt;iostream&gt;
+using namespace std;
+
+class Singleton
+{
+public:
+    static Singleton&amp; getInstance()
+    {
+        static Singleton value;
+        return value;
+    }
+
+private:
+    Singleton() = default;
+    Singleton(const Singleton&amp; other)=delete;
+    Singleton&amp; operator=(const Singleton&amp;)=delete;
+};
+</code></pre>
+
+<p>这个手法的基础在于： C++保证，函数中的 <code>local static</code> 对象会在 &ldquo;<strong>该函数被调用期间</strong>&rdquo;  “<strong>首次遇上该对象之定义式</strong>” 时被初始化，所以如果以 <strong>函数调用</strong> 返回一个 <code>reference</code> 指向 <code>local static</code> 对象 <strong>替换</strong> 直接访问 <code>non-local static</code> 对象，就可以获得保证，保证所获得的那个 <code>reference</code> 将指向一个 <strong>历经初始化</strong> 的对象</p>
+
+<p>不过 <code>local static</code> 线程安全是 C++11 之后才支持的，在 C++11 之前，在多线程环境下<code>local static</code> 对象的初始化并不是线程安全的。具体表现就是：如果一个线程正在执行 <code>local static</code> 对象的初始化语句但还没有完成初始化，此时若其它线程也执行到该语句，那么这个线程会认为自己是第一次执行该语句并进入该 <code>local static</code> 对象的构造函数中。这会造成这个 <code>local static</code> 对象的重复构造，进而产生 <strong>内存泄露</strong> 问题。</p>
+
+<h2 id="总结">总结</h2>
+
+<p>虽然很常用，但是在保证线程安全的前提下，实现起来考虑的细节还是挺多的，</p>
+
+<p>还有一些细节的知识，建议看一下下面几篇博客，里面提了一些很有意思的思考</p>
+
+<ul>
+<li>通过C++11提供的 call_once 来实现单例</li>
+<li><code>getInstance</code> 到底应该返回指针还是引用</li>
+<li>如果想复用的话，利用模板应该如何实现等等</li>
+</ul>
+
+<p><a href="https://www.cnblogs.com/loveis715/archive/2012/07/18/2598409.html">https://www.cnblogs.com/loveis715/archive/2012/07/18/2598409.html</a></p>
+
+<p><a href="https://zhuanlan.zhihu.com/p/37469260">https://zhuanlan.zhihu.com/p/37469260</a></p>
+
+<p><a href="https://zhuanlan.zhihu.com/p/62014096">https://zhuanlan.zhihu.com/p/62014096</a></p>
+
+<p>关于单例的总结大概也就这么多了</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-10/%E9%9A%90%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%88%B0%E5%BA%95%E6%98%AF%E4%B8%AA%E5%95%A5/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>隐式类型转换到底是个啥</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8d%95%e4%be%8b%e6%98%af%e4%bb%80%e4%b9%88">
+												 单例是什么
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">
+												 应用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bb%a3%e7%a0%81%e5%ae%9e%e7%8e%b0%e8%af%b4%e6%98%8e">
+												 代码实现说明
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%a5%bf%e6%b1%89%e6%a8%a1%e5%bc%8f">
+												 饿汉模式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%bf%87%e6%97%a9%e7%9a%84%e5%88%9d%e5%a7%8b%e5%8c%96">
+												 过早的初始化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#non-local-static-%e5%bc%95%e5%85%a5%e7%9a%84%e6%bd%9c%e5%9c%a8%e9%a3%8e%e9%99%a9">
+												 non-local static 引入的潜在风险
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%87%92%e6%b1%89%e6%a8%a1%e5%bc%8f">
+												 懒汉模式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%9f%ba%e7%a1%80%e7%89%88">
+												 基础版
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8f%8c%e6%a3%80%e6%9f%a5%e9%94%81-double-checked-locking-pattern">
+												 双检查锁 Double-Checked Locking Pattern
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#c-11%e6%8e%a8%e8%8d%90%e6%96%b9%e5%bc%8f">
+												 C&#43;&#43;11推荐方式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
