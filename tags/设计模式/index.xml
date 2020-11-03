@@ -6,10 +6,28 @@
     <description>Recent content in 设计模式 on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Mon, 19 Oct 2020 10:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 29 Oct 2020 22:15:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>工厂方法模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-10/%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 29 Oct 2020 22:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-10/%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本篇文章会先介绍 &lt;code&gt;工厂方法模式​&lt;/code&gt; 的一些知识和特点，并在最后对 &lt;code&gt;工厂方法模式&lt;/code&gt; 和 &lt;code&gt;简单工厂模式&lt;/code&gt; 这二者之间的异同做一些分析&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>简单工厂模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-10/%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Mon, 26 Oct 2020 22:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-10/%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;简单工厂走一走~&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>单例模式</title>

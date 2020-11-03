@@ -7,23 +7,23 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="败给时间">
-  <meta name="description" content="这部分主要跟着大佬的脚步&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;，学习MySQL的Buffer Pool(缓冲池)。">
+  <meta name="description" content="简单工厂走一走~">
   
-  <meta property="og:title" content="MySQL 是怎样运行的-第七部分" />
-<meta property="og:description" content="这部分主要跟着大佬的脚步&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;，学习MySQL的Buffer Pool(缓冲池)。" />
+  <meta property="og:title" content="简单工厂模式" />
+<meta property="og:description" content="简单工厂走一走~" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://catcheroftime.github.io/blog/2019-07/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E4%B8%83%E9%83%A8%E5%88%86/" />
-<meta property="article:published_time" content="2019-07-04T00:15:00&#43;08:00"/>
-<meta property="article:modified_time" content="2019-07-04T00:15:00&#43;08:00"/>
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-10/%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2020-10-26T22:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-10-26T22:15:00&#43;08:00"/>
 
 
   <title>
   
-       MySQL 是怎样运行的-第七部分 | 一个懒散的程序猿 
+       简单工厂模式 | 一个懒散的程序猿 
   
   </title>
 
-  <link rel="canonical" href="https://catcheroftime.github.io/blog/2019-07/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E4%B8%83%E9%83%A8%E5%88%86/">
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-10/%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/">
 
   
   
@@ -263,17 +263,17 @@
   <ul class="post-meta li-x">
     
       
-        <li><a href="https://catcheroftime.github.io/categories/mysql"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> MySQL </a></li>
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
       
     
     
   </ul>
 
-  <div class="px-4 post-heading">MySQL 是怎样运行的-第七部分</div>
+  <div class="px-4 post-heading">简单工厂模式</div>
 
   <ul class="post-meta li-x mt-1">
     
-      <li>Jul 4, 2019</li>
+      <li>Oct 26, 2020</li>
     
 
     
@@ -284,83 +284,194 @@
 
 
           <div class="post-content markdown">
-            <p>这部分主要跟着大佬的脚步<a href="https://juejin.im/book/5bffcbc9f265da614b11b731">&ldquo;MySQL 是怎样运行的：从根儿上理解 MySQL&rdquo;</a>，学习MySQL的Buffer Pool(缓冲池)。</p>
+            <p>简单工厂走一走~</p>
 
-<h2 id="innodb-的-buffer-pool-缓冲池">InnoDB 的 Buffer Pool(缓冲池)</h2>
-
-<p>由于CPU上的速度远远大于磁盘速度， 需要先将数据加载到内存中进行读写访问， 在读写完成后不急着将该页对应的内存空间释放掉， 而是将其缓存起来， 将来如果有请求再次访问该页面时， 可以省区磁盘的IO开销。</p>
-
-<p>通过启动服务器的时候配置 <code>innodb_buffer_pool_size</code> 参数值， 表示 Buffer Pool的 大小。</p>
-
-<p>每一个缓存页都创建了一些所谓的<code>控制信息</code>，这些控制信息包括该页所属的表空间编号、页号、缓存页在Buffer Pool中的地址、链表节点信息、一些锁信息以及LSN信息等等。 每个缓存页对应的控制信息占用的内存大小是相同的，我们就把每个页对应的控制信息占用的一块内存称为一个<code>控制块</code>， 大小为808B， 大概是一个缓存页(16KB)的5%。 下面时如何管理<code>控制块</code>。申请Buffer Pool 时需要额外申请5%大小控件</p>
-
-<p>Buffer Pool向操作系统申请的连续内存由控制块和缓存页组成，每个控制块和缓存页都是一一对应的，在填充足够多的控制块和缓存页的组合后，Buffer Pool剩余的空间可能产生不够填充一组控制块和缓存页，这部分空间不能被使用，也被称为碎片。</p>
-
-<p>为了快速定位某个页是否被加载到Buffer Pool，使用表空间号 + 页号作为key，缓存页作为value，建立哈希表。</p>
-
-<h3 id="free-链表">free 链表</h3>
-
-<p>所有空闲的缓存页对应的控制块作为一个节点放到一个链表中</p>
-
-<h3 id="flush-链表">flush 链表</h3>
-
-<p>脏页 与磁盘上页不一致 后台有专门的线程每隔一段时间负责把脏页刷新到磁盘</p>
+<p>虽然看 《设计模式-可复用面向对象软件的基础》 的时候，将工厂模式分为2种</p>
 
 <ul>
-<li><p>从LRU链表的冷数据中刷新一部分页面到磁盘。<br />
-后台线程会定时从LRU链表尾部开始扫描一些页面，扫描的页面数量可以通过系统变量innodb_lru_scan_depth来指定，如果从里边儿发现脏页，会把它们刷新到磁盘。这种刷新页面的方式被称之为BUF_FLUSH_LRU。</p></li>
-
-<li><p>从flush链表中刷新一部分页面到磁盘。<br />
-后台线程也会定时从flush链表中刷新一部分页面到磁盘，刷新的速率取决于当时系统是不是很繁忙。这种刷新页面的方式被称之为BUF_FLUSH_LIST。</p></li>
+<li>工厂方法模式</li>
+<li>抽象工厂模式</li>
 </ul>
 
-<h3 id="lru链表-least-recently-used">LRU链表(Least Recently Used)</h3>
+<p>但是在看 《大话设计模式》 以及网上很多资料时，一般都习惯将 <code>工厂方法模式</code> 做了进一步的拆分，分为3种</p>
 
 <ul>
-<li>根据<code>缓存命中率</code>(假设我们一共访问了n次页，那么被访问的页已经在缓存中的次数除以n就是所谓的缓存命中率), 在free链表没有多余的空闲缓存页时移除旧的缓存页。
-<br /></li>
+<li>简单工厂模式</li>
+<li>工厂方法模式</li>
+<li>抽象工厂模式</li>
 </ul>
 
-<h4 id="简单的lru链表实现">简单的LRU链表实现</h4>
+<p>这篇文章主要就是先从 <code>简单工厂模式</code> 入手，真正开发过程中用的最多的还是简单工厂模式</p>
+
+<h2 id="是什么">是什么</h2>
+
+<p>工厂的生产环境流程简化后一般是： <strong>人提供给工厂</strong> 一个材料， <strong>工厂</strong> 加工完成后，<strong>工厂给人</strong> 一个产品， 只要提供给工厂产品对应的材料，工厂可以加工各种各样的产品</p>
+
+<p>简单工厂模式的流程其实也是这样的，我现在需要一个对象， 我提供给 “工厂” 一个材料(参数)， “工厂” 根据材料(参数)生产对象， 最后将产品提供给我， 提供不同的材料(参数)，工厂返回不同的产品</p>
+
+<p>所以在这样的描述下，工厂最核心的功能就是 根据传入参数返回产品(对象)，为了让客户端的 &ldquo;我&rdquo; 调用的更简洁，工厂类返回产品的接口设计成 <code>static</code></p>
+
+<p>接下来主要就是对这个 “产品” 进行设计，毕竟 “我” 操作的对象是工厂替我创建的 <strong>产品</strong></p>
+
+<p>对于 “我” 而言，不需要知道具体的产品是什么，所以设计一个产品的基类，具体的产品继承这个产品基类, 所以此时工厂返回给 &ldquo;我&rdquo; 一个基类的对象，我直接操作基类，而子类以父类的身份出现，这就很好的利用了C++多态这个属性，并且 “我” 是依赖于抽象的产品基类，也在一定程度解耦了</p>
+
+<p>所以 <code>简单工厂模式</code> 的核心是下面几个点</p>
 
 <ul>
-<li>如果该页不在Buffer Pool中，在把该页从磁盘加载到Buffer Pool中的缓存页时，就把该缓存页对应的控制块作为节点塞到链表的头部。</li>
-<li>只要我们使用到某个缓存页，就把该缓存页调整到LRU链表的头部，这样LRU链表尾部就是最近最少使用的缓存页,Buffer Pool中的空闲缓存页使用完时，到LRU链表的尾部找些缓存页淘汰。<br />
-<br /></li>
+<li>工厂下的产品都具有共同的属性</li>
+<li>一个工厂类即可，并且完成旗下所有的具体产品创建逻辑</li>
 </ul>
 
-<p>简单LRU实现可能存在的问题
-  - 加载到Buffer Pool中的页不一定被用到。（可能因为预读，导致一些数据被塞到链表头部，但可能一直用不到）
-  - 如果非常多的使用频率偏低的页被同时加载到Buffer Pool时，可能会把那些使用频率非常高的页从Buffer Pool中淘汰掉。（例如扫描全表的查询语句）</p>
+<h2 id="优缺点">优缺点</h2>
 
-<h4 id="划分区域的lru链表实现">划分区域的LRU链表实现</h4>
+<p>根据设计思路，其实不难发现它有以下几个优点：</p>
 
 <ul>
-<li>部分存储使用频率非常高的缓存页，所以这一部分链表也叫做热数据，或者称young区域。</li>
-<li>另一部分存储使用频率不是很高的缓存页，所以这一部分链表也叫做冷数据，或者称old区域。</li>
+<li>结构上，客户端负责要对象，工厂类负责提供对象，职责划分清晰</li>
+<li>代码上，客户端的我，不需要知道具体产品的类名，只需要知道参数即可，因此我的头文件只需要 <code>include</code> 基类，毕竟客户端操作的对象是基类的对象</li>
+<li>后期具体产品不论怎么添加，客户端这方面的代码基本都不需要进行大的修改，最多需要维护一个具体产品和提供给工厂的参数之间的关系表</li>
 </ul>
 
-<p>系统变量<code>innodb_old_blocks_pct</code>的值来确定old区域在LRU链表中所占的比例</p>
+<p>优点很明显，缺点同样也很明显:</p>
 
-<pre><code>SET GLOBAL innodb_old_blocks_pct = 40;
+<ul>
+<li>工厂承担的职责太多了，负责了所有产品的创建逻辑，这就导致如果工厂类出现问题，影响的代码可能会很多</li>
+<li>并且当需要添加新的的产品时，就需要修改工厂类，而在很多开发的时候，对旧代码的改动可能会引入一些意想不到的问题</li>
+</ul>
+
+<p>所以，当工厂负责创建对象比较少，并且这个产品对象比较固定时，推荐使用</p>
+
+<h2 id="怎么写">怎么写</h2>
+
+<p>这里我主要使用 《大话设计模式》 的例子，将其改成 <code>C++</code> 版本, 就不单独举例子了</p>
+
+<blockquote>
+<p>实现一个加减乘除功能，要求输入2个数和运算符，得到结果</p>
+</blockquote>
+
+<p>运算符对象代码如下</p>
+
+<pre><code class="language-C++">class Operation
+{
+public:
+    Operation():A(0), B(0){}
+    virtual ~Operation(){}
+
+    double GetA() const { return A; }
+    double GetB() const { return B; }
+    void SetA(double x) { A=x; }
+    void SetB(double y) { B=y; }
+    double virtual GetResult(){ return 0; }
+
+private:
+    double A, B;
+};
+
+class Add : public Operation
+{
+public:
+    double GetResult()
+    {
+        return GetA()+GetB();
+    }
+};
+
+class Sub : public Operation
+{
+public:
+    double GetResult()
+    {
+        return GetA()-GetB();
+    }
+};
+
+class Mul : public Operation
+{
+public:
+    double GetResult()
+    {
+        return GetA()*GetB();
+    }
+};
+
+class Div : public Operation
+{
+public:
+    double GetResult()
+    {
+        if (GetB() == 0)
+            throw string(&quot;Division by zero condition!&quot;);
+        return GetA()/GetB();
+    }
+};
 </code></pre>
 
-<ul>
-<li>针对预读的页面可能不进行后续访情况的优化<br />
-当磁盘上的某个页面在初次加载到Buffer Pool中的某个缓存页时，该缓存页对应的控制块会被放到old区域的头部。这样针对预读到Buffer Pool却不进行后续访问的页面就会被逐渐从old区域逐出，而不会影响young区域中被使用比较频繁的缓存页。</li>
-<li>针对全表扫描, 短时间内访问大量使用频率非常低的页面情况的优化<br />
-首次被加载到Buffer Pool的页被放到了<code>old</code>区域的头部，一个页面有很多条记录，在全表扫描时， 该页会被反复访问，为了防止这种页被放到<code>young</code>区域头部，所以规定： 在对某个处在old区域的缓存页进行第一次访问时就在它对应的控制块中记录下来这个访问时间，如果后续的访问时间与第一次访问的时间在某个时间间隔内，那么该页面就不会被从old区域移动到young区域的头部，否则将它移动到young区域的头部。<br />
-上述的这个间隔时间是由系统变量innodb_old_blocks_time控制的 <code>SHOW VARIABLES LIKE 'innodb_old_blocks_time'</code>
-<br /></li>
-</ul>
+<p>运算符工厂类实现如下：</p>
 
-<h4 id="更进一步优化lru链表">更进一步优化LRU链表</h4>
+<pre><code class="language-C++">enum OperatorType
+{
+    ADD = 0,
+    SUB,
+    MUL,
+    DIV
+};
 
-<p>频繁移动缓存页到LRU链表头部。 实际上开销很大， <code>young</code>区域作为热点数据，更是被经常访问。所以需要想办法降低陶正LRU链表的频率， 最终的目标是 <strong>尽量高效的提高 Buffer Pool 的缓存命中率</strong></p>
+class SimpleFactory
+{
+public:
+    static Operation * CreateOperator(OperatorType type)
+    {
+        Operation * p;
+        switch(type)
+        {
+        case ADD:
+            p = new Add();
+            break;
+        case SUB:
+            p = new Sub();
+            break;
+        case MUL:
+            p = new Mul();
+            break;
+        case DIV:
+            p = new Div();
+            break;
+        }
+        return p;
+    }
+};
+</code></pre>
 
-<ul>
-<li>例如某个缓存页对应的节点在young区域的1/4中，再次访问该缓存页时也不会将其移动到LRU链表头部</li>
-</ul>
+<p>main 调用方式如下：</p>
+
+<pre><code class="language-C++">int main()
+{
+    double A = 20;
+    double B = 10;
+
+    Operation *op = SimpleFactory::CreateOperator(OperatorType::SUB);
+    op-&gt;SetA(A);
+    op-&gt;SetB(B);
+    try {
+        cout&lt;&lt; op-&gt;GetResult() &lt;&lt;endl;
+    } catch (string exception ) {
+        cout&lt;&lt; exception &lt;&lt;endl;
+    }
+
+    delete op;
+    op = nullptr;
+}
+</code></pre>
+
+<h2 id="简单总结">简单总结</h2>
+
+<p>简单工厂模式确定对得起这个名字，确实足够简单</p>
+
+<p>只有 <strong>一个</strong> 工厂，这个工厂的实例，维护了旗下所有具有共同属性的产品的创建逻辑</p>
+
+<p>所以当需要扩展产品的时候，就只能修改这个工厂，从而违反了 <strong>开放-封闭原则</strong> (软件实体（类、模块、函数）可以扩展，但是不可修改的)</p>
+
+<p>而接下来的工厂方法模式，会在一定程度上解决这个问题</p>
           </div>
 
           
@@ -373,7 +484,7 @@
   <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
   <div class="tags-sm">
     
-      <li><a href="https://catcheroftime.github.io/tags/mysql" role="button">MySQL </a></li>
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
       
     
   </div>
@@ -389,10 +500,10 @@
           <div class="row pt-3">
             <div class="col-md-6">
               
-                <a href=https://catcheroftime.github.io/blog/2019-07/mysql-%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%90%E8%A1%8C%E7%9A%84-%E7%AC%AC%E5%85%AD%E9%83%A8%E5%88%86/ class="post-meta">
+                <a href=https://catcheroftime.github.io/blog/2020-10/%E6%98%BE%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%88%B0%E5%BA%95%E6%98%AF%E4%B8%AA%E5%95%A5/ class="post-meta">
                   <div class="pt-2 pb-5 d-flex">
                     <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
-                    <span>MySQL 是怎样运行的-第六部分</span>
+                    <span>显式类型转换到底是个啥</span>
                   </div>
                 </a>
               
@@ -400,10 +511,10 @@
             
             <div class="col-md-6 text-right" >
               
-                <a href=https://catcheroftime.github.io/blog/2019-07/qt-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/ class="post-meta">
+                <a href=https://catcheroftime.github.io/blog/2020-10/%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/ class="post-meta">
                   <div class="pt-2 pb-5 flex-reverse">
                     <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>Qt-自定义插件开发</span>
+                    <span>工厂方法模式</span>
                   </div>
                 </a>
               
@@ -451,8 +562,8 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#innodb-%e7%9a%84-buffer-pool-%e7%bc%93%e5%86%b2%e6%b1%a0">
-												 InnoDB 的 Buffer Pool(缓冲池)
+						 					<a class="nav-link" href="#%e6%98%af%e4%bb%80%e4%b9%88">
+												 是什么
 											</a>
 										</li>
 						 
@@ -470,19 +581,15 @@
 								
 									<ul class="nav">
 								
-									<ul class="nav">
-								
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#free-%e9%93%be%e8%a1%a8">
-												 free 链表
+						 					<a class="nav-link" href="#%e4%bc%98%e7%bc%ba%e7%82%b9">
+												 优缺点
 											</a>
 										</li>
 						 
 								
-								
-									</ul>
 								
 									</ul>
 								
@@ -496,19 +603,15 @@
 								
 									<ul class="nav">
 								
-									<ul class="nav">
-								
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#flush-%e9%93%be%e8%a1%a8">
-												 flush 链表
+						 					<a class="nav-link" href="#%e6%80%8e%e4%b9%88%e5%86%99">
+												 怎么写
 											</a>
 										</li>
 						 
 								
-								
-									</ul>
 								
 									</ul>
 								
@@ -522,109 +625,15 @@
 								
 									<ul class="nav">
 								
-									<ul class="nav">
-								
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#lru%e9%93%be%e8%a1%a8-least-recently-used">
-												 LRU链表(Least Recently Used)
+						 					<a class="nav-link" href="#%e7%ae%80%e5%8d%95%e6%80%bb%e7%bb%93">
+												 简单总结
 											</a>
 										</li>
 						 
 								
-								
-									</ul>
-								
-									</ul>
-								
-							
-						
-				 
-						
-						
-							
-								
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-								
-
-										<li class="nav-item">
-						 					<a class="nav-link" href="#%e7%ae%80%e5%8d%95%e7%9a%84lru%e9%93%be%e8%a1%a8%e5%ae%9e%e7%8e%b0">
-												 简单的LRU链表实现
-											</a>
-										</li>
-						 
-								
-								
-									</ul>
-								
-									</ul>
-								
-									</ul>
-								
-							
-						
-				 
-						
-						
-							
-								
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-								
-
-										<li class="nav-item">
-						 					<a class="nav-link" href="#%e5%88%92%e5%88%86%e5%8c%ba%e5%9f%9f%e7%9a%84lru%e9%93%be%e8%a1%a8%e5%ae%9e%e7%8e%b0">
-												 划分区域的LRU链表实现
-											</a>
-										</li>
-						 
-								
-								
-									</ul>
-								
-									</ul>
-								
-									</ul>
-								
-							
-						
-				 
-						
-						
-							
-								
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-								
-
-										<li class="nav-item">
-						 					<a class="nav-link" href="#%e6%9b%b4%e8%bf%9b%e4%b8%80%e6%ad%a5%e4%bc%98%e5%8c%96lru%e9%93%be%e8%a1%a8">
-												 更进一步优化LRU链表
-											</a>
-										</li>
-						 
-								
-								
-									</ul>
-								
-									</ul>
 								
 									</ul>
 								
