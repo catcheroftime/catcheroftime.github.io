@@ -6,10 +6,19 @@
     <description>Recent content on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Thu, 29 Oct 2020 22:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 03 Nov 2020 23:10:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>抽象工厂模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-11/%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 03 Nov 2020 23:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-11/%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;经过一层一层抽象，来到了最复杂的抽象工厂模式。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>工厂方法模式</title>

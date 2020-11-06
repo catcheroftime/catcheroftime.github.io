@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="经过一层一层抽象，来到了最复杂的抽象工厂模式。">
+  
+  <meta property="og:title" content="抽象工厂模式" />
+<meta property="og:description" content="经过一层一层抽象，来到了最复杂的抽象工厂模式。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-11/%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2020-11-03T23:10:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-11-03T23:10:00&#43;08:00"/>
+
+
+  <title>
+  
+       抽象工厂模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-11/%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">抽象工厂模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Nov 3, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>经过一层一层抽象，来到了最复杂的抽象工厂模式。</p>
+
+<h2 id="意图">意图</h2>
+
+<blockquote>
+<p>提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们具体的类。</p>
+</blockquote>
+
+<h2 id="uml图">UML图</h2>
+
+<p>来，直接上 UML 图，结合着它的 <code>UML</code> 图解释：</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/abstractfactory/UML.png" alt="UML" /></p>
+
+<p>《大话设计模式》里关于 <code>抽象工厂模式</code> 的图画的内容乍一看很乱,不要慌，我用语言在整理一下：</p>
+
+<ul>
+<li><code>AbstractFactory</code> 抽象的工厂，声明一个创建抽象产品对象的操作接口</li>
+<li><code>ConcreteFactory</code> 具体的工厂，实现创建具体产品对象的操作</li>
+<li><code>AbstractProduct</code> 为一类产品对象声明一个接口</li>
+<li><code>ConcreteProduct</code> 定义一个将被对应的具体工厂创建的产品对象，实现 AbstractProduct 接口</li>
+<li><code>Client</code> 仅使用由 <code>AbstractFactory</code> 和 <code>AbstractProduct</code> 类声明的接口</li>
+</ul>
+
+<p>通常在使用这个模式的时候， <code>client</code> 在运行时创建一个 <code>ConcreteFactory</code> 类的实例， 这一个具体的工厂创建具有特定实现的产品对象，为创建不同的产品对象，客户应使用不同的具体工厂，大致就是这样</p>
+
+<pre><code class="language-C++">// Client 部分使用代码
+AbstractFactory *factory = new ConcreteFactory1();
+AbstractProductA *a = factory-&gt;CreateProductA();
+AbstractProductB *b = factory-&gt;CreateProductB();
+</code></pre>
+
+<h2 id="应用场景">应用场景</h2>
+
+<p>所以使用场景可以分为以下几点：</p>
+
+<ol>
+<li>一个系统要独立于它的产品的创建、组合、和表示时</li>
+<li>一个系统要有多个产品系列中的一个来配置时</li>
+<li>当你要强调一系列相关的产品对象的设计以便进行联合使用时</li>
+<li>当你提供一个产品类库时，而只想显示它们的接口而不是实现时。</li>
+</ol>
+
+<h2 id="来个例子">来个例子</h2>
+
+<p>看个例子，可能对应用场景有更深的理解：</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/abstractfactory/demo.png" alt="UML" /></p>
+
+<p>我现在产品的基类分别是 <code>Label</code> <code>LineEdit</code> <code>PushButton</code>, 抽象工厂是 <code>AbstractFactory</code>, 抽象工厂定义了创建产品的操作接口</p>
+
+<pre><code class="language-C++">class AbstractFactory
+{
+public:
+    virtual ~AbstractFactory(){}
+
+    virtual Label * createLable() = 0;
+    virtual LineEdit * createLineEdit() = 0;
+    virtual PushButton * createPushButton() = 0;
+}
+</code></pre>
+
+<p>我先是实现一组 <code>Q</code> 风格的， 我在基类前加个 <code>Q</code> 区分一下<br />
+现在3个控件分别是 <code>QLabel</code> <code>QLineEdit</code> <code>QPushButton</code> ，都是使用 <code>QConcreteFactory</code> 的工厂来创建的实例。</p>
+
+<pre><code class="language-C++">class QConcreteFactory : public AbstractFactory
+{
+public:
+    QConcreteFactory(){}
+
+    virtual Label * createLable(){ return new QLabel; }
+    virtual LineEdit * createLineEdit() { return new QLineEdit; }
+    virtual PushButton * createPushButton() { return new QPushButton; }
+}
+</code></pre>
+
+<p>现在它们的风格就是这样的， 我客户端使用起来的伪代码可能是这样的：</p>
+
+<pre><code class="language-C++">AbstractFactory *factory = new QConcreteFactory();
+Label *label = factory-&gt;createLable();
+LineEdit *edit = factory-&gt;createLineEdit();
+PushButton *btn = facotory-&gt;createPushButton();
+// 后面是使用 label , edit , btn 做一些布局操作等等等
+</code></pre>
+
+<p>现在我需要将客户端整体风格换成 <code>A</code> 风格的，那么在保证不影响原来代码的前提下， 我只需要实现 <code>A</code> 风格的工厂 <code>AConcreteFactory</code>， 以及其下 <code>ALabel</code> <code>ALineEdit</code> <code>APushButton</code><br />
+这样客户端在决定使用 <code>A</code> 风格的控件的时候，客户端方面的代码只需要改一行</p>
+
+<pre><code class="language-C++">// AbstractFactory *factory = new QConcreteFactory();
+AbstractFactory *factory = new AConcreteFactory();
+</code></pre>
+
+<p>从这个例子，可以看出一些 抽象工厂的一些很明显的特点：</p>
+
+<ul>
+<li>工厂提供了产品的创建接口， 客户端通过工厂提供的创建接口得到产品后可以任意组合，而产品只要关心自己的功能和逻辑即可</li>
+<li>工厂的存在意义是，它将一个系列相关的产品封装在一个类里，其实封装后，也有一个强调的意思，只要你用这个工厂，那从这个工厂里得到的产品都是它旗下的系列</li>
+</ul>
+
+<h2 id="优缺点">优缺点</h2>
+
+<p>因为很类似于工厂方法，工厂方法有的优点它也有：</p>
+
+<ul>
+<li>由于一个工厂封装了产品对象的责任和过程，它将客户与类的实现分离，客户通过它们抽象的接口操作实例，产品的类名也在具体工厂的实现中被分离</li>
+</ul>
+
+<p>此外这种设计也带来一些其他优点：</p>
+
+<ul>
+<li><p>容易交换产品系列<br />
+客户端方面的代码仅仅需要更换使用的具体工厂类即可，改动最小，也很可靠</p></li>
+
+<li><p>有利于产品的一致性<br />
+具体工厂封装了旗下的产品，只要使用一个工厂，就能保证产出的产品是一致的</p></li>
+</ul>
+
+<p>缺点当然也有：</p>
+
+<p>从我举的例子里，可以看出，当我需要添加一种的新的产品风格的时候，只需要实现一种新的 <code>ConcreteFactory</code> 即可<br />
+但是当需要添加一个新种类的产品，比如我从原来 <code>Label</code> <code>LineEdit</code> <code>PushButton</code> 再额外加一种 <code>TimeEdit</code><br />
+由于 <code>AbstractFactory</code> 接口确定了可以被创建的产品集合，当添加一种新的产品时，所有涉及到 <code>AbstractFactory</code> 类及其所有子类都需要改变，也就破坏了封闭-开发原则</p>
+
+<h2 id="工厂模式三者的异同">工厂模式三者的异同</h2>
+
+<h3 id="相同点">相同点</h3>
+
+<p>所谓工厂，客户只要产品，不关心工厂是如何创建的，客户依赖于产品抽象的接口操作实例，也不关心具体产品的具体类名，具体的产品和客户完全隔离开， 这一点，他们都很好的满足</p>
+
+<h3 id="不同点">不同点</h3>
+
+<ul>
+<li>简单工厂： 有 <strong>唯一</strong> 的工厂类，工厂类的创建方式根据传入的参数判断，最后决定创建的产品</li>
+<li>工厂方法： 将工厂进行抽象，具体工厂类实现抽象工厂提供的实例化抽象产品的接口，此时 <strong>一个工厂是创建一种产品</strong></li>
+<li>抽象工厂： 抽象工厂将产品进行分类，此时的 <strong>一个工厂可以创建一个系列的产品</strong> ，也就是说抽象工厂提供了多个创建产品的接口</li>
+</ul>
+
+<h3 id="换个角度">换个角度</h3>
+
+<p>抽象工厂产品的归类，其实也有一些很有意思的角度：</p>
+
+<p>还是用前面提到的例子来说明谈一谈：</p>
+
+<p>我有3个产品基类分别是 <code>Label</code> <code>LineEdit</code> <code>PushButton</code>, 按照要求我要设计不同的款式 <code>A</code> 和 <code>Q</code> 等等款式</p>
+
+<p>如果从单一产品的角度而言，我完全可以以简单工厂或者说工厂方法来实现， 以 <code>Label</code> 为例：</p>
+
+<p>简单工厂的写法可能类似于下面这样的</p>
+
+<pre><code class="language-C++">enum LabelType
+{
+    QLabel,
+    ALabel
+};
+
+class SimpleFactory
+{
+public:
+    static Label * CreateLabel(LabelType type)
+    {
+        Label * p = nullptr;
+        switch(type)
+        {
+        case LabelType::QLabel:
+            p = new QLabel();
+            break;
+        case LabelType::ALabel:
+            p = new ALabel();
+            break;
+        default:
+            p = new QLabel();
+            break;
+        }
+        return p;
+    }
+};
+</code></pre>
+
+<p>工厂方法，因为我需要提供一个 <code>Label</code> 给基类的工厂定义一个返回 <code>Label</code> 的接口，具体工程继承实现即可：</p>
+
+<pre><code class="language-C++">class Factory
+{
+public:
+    virtual Label *CreateLabel()=0;
+};
+
+class QLabelFactory : public Factory
+{
+public:
+    Label *CreateLabel() {
+        return new QLabel();
+    }
+};
+
+class ALabelFactory : public Factory
+{
+public:
+    Label *CreateLabel() {
+        return new ALabel();
+    }
+};
+</code></pre>
+
+<p>但是抽象工厂不是站在单一产品的角度进行抽象，而是对所有产品中一些其他属性进行抽象， 比如 <code>A</code>, <code>Q</code> 这种风格进行抽象，它将所有产品划分为一个系列，一个产品族</p>
+
+<p>换句话说就是：简单工厂和工厂方法是先划分产品然后再划分风格，而抽象工厂是在先划分风格然后划分产品</p>
+
+<p>抽象的角度不同可能导致使用不同的设计模式，设计出的代码复杂也会存在较大的差异，但可能也是设计的魅力吧</p>
+
+<h2 id="说明">说明</h2>
+
+<p>关于抽象工厂模式 C++ 实现的 demo 我就不再这篇文章中直接粘贴了，有兴趣可以关注一下我的 github, 这个工程有我目前整理完的设计模式的 C++ demo，之后会陆续将所有的设计模式全部整理完，加油:</p>
+
+<p><a href="https://github.com/catcheroftime/DesignPatterns">https://github.com/catcheroftime/DesignPatterns</a></p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-10/%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>工厂方法模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#uml%e5%9b%be">
+												 UML图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">
+												 应用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9d%a5%e4%b8%aa%e4%be%8b%e5%ad%90">
+												 来个例子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bc%98%e7%bc%ba%e7%82%b9">
+												 优缺点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b7%a5%e5%8e%82%e6%a8%a1%e5%bc%8f%e4%b8%89%e8%80%85%e7%9a%84%e5%bc%82%e5%90%8c">
+												 工厂模式三者的异同
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%9b%b8%e5%90%8c%e7%82%b9">
+												 相同点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%8d%e5%90%8c%e7%82%b9">
+												 不同点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8d%a2%e4%b8%aa%e8%a7%92%e5%ba%a6">
+												 换个角度
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%af%b4%e6%98%8e">
+												 说明
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
