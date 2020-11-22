@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="可能是最简单的创建型模式&ndash;原型模式">
+  
+  <meta property="og:title" content="原型模式" />
+<meta property="og:description" content="可能是最简单的创建型模式&ndash;原型模式" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-11/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2020-11-17T12:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-11-17T12:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       原型模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-11/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">原型模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Nov 17, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>可能是最简单的创建型模式&ndash;原型模式</p>
+
+<h2 id="意图">意图</h2>
+
+<blockquote>
+<p>用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象</p>
+</blockquote>
+
+<h2 id="动机">动机</h2>
+
+<p>想象一下以下几个场景</p>
+
+<ol>
+<li>每次通过 <code>new</code> 产生一个对象成本非常高，比如依赖于高代价的数据库操作之后创建，而且用的频率还挺高</li>
+<li>我拿到一个基类 <code>Base</code> 的指针, 它指向的是某一个派生类 <code>Derived</code> 对象, 我现在想要克隆这个指针，但是我的代码里不知道 <code>Derived</code> 的具体类型，也就没法直接调用构造函数</li>
+</ol>
+
+<h2 id="应用场景">应用场景</h2>
+
+<p>借用《设计模式之禅》里提到的原型模式的应用场景：</p>
+
+<ul>
+<li>资源优化场景<br />
+类初始化需要消化非常多的资源，这个资源包括数据、硬件资源等。</li>
+<li>性能和安全要求的场景<br />
+通过 new 产生一个对象需要非常繁琐的数据准备或访问权限，则可以使用原型模式。</li>
+<li>一个对象多个修改者的场景<br />
+一个对象需要提供给其他对象访问，而且各个调用者可能都需要修改其值时，可以考虑
+使用原型模式拷贝多个对象供调用者使用。</li>
+</ul>
+
+<p>其实总结起来就是： 创建新对象成本大，可以通过原型模式对已有对象进行克隆</p>
+
+<p>此外：</p>
+
+<ul>
+<li>当要实例化的类是在运行时刻指定时，例如，通过动态装载</li>
+<li>为了避免创建一个与产品类层次平行的工厂类层次时</li>
+<li>当一个类的实例 <strong>只能</strong> 有几个不同状态组合中的一种时，建立相应数目的原型并克隆他们可能比每次用合适手工实例化该类更方便一些，当然这个可以结合抽象工厂或者简单工厂一起使用</li>
+</ul>
+
+<h2 id="uml图">UML图</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/prototype/uml.png" alt="UML" /></p>
+
+<p>从 UML 图中可以看出， 客户端主要就是通过 <code>p = prototype-&gt;Clone()</code> 的形式获取一个克隆对象，整体的代码逻辑很简单，主要就是 <code>Clone()</code> 的实现</p>
+
+<h2 id="优缺点">优缺点</h2>
+
+<ul>
+<li>和所有的建造者模式一样，它对客户隐藏了具体的产品类，因此减少了客户知道的名字的数目，并且客户端不需要知道任何创建的细节</li>
+<li>对于创建有复杂或耗资源初始化过程的对象的时候，会提高创建效率</li>
+<li>创建的对象保存了原实例的所有状态</li>
+<li>基类 <code>Base</code> 的指针, 它指向的是某一个派生类 <code>Derived</code> 对象，获取这样指针的克隆时候，也格外具有优势</li>
+</ul>
+
+<p>当然，它的缺点也很明显，为了保证新对象和原对象需要相互独立且一样，所以 <code>Clone()</code> 在类比较复杂的时候，保证实现 <code>深拷贝</code> 也就会变得很复杂了</p>
+
+<h2 id="来个栗子">来个栗子</h2>
+
+<p>在看 《设计模式之禅》 里关于原型模式的时候举到的一个例子我觉得很形象</p>
+
+<blockquote>
+<p>一个对象的产生可以不由零起步，直接从一个已经具备一定雏形的对象克隆，然后再修改为生产需要的对象。<br />
+也就是说，产生一个人，可以不从1岁长到2岁，再到3岁……也可以直接找一个人，从其身上获得DNA，然后克隆一个，直接修改一下就是30岁了！</p>
+</blockquote>
+
+<p>就依照上面的例子，但是我们稍微改一下，还是使用克隆人的概念，但是这时候，我们基类是 <code>person</code> (人), 派生类是 <code>Chinese</code> (中国人)</p>
+
+<p>首先是设计一个 <code>Prototype</code> 的基类 <code>person</code>， 主要为这个人提供了年龄和姓名的设置，以及一个虚函数 <code>clone()</code>，<code>clone()</code> 可以直接得到一个人的克隆对象</p>
+
+<p>而C++在克隆这方面有个很简单实现，<strong>拷贝构造函数</strong>， 这个函数可以直接满足需求，一般情况下，在没有定义该函数的时候，C++的编译器会为我们定义一个默认的</p>
+
+<pre><code class="language-C++">#include &quot;string&quot;
+using namespace std;
+
+class Person
+{
+public:
+    Person():m_year(0), m_name(&quot;&quot;) {}
+    virtual ~Person(){}
+
+    virtual Person *clone() { return new Person(*this); }
+
+    void setYear(int year) { m_year = year;}
+    int getYear() { return m_year;}
+
+    void setName(string name) { m_name = name;}
+    string getName() {return m_name;}
+
+private:
+    int m_year;
+    string m_name;
+};
+</code></pre>
+
+<p>接下来实现派生类 <code>Chinese</code>, 中国人有一个独有的属性，会使用的书法名称，比如楷书，隶书，小篆等等<br />
+因为这里的类里的成员比较简单，所以 <code>clone()</code> 的实现，直接调用了类的 <strong>拷贝构造函数</strong></p>
+
+<pre><code class="language-C++">#include &quot;person.h&quot;
+
+#include &quot;string&quot;
+using namespace std;
+
+class Chinese : public Person
+{
+public:
+    Chinese(): Person(),m_character(&quot;楷书&quot;){}
+    ~Chinese(){}
+
+    void setCharacter(string character) {m_character = character;}
+    string getCharacter() {return m_character; }
+
+    virtual Person *clone() { return new Chinese(*this); }
+
+private:
+    string m_character;   // 书法名称
+};
+</code></pre>
+
+<p>最后看一下客户端部分的代码</p>
+
+<pre><code class="language-C++">#include &quot;chinese.h&quot;
+#include &lt;iostream&gt;
+using namespace std;
+
+#define SAFE_DELETE(p) { if(p) { delete p; p=nullptr;}}
+int main()
+{
+    cout &lt;&lt; &quot;初始化原实例，并对其赋值&quot;&lt;&lt; endl;
+    Person *p = new Chinese();
+    p-&gt;setYear(30);
+    p-&gt;setName(&quot;张三&quot;);
+    cout &lt;&lt; &quot;原实例  年龄：&quot;&lt;&lt;p-&gt;getYear() &lt;&lt; &quot;， 名称：&quot; &lt;&lt; p-&gt;getName() &lt;&lt; endl;
+
+    Person *p2 = p-&gt;clone();
+    cout &lt;&lt; &quot;克隆原实例&quot;&lt;&lt; endl;
+    cout &lt;&lt; &quot;克隆体  年龄：&quot;&lt;&lt;p2-&gt;getYear() &lt;&lt; &quot;， 名称：&quot; &lt;&lt; p2-&gt;getName() &lt;&lt; endl;
+
+    cout &lt;&lt; &quot;对克隆体重新赋值&quot;&lt;&lt; endl;
+    p2-&gt;setYear(20);
+    p2-&gt;setName(&quot;李四&quot;);
+    cout &lt;&lt; &quot;原实例  年龄：&quot;&lt;&lt;p-&gt;getYear() &lt;&lt; &quot;， 名称：&quot; &lt;&lt; p-&gt;getName() &lt;&lt; endl;
+    cout &lt;&lt; &quot;克隆体  年龄：&quot;&lt;&lt;p2-&gt;getYear() &lt;&lt; &quot;， 名称：&quot; &lt;&lt; p2-&gt;getName() &lt;&lt; endl;
+
+    SAFE_DELETE(p);
+    SAFE_DELETE(p2);
+    return 0;
+}
+</code></pre>
+
+<p>运行结果</p>
+
+<pre><code class="language-C++">初始化原实例，并对其赋值
+原实例  年龄：30， 名称：张三
+克隆原实例
+克隆体  年龄：30， 名称：张三
+对克隆体重新赋值
+原实例  年龄：30， 名称：张三
+克隆体  年龄：20， 名称：李四
+</code></pre>
+
+<p>上面的例子是 <code>p</code> 是 <code>Person</code> 基类对象，但是指向的是基类 <code>Chinese</code>, 为了确定克隆出的对象是否具有 <code>Chinese</code> 的 <code>Character(书法字体)</code> 属性， 需要进一步测试，代码如下：</p>
+
+<pre><code class="language-C++">#include &quot;chinese.h&quot;
+#include &lt;iostream&gt;
+using namespace std;
+
+#define SAFE_DELETE(p) { if(p) { delete p; p=nullptr;}}
+int main()
+{
+    cout &lt;&lt; &quot;初始化原实例，并对其赋值&quot;&lt;&lt; endl;
+    Chinese *p = new Chinese();
+    p-&gt;setYear(30);
+    p-&gt;setName(&quot;张三&quot;);
+    p-&gt;setCharacter(&quot;小篆&quot;);
+    cout &lt;&lt; &quot;原实例  年龄：&quot;&lt;&lt;p-&gt;getYear() &lt;&lt; &quot;， 名称：&quot; &lt;&lt; p-&gt;getName() &lt;&lt; &quot;， 书法：&quot; &lt;&lt; p-&gt;getCharacter() &lt;&lt; endl;
+
+    Person *p2 = p-&gt;clone();
+    if (auto p3 = dynamic_cast&lt;Chinese*&gt; (p2) ) {
+        cout &lt;&lt; &quot;克隆原实例&quot;&lt;&lt; endl;
+        cout &lt;&lt; &quot;克隆体  年龄：&quot;&lt;&lt;p3-&gt;getYear() &lt;&lt; &quot;， 名称：&quot; &lt;&lt; p3-&gt;getName() &lt;&lt;  &quot;， 书法：&quot; &lt;&lt; p3-&gt;getCharacter() &lt;&lt; endl;
+
+        cout &lt;&lt; &quot;对克隆体重新赋值&quot;&lt;&lt; endl;
+        p3-&gt;setYear(20);
+        p3-&gt;setName(&quot;李四&quot;);
+        p3-&gt;setCharacter(&quot;隶书&quot;);
+        cout &lt;&lt; &quot;原实例  年龄：&quot;&lt;&lt;p-&gt;getYear() &lt;&lt; &quot;， 名称：&quot; &lt;&lt; p-&gt;getName() &lt;&lt; &quot;， 书法：&quot; &lt;&lt; p-&gt;getCharacter() &lt;&lt; endl;
+        cout &lt;&lt; &quot;克隆体  年龄：&quot;&lt;&lt;p3-&gt;getYear() &lt;&lt; &quot;， 名称：&quot; &lt;&lt; p3-&gt;getName() &lt;&lt;  &quot;， 书法：&quot; &lt;&lt; p3-&gt;getCharacter() &lt;&lt; endl;
+    }
+
+    SAFE_DELETE(p);
+    SAFE_DELETE(p2);
+
+    return 0;
+}
+</code></pre>
+
+<p>运行结果如下：</p>
+
+<pre><code class="language-C++">初始化原实例，并对其赋值
+原实例  年龄：30， 名称：张三， 书法：小篆
+克隆原实例
+克隆体  年龄：30， 名称：张三， 书法：小篆
+对克隆体重新赋值
+原实例  年龄：30， 名称：张三， 书法：小篆
+克隆体  年龄：20， 名称：李四， 书法：隶书
+</code></pre>
+
+<p>从例子我们看出，通过 <code>clone()</code> 得到的克隆体，保证了克隆体和原对象状态的一致性，不用重新初始化对象，而是动态的获得了对象运行时的状态</p>
+
+<h2 id="总结">总结</h2>
+
+<p>如果使用构造函数创建类，那么这个类对客户端而言是已知的，原型模式设计的类可以是未知的，调用的是 <code>clone()</code>, 利用C++多态的特性，保证和原对象一样的属性。</p>
+
+<p>如果细心的阅读了本篇文章，例子中 <code>Clone()</code> 部分我说过，类成员比较简单，可以直接使用缺省的 <code>拷贝构造函数</code>， 但是这个简单指的是，类的成员中没有指针，类类型成员变量中也没有指针，可是实际代码中这些可能都有。而关于 <code>拷贝构造函数</code> 这一块的总结，我放在接下来的这篇文章中，这篇文章有较为详细的介绍</p>
+
+<p>对 <code>原型模式</code> 的总结就这些了，不知不觉将设计模式里，创建型的都总结完了~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-11/uml%E7%B1%BB%E5%9B%BE/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>UML类图</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-11/%E6%8B%B7%E8%B4%9D%E6%8E%A7%E5%88%B6%E4%B8%8A/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>拷贝控制(上)</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%9c%ba">
+												 动机
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">
+												 应用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#uml%e5%9b%be">
+												 UML图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bc%98%e7%bc%ba%e7%82%b9">
+												 优缺点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9d%a5%e4%b8%aa%e6%a0%97%e5%ad%90">
+												 来个栗子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="来来来，换个建造者模式走一走">
+  
+  <meta property="og:title" content="建造者模式" />
+<meta property="og:description" content="来来来，换个建造者模式走一走" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-11/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2020-11-06T12:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-11-06T12:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       建造者模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-11/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">建造者模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Nov 6, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>来来来，换个建造者模式走一走</p>
+
+<h2 id="意图">意图</h2>
+
+<blockquote>
+<p>将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示</p>
+</blockquote>
+
+<h2 id="uml">UML</h2>
+
+<p>先看 UML 图大致了解一下代码的框架</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/builder/UML.png" alt="UML" /></p>
+
+<ul>
+<li>Builder  (抽象建造者)<br />
+为创建一个 Product 对象的各个部件指定抽象接口</li>
+<li>ConcreteBuilder (具体建造者)<br />
+
+<ul>
+<li>实现 Builder 的接口以构造和装配改产品的各个部件</li>
+<li>定义并明确它所创建的表示</li>
+<li>提供一个检索产品的接口</li>
+</ul></li>
+<li>Director (指挥者)<br />
+构造一个使用Builder接口的对象</li>
+<li>Product (产品)
+
+<ul>
+<li>表示被构造的复杂对象， ConcreteBuilder创建改产品的内部表示并定义它的装配过程<br /></li>
+<li>包含定义组成部件的类，包括将这些部件装配成最终产品的接口</li>
+</ul></li>
+</ul>
+
+<p>看了UML图，是不是很困惑作为客户端应该如何调用，再来：</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/builder/time.png" alt="时序图" /></p>
+
+<ul>
+<li>客户端创建它想要的产品 Builder 对象</li>
+<li>客户端创建指挥的类 Director</li>
+<li>利用 Direcotor 指挥 ConcreteBuilder 构建 Product</li>
+<li>最后从 ConcreteBuilder 获取 Product</li>
+</ul>
+
+<h2 id="优缺点">优缺点</h2>
+
+<h3 id="优点">优点</h3>
+
+<ul>
+<li><p>它使你可以改变一个产品的内部表示<br />
+因为产品时通过 <code>Director</code> 调用抽象的接口来进行构造的，所以隐藏了这个产品的表示和内部的结构，同时也隐藏了这个产品是如何装配的<br />
+当我需要改变产品的内部表示的时候，只需要重新定义一个 <code>Director</code></p></li>
+
+<li><p>它将构造代码和表示代码分开<br />
+封装了复杂对象的创建和表示方式，提过了对象的封装性</p></li>
+
+<li><p>对构造过程进行更精细的控制<br />
+建造者模式接口相比其他创建型模式能更好的反映产品的构造过程，因此可以更精细的控制构造过程，从而能更精细的控制所得的产品内部结构</p></li>
+</ul>
+
+<h3 id="缺点">缺点</h3>
+
+<ul>
+<li>产品在构造过程中必须有相同的构造过程，应用范围就小很多</li>
+<li>如果产品内部变化复杂，可能会需要使用很多具体建造者</li>
+</ul>
+
+<h2 id="应用场景">应用场景</h2>
+
+<ul>
+<li>当创建复杂对象的算法应该独立于该对象的组成部分以及它们的装配方式时</li>
+<li>当构造过程必须允许被构造的对象有不同的表示时</li>
+</ul>
+
+<h2 id="代码实现">代码实现</h2>
+
+<blockquote>
+<p>趁着双十一打折，可能有一部分开始自己组装电脑，而一台电脑无非以下几个部分：CPU，主板，内存，显卡，存储，电源，散热，机箱，有这8部分，就可以组装好一台电脑<br />
+各个配件的档次不同，性能也不同，配出电脑也不同， 所以电脑的种类可能就是无限的<br />
+根据从 <code>B站装机猿</code> 那里看到的一些电脑配置推荐，现在有 6666 和 11199 2个价位电脑</p>
+</blockquote>
+
+<p>用建造者模式设计上面这个例子的代码如下：</p>
+
+<p>先是电脑这个产品类，主要就是记录每个部件的名称，以及价格信息，在调用 <code>show()</code> 时，将它所有的信息打印出来</p>
+
+<pre><code class="language-C++">#include &lt;string&gt;
+#include &lt;list&gt;
+#include &lt;istream&gt;
+
+class Computer
+{
+public:
+    void add(std::string part) { m_module.push_back(part);}
+    void setPrice(int price) {m_price = price;}
+
+    void show() {
+        std::cout &lt;&lt; m_price &lt;&lt; &quot; 价格的配置电脑如下： &quot;&lt;&lt; std::endl;
+        for (auto moudle : m_module)
+            std::cout &lt;&lt; moudle &lt;&lt; std::endl;
+    }
+
+private:
+    std::list&lt;std::string&gt; m_module;
+    int m_price;
+};
+</code></pre>
+
+<p>OK，接下来就是建造电脑的类了，这里推荐2个档次的， 6666 价位以及 11199 价位</p>
+
+<pre><code class="language-C++">#include &quot;computer.h&quot;
+
+class Builder {
+public:
+    virtual void BuildComputer() {}
+    virtual void AddCpu(){}
+    virtual void AddMainboard(){}
+    virtual void AddMemory(){}
+    virtual void AddGpu() {}
+    virtual void AddStorage(){}
+    virtual void AddPowersupply(){}
+    virtual void AddRadiator() {}
+    virtual void AddCase(){}
+    virtual Computer *GetComputer() { return nullptr;}
+protected:
+    Builder(){}
+};
+
+class Builder6666: public Builder
+{
+public:
+    Builder6666() : m_computer(nullptr) {}
+    virtual void BuildComputer() {  m_computer = new Computer; m_computer-&gt;setPrice(6666);}
+    virtual void AddCpu() { m_computer-&gt;add(&quot;CPU:10400F&quot;);}
+    virtual void AddMainboard() {m_computer-&gt;add(&quot;主板：微星B460M PRO VDH WIFI&quot;);}
+    virtual void AddMemory() {m_computer-&gt;add(&quot;内存：金士顿骇客神条2666 8Gx2&quot;);}
+    virtual void AddGpu() {m_computer-&gt;add(&quot;显卡:微星万图师3X RTX3070&quot;);}
+    virtual void AddStorage() {m_computer-&gt;add(&quot;固态：西数SN550 500G&quot;);}
+    virtual void AddPowersupply() {m_computer-&gt;add(&quot;电源：九州风神DQ650-M-V2L&quot;);}
+    virtual void AddRadiator() {m_computer-&gt;add(&quot;散热器：九州风神玄冰400蓝光版&quot;);}
+    virtual void AddCase() {m_computer-&gt;add(&quot;机箱：先马平头哥M3&quot;);}
+    virtual Computer *GetComputer() { return m_computer; }
+
+private:
+    Computer *m_computer;
+};
+
+class Builder11199: public Builder
+{
+public:
+    Builder11199() : m_computer(nullptr){}
+    virtual void BuildComputer() {  m_computer = new Computer; m_computer-&gt;setPrice(11199);}
+    virtual void AddCpu() { m_computer-&gt;add(&quot;CPU:AMD锐龙3900X散片&quot;);}
+    virtual void AddMainboard() {m_computer-&gt;add(&quot;主板：微星B550 CARBON WIFI&quot;);}
+    virtual void AddMemory() {m_computer-&gt;add(&quot;内存：金士顿骇客神条RGB3200 8Gx2&quot;);}
+    virtual void AddGpu() {m_computer-&gt;add(&quot;显卡:微星RTX2070Super魔龙&quot;);}
+    virtual void AddStorage() {m_computer-&gt;add(&quot;固态：西数黑盘SN750 500G&quot;);}
+    virtual void AddPowersupply() {m_computer-&gt;add(&quot;电源：九州风神DQ850&quot;);}
+    virtual void AddRadiator() {m_computer-&gt;add(&quot;散热器：九州风神堡垒360EX RGB&quot;);}
+    virtual void AddCase() {m_computer-&gt;add(&quot;机箱：九州风神CL500&quot;);}
+    virtual Computer *GetComputer() { return m_computer; }
+
+private:
+    Computer *m_computer;
+};
+</code></pre>
+
+<p>造电脑的类 <code>Builder</code> 相关的类完成了，只剩下指挥的 <code>Director</code> 类了</p>
+
+<pre><code class="language-C++">#include &quot;builder.h&quot;
+
+class Director
+{
+public:
+    void BuildUp(Builder&amp; builder)
+    {
+        builder.BuildComputer();
+        builder.AddCpu();
+        builder.AddMainboard();
+        builder.AddMemory();
+        builder.AddGpu();
+        builder.AddStorage();
+        builder.AddPowersupply();
+        builder.AddRadiator();
+        builder.AddCase();
+    }
+};
+</code></pre>
+
+<p>最后就是 <code>main()</code> 部分的调用了</p>
+
+<pre><code class="language-C++">#include &lt;iostream&gt;
+#include &quot;director.h&quot;
+
+using namespace std;
+
+#ifndef SAFE_DELETE
+#define SAFE_DELETE(p) { if(p){ delete p; p=nullptr;} }
+#endif
+
+int main()
+{
+    Director director;
+
+    Builder6666 build6666;
+    Builder11199 build11199;
+
+    director.BuildUp(build6666);
+    director.BuildUp(build11199);
+
+    Computer *computer6666 = build6666.GetComputer();
+    Computer *computer11199 = build11199.GetComputer();
+
+    computer6666-&gt;show();
+    computer11199-&gt;show();
+
+    SAFE_DELETE(computer6666);
+    SAFE_DELETE(computer11199);
+
+    return 0;
+}
+</code></pre>
+
+<p>运行结果如下图：</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/builder/result.png" alt="运行结果" /></p>
+
+<h2 id="总结">总结</h2>
+
+<p>产品类没有抽象的原因：</p>
+
+<p>通常情况下，客户端都是通过具体建造者来获取产品，所以客户端的位置让它知道 <code>Builder</code> 的哪一个具体子类对应的产品是什么，也能相应的处理它的产品。所以我觉得建造者模式核心还是同样的构建过程，最后用这个构建过程出什么产品，就由具体的建造者决定了</p>
+
+<p>建造者模式在我眼里实际上是就是对 <strong>复杂的相同的构造过程</strong> 进行的封装，而这个封装就是指挥者 <code>Director</code>， <code>Director</code> 可以自由定义每部分的初始化调用的顺序，是否调用等等操作，而每部分如何初始化，抽象成 <code>Builder</code>, 具体建造者继承 <code>Builder</code> 只需要安心的实现每部分的初始化的代码，所以很好的将一个复杂对象的构建与它的表示分离</p>
+
+<p>代码的例子是组装一台完整的电脑，可能有时候只需要组装 主板+CPU，这时候对于 <code>Director</code> 而言，只要添加一个新的接口，只调用 <code>Builder</code> 的构造主板和CPU的函数即可，这时候，从 <code>Builder</code> 中获取的电脑就只有主板和CPU，也说明了将对象的构建与它的表示分离的设计在扩展的时候也是很简单的</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-11/%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>抽象工厂模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-11/uml%E7%B1%BB%E5%9B%BE/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>UML类图</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#uml">
+												 UML
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bc%98%e7%bc%ba%e7%82%b9">
+												 优缺点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bc%98%e7%82%b9">
+												 优点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bc%ba%e7%82%b9">
+												 缺点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">
+												 应用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bb%a3%e7%a0%81%e5%ae%9e%e7%8e%b0">
+												 代码实现
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

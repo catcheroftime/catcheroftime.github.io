@@ -6,10 +6,37 @@
     <description>Recent content in 设计模式 on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Tue, 03 Nov 2020 23:10:00 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 17 Nov 2020 12:15:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>原型模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-11/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 17 Nov 2020 12:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-11/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;可能是最简单的创建型模式&amp;ndash;原型模式&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>UML类图</title>
+      <link>https://catcheroftime.github.io/blog/2020-11/uml%E7%B1%BB%E5%9B%BE/</link>
+      <pubDate>Sun, 15 Nov 2020 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-11/uml%E7%B1%BB%E5%9B%BE/</guid>
+      <description>&lt;p&gt;在总结设计模式的时候，经常需要通过它们的 &lt;code&gt;UML&lt;/code&gt; 图来更整体的了解设计模式的代码结构，这篇文章主要就是总结 &lt;code&gt;UML&lt;/code&gt; 的一些相关知识&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>建造者模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-11/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 06 Nov 2020 12:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-11/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;来来来，换个建造者模式走一走&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>抽象工厂模式</title>

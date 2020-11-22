@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="">
+  
+  <meta property="og:title" content="拷贝控制(上)" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-11/%E6%8B%B7%E8%B4%9D%E6%8E%A7%E5%88%B6%E4%B8%8A/" />
+<meta property="article:published_time" content="2020-11-18T12:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-11-18T12:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       拷贝控制(上) | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-11/%E6%8B%B7%E8%B4%9D%E6%8E%A7%E5%88%B6%E4%B8%8A/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/c&#43;&#43;"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> C&#43;&#43; </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">拷贝控制(上)</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Nov 18, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>一个类通过定义五种特殊的成员函数来控制此类型对象的拷贝、移动、赋值和销毁：拷贝构造函数、拷贝赋值运算符、移动构造函数、移动赋值运算符和析构函数。而这些操作合起来称为 <code>拷贝控制操作</code></p>
+
+<ul>
+<li><code>拷贝和移动构造函数</code> 定义了 <strong>当用同类型的另一个对象初始化本对象时做什么</strong></li>
+<li><code>拷贝和移动赋值运算符</code> 定义了 <strong>将一个对象赋予同类型的另一个对象时做什么</strong></li>
+<li><code>析构函数</code> 定义了 <strong>当此类型对象销毁时做什么</strong></li>
+</ul>
+
+<p>如果一个类没有定义所有这些拷贝控制成员，编译器会自动为它定义缺失的操作,但编译器定义的行为可能并非如我们所想，所以我们最终的目标是认识到什么时候需要定义这些操作。</p>
+
+<h2 id="拷贝构造函数">拷贝构造函数</h2>
+
+<p>如果一个构造函数的第一个参数是自身类型的引用，且任何额外参数都有默认值，则此构造函数是 <code>拷贝构造函数</code>。</p>
+
+<pre><code class="language-C++">class Foo{
+public:
+    Foo();            //默认构造函数
+    Foo(const Foo&amp;)   //拷贝构造函数
+}
+</code></pre>
+
+<p>之前提过，我们如果没有为一个类定义拷贝构造函数，编译器会为我们定义一个。与合成默认构造函数不同，即使我们定义了其他构造函数，编译器也会为我们合成一个拷贝构造函数</p>
+
+<p>编译器从给定对象中依次将每个非 <code>static</code> 成员拷贝到正在创建对象中，每个成员的类型决定了它如何拷贝：<br />
+<font color=red>对类类型的成员，会使用其拷贝构造函数来拷贝；内置类型的成员则直接拷贝</font></p>
+
+<pre><code class="language-C++">string dots(10, '.');            // 直接初始化
+string s(dots);                  // 直接初始化
+string s2 = dots;                // 拷贝初始化
+string null_book = &quot;9-999&quot;       // 拷贝初始化
+string nines = string(100,'9');  // 拷贝初始化
+</code></pre>
+
+<p>拷贝初始化，编译器会将右侧运算对象拷贝到正在创建的对象中，如果需要的话还会进行适当的类型转换</p>
+
+<p>拷贝构造函数会在以下几种情况下会被使用：</p>
+
+<ul>
+<li>通过 <code>=</code> <strong>定义</strong> 变量时</li>
+<li>将一个对象作为实参传递给一个非引用类型的形参</li>
+<li>从一个返回类型为非引用类型的函数返回一个对象</li>
+<li>用花括号列表初始化一个数组中的元素或一个聚合类中的成员</li>
+<li>初始化标准库容器或调用其 insert/push 操作，容器会对其元素进行拷贝初始化</li>
+</ul>
+
+<blockquote>
+<p>聚合类：</p>
+
+<ul>
+<li>所有成员都是 <code>public</code> 的</li>
+<li>没有定义任何构造函数</li>
+<li>没有类内初始值</li>
+<li>没有基类，也没有 <code>virtual</code> 函数</li>
+</ul>
+</blockquote>
+
+<p>拷贝构造函数自己的参数必须是引用类型这里也就可以得出结论了：</p>
+
+<p><code>将一个对象作为实参传递给一个非引用类型的形参</code> 是会调用拷贝构造函数, 如果拷贝构造函数的参数不是引用类型，则调用永远不会成功&ndash;为了调用拷贝构造函数，我们必须拷贝它的实参，但为了拷贝实参，我们又需要调用拷贝构造函数，套娃呢~</p>
+
+<h2 id="拷贝赋值运算符">拷贝赋值运算符</h2>
+
+<pre><code class="language-C++">class Foo{
+public:
+    Foo&amp; operator=(const Foo&amp;);
+};
+</code></pre>
+
+<p>拷贝赋值运算符本身是一个 <strong>重载的赋值运算符</strong>，定义为类的成员函数，左侧运算对象绑定到隐含的 <code>this</code> 参数，而右侧运算对象是所属类类型的，作为函数的参数，函数返回指向其左侧运算对象的引用</p>
+
+<p>当对类对象进行赋值时，会使用拷贝赋值运算符</p>
+
+<p>通常情况下，合成的拷贝赋值运算符会将右侧对象的非 <code>static</code> 成员逐个赋予左侧对象的对应成员，这些赋值操作是有成员类型的拷贝赋值运算符来完成的</p>
+
+<p>若一个类未定义自己的拷贝赋值运算符，编译器就会为其合成拷贝赋值运算符，完成赋值操作</p>
+
+<h2 id="析构函数">析构函数</h2>
+
+<p>析构函数完成与构造函数相反的工作： 释放对象使用的资源，销毁非静态数据成员</p>
+
+<p>从语法上看，它是类的一个成员函数，名字是被波浪号接类名，没有返回值，也不接受参数</p>
+
+<p>当一个类没有定义析构函数时，编译器会为它合成析构函数</p>
+
+<p>析构的顺序，首先执行函数体，当空函数体执行完后，然后销毁非静态数据成员。也就是说，成员是在析构函数体之后隐含的析构阶段进行销毁</p>
+
+<p>成员按初始化顺序的逆序销毁，成员销毁时发生什么完全依赖于成员的类型，销毁类类型的成员执行成员自己的析构函数，内置类型没有析构函数。</p>
+
+<blockquote>
+<p>隐式销毁一个内置指针类型的成员不会 <code>delete</code> 它所指向的对象， 提到指针在提一下智能指针，智能指针实际上是类类型的，所以具有析构函数</p>
+</blockquote>
+
+<p>什么时候调用析构函数：</p>
+
+<ul>
+<li>变量在离开其作用域时被销毁</li>
+<li>当一个对象被销毁时，其成员被销毁</li>
+<li>容器(无论是标准库容器还是数组)被销毁时，其元素被销毁</li>
+<li>对于动态分配的对象，当对指向它的指针应用 delete 运算符时被销毁</li>
+<li>对于临时对象，当创建它的完整表达式结束时被销毁</li>
+</ul>
+
+<h2 id="举个栗子">举个栗子</h2>
+
+<p>我定义了一个简单的类，进一步理解拷贝构造函数，拷贝赋值运算符以及析构函数何时执行</p>
+
+<pre><code class="language-C++">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+struct X {
+  X() { cout &lt;&lt; &quot;构造函数 X()&quot; &lt;&lt; endl;}
+  X(const X&amp;) { cout &lt;&lt; &quot;拷贝构造函数 X&amp;&quot; &lt;&lt; endl;}
+  X&amp; operator =(const X &amp;rhs) { cout &lt;&lt; &quot;拷贝赋值运算符 =（const X&amp;）&quot; &lt;&lt; endl;}
+  ~X() { cout &lt;&lt; &quot;析构函数 ~X()&quot; &lt;&lt; endl;}
+};
+
+void f1(X x) {}
+
+void f2(X &amp;x) {}
+
+int main()
+{
+    X x;
+    cout &lt;&lt; endl;
+
+    cout &lt;&lt; &quot;非引用参数传递：&quot; &lt;&lt; endl;
+    f1(x);
+    cout &lt;&lt; endl;
+
+    cout &lt;&lt; &quot;引用参数传递：&quot; &lt;&lt; endl;
+    f2(x);
+    cout &lt;&lt; endl;
+
+    cout &lt;&lt; &quot;动态分配：&quot; &lt;&lt; endl;
+    X *px = new X;
+    cout &lt;&lt; endl;
+
+    cout &lt;&lt; &quot;添加到容器中：&quot; &lt;&lt; endl;
+    vector&lt;X&gt; vx;
+    vx.push_back(x);
+    cout &lt;&lt; endl;
+
+    cout &lt;&lt; &quot;释放动态分配对象：&quot; &lt;&lt; endl;
+    delete px;
+    cout &lt;&lt; endl;
+
+    cout &lt;&lt; &quot;间接初始化和赋值：&quot; &lt;&lt; endl;
+    X y = x;
+    y = x;
+    cout &lt;&lt; endl;
+
+    cout &lt;&lt; &quot;程序结束： &quot;&lt;&lt;endl;
+    return 0;
+}
+</code></pre>
+
+<p>运行结果如下：</p>
+
+<pre><code class="language-C++">构造函数 X()
+
+非引用参数传递：
+拷贝构造函数 X&amp;
+析构函数 ~X()
+
+引用参数传递：
+
+动态分配：
+构造函数 X()
+
+添加到容器中：
+拷贝构造函数 X&amp;
+
+释放动态分配对象：
+析构函数 ~X()
+
+间接初始化和赋值：
+拷贝构造函数 X&amp;
+拷贝赋值运算符 =（const X&amp;）
+
+程序结束：
+析构函数 ~X()
+析构函数 ~X()
+析构函数 ~X()
+</code></pre>
+
+<p>程序结束的析构三次分别是 <code>x</code>， <code>y</code> 和 <code>vx</code> 的第一个元素</p>
+
+<h2 id="三五法则">三五法则</h2>
+
+<p>三个基本操作可以控制类的拷贝操作： 拷贝构造函数，拷贝赋值运算符和析构函数， 其实就是三法则</p>
+
+<p>五法则指的是： 在C++11新标准下，一个类还可以在定义一个移动构造函数和一个移动赋值运算符，一共五个基本操作控制类的拷贝操作</p>
+
+<p>新标准新加了2个特殊函数，但是也没有将三法则直接去掉，而是合并了，称为 <code>三五法则</code></p>
+
+<p>这些操作 <strong>一般被看成一个整体，通常情况下，需要其中一个操作，而不需要定义所有操作的情况是很少见的</strong></p>
+
+<ul>
+<li>需要析构函数的类也需要拷贝和赋值操作<br /></li>
+<li>需要拷贝操作的类也需要赋值操作，反之亦然</li>
+</ul>
+
+<p>解释一下为什么一般视为一个整体：</p>
+
+<p>若一个类需要析构函数，则代表其编译器默认合成的析构函数不足以释放类所拥有的资源，最典型的就是指针成员。所以，我们需要自己写析构函数来释放给指针所分配的内存来防止内存泄露。<br />
+可以先看一下下面这个例子 <code>HasPtr</code>, 因为成员变量中有指针类型的 <code>ps</code>, 所以析构的时候需要手动 <code>delete</code></p>
+
+<pre><code class="language-C++">class HasPtr{
+public:
+    HasPtr(const std::string &amp;s = std::string()):
+        ps(new std::string(s)), i(0) {}
+    ~HasPtr() { delete ps; }
+    string getString() { return *ps;}
+private:
+    std::string *ps;
+    int i;
+};
+</code></pre>
+
+<p>如果对上面 <code>HasPtr</code> 这个类做如下的操作</p>
+
+<pre><code class="language-C++">HasPtr f(HasPtr hp)    // HasPtr 是传值参数，所以将被拷贝
+{
+    HasPtr ret = hp;   // 拷贝指定的 HasPtr
+    return ret;        // ret 和 hp 被销毁
+}
+
+int main()
+{
+    HasPtr p1(&quot;test&quot;);
+    cout &lt;&lt; p1.getString() &lt;&lt; endl;
+    HasPtr p2 = f(p1);
+    cout &lt;&lt; p2.getString() &lt;&lt; endl;
+}
+</code></pre>
+
+<p>如果使用编译器合成的拷贝构造函数，前面提过 <strong>对类类型的成员，会使用其拷贝构造函数来拷贝；内置类型的成员则直接拷贝</strong>，也就是说指针类型只是简单拷贝指针本身，这意味着多个 <code>HasPtr</code> 对象可能指向相同的内存：</p>
+
+<p>以上面的例子为例，<code>hp</code> 和 <code>ret</code> 因为都是调用编译器合成的拷贝构造函数，所以他们的成员变量 <code>ps</code> 是相同的指针值，都指向同一块地址，也就是现在是2个指针指向同一个内存了<br />
+当函数 <code>f</code> 返回时，两个对象上都会调用 <code>HasPtr</code> 的析构函数， 此析构函数会 <code>delete</code> <code>ret</code> 和 <code>hp</code> 中的指针对象，此代码会导致此指针被 <code>delete</code> 两次,这个很明显是错误的</p>
+
+<p>为了避免这种问题，所以这个时候需要定义拷贝构造函数，当然也需要定义拷贝赋值运算符</p>
+
+<pre><code class="language-C++">HasPtr(const HasPtr &amp;hp) {
+    ps = new string(*hp.ps);
+    i = hp.i;
+}
+
+HasPtr&amp; operator=(const HasPtr &amp;rhs) {
+    auto newps = new string(*rhs.ps);   // 拷贝指针指向的对象
+    delete ps;                          // 销毁原 string
+    ps = newps;                         // 指向新 string
+    i = rhs.i;                          // 使用内置的 int 赋值
+    return *this;                       // 返回一个次对象的引用
+}
+</code></pre>
+
+<p>查看网上的资料，都习惯将上面这种拷贝存在的差异性，分别称为 <code>浅拷贝</code> 和 <code>深拷贝</code>, 可以看一下知乎关于这个的讨论</p>
+
+<p><a href="https://www.zhihu.com/question/36370072">https://www.zhihu.com/question/36370072</a></p>
+
+<p>但是我觉得 <code>C++</code> 其实可以不用关心这个概念，其实是构造函数阶段是否存在分配动态内存，当存在分配动态内存比如指针的时候，使用编译器合成的默认拷贝构造函数得到的新对象，无法保证和原对象完全独立，互无联系，有指针悬挂等等风险，所以这时候需要自己定义默认拷贝构造函数，根据三五法则，大部分情况下，需要一个，也需要实现剩余的几个</p>
+
+<p>这篇文章就先到这里，关于拷贝控制的移动构造函数、移动赋值运算符放到下一篇了，有点长了</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/c&#43;&#43;" role="button">C&#43;&#43; </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-11/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>原型模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-11/%E6%8B%B7%E8%B4%9D%E6%8E%A7%E5%88%B6%E4%B8%8B/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>拷贝控制(下)</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8b%b7%e8%b4%9d%e6%9e%84%e9%80%a0%e5%87%bd%e6%95%b0">
+												 拷贝构造函数
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8b%b7%e8%b4%9d%e8%b5%8b%e5%80%bc%e8%bf%90%e7%ae%97%e7%ac%a6">
+												 拷贝赋值运算符
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9e%90%e6%9e%84%e5%87%bd%e6%95%b0">
+												 析构函数
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%be%e4%b8%aa%e6%a0%97%e5%ad%90">
+												 举个栗子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%89%e4%ba%94%e6%b3%95%e5%88%99">
+												 三五法则
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

@@ -303,6 +303,34 @@
 
 <p>常用数据类型: 字符串 和 数字</p>
 
+<h3 id="关键字">关键字</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">关键字</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><code>&amp;&amp;</code></td>
+<td align="left"><code>&amp;&amp;</code> 前的命令执行成功了就继续执行后面的命令</td>
+</tr>
+
+<tr>
+<td align="left">`</td>
+<td align="left"></td>
+</tr>
+
+<tr>
+<td align="left"><code>;</code></td>
+<td align="left">不论 <code>;</code> 前的命令执行成功与否都去执行后面的命令</td>
+</tr>
+</tbody>
+</table>
+
 <h3 id="输出打印">输出打印</h3>
 
 <ul>
@@ -576,6 +604,26 @@ echo ${key}
 <li>chmod 777 ./a.sh</li>
 <li>chmod -x ./a.sh</li>
 </ul>
+
+<h3 id="之间的区别">;;、&amp;、&amp;&amp;之间的区别</h3>
+
+<pre><code>;;:
+command1;command2
+</code></pre>
+
+<p>&ndash;不管command1命令是否执行成功，command2命令都执行。</p>
+
+<pre><code>&amp;:
+command1&amp;command2
+</code></pre>
+
+<p>&ndash;command1命令和command2命令同时执行</p>
+
+<pre><code>&amp;&amp;:
+command1&amp;&amp;command2
+</code></pre>
+
+<p>&ndash;只在command1命令执行后，才执行command2命令。</p>
           </div>
 
           
@@ -695,6 +743,32 @@ echo ${key}
 										<li class="nav-item">
 						 					<a class="nav-link" href="#%e5%8f%98%e9%87%8f">
 												 变量
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%b3%e9%94%ae%e5%ad%97">
+												 关键字
 											</a>
 										</li>
 						 
@@ -1221,6 +1295,32 @@ echo ${key}
 										<li class="nav-item">
 						 					<a class="nav-link" href="#bash-%e6%9d%83%e9%99%90%e4%b8%8d%e5%a4%9f">
 												 bash:权限不够
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b9%8b%e9%97%b4%e7%9a%84%e5%8c%ba%e5%88%ab">
+												 ;;、&amp;、&amp;&amp;之间的区别
 											</a>
 										</li>
 						 

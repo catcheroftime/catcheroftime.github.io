@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="在总结设计模式的时候，经常需要通过它们的 UML 图来更整体的了解设计模式的代码结构，这篇文章主要就是总结 UML 的一些相关知识">
+  
+  <meta property="og:title" content="UML类图" />
+<meta property="og:description" content="在总结设计模式的时候，经常需要通过它们的 UML 图来更整体的了解设计模式的代码结构，这篇文章主要就是总结 UML 的一些相关知识" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-11/uml%E7%B1%BB%E5%9B%BE/" />
+<meta property="article:published_time" content="2020-11-15T00:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-11-15T00:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       UML类图 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-11/uml%E7%B1%BB%E5%9B%BE/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">UML类图</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Nov 15, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>在总结设计模式的时候，经常需要通过它们的 <code>UML</code> 图来更整体的了解设计模式的代码结构，这篇文章主要就是总结 <code>UML</code> 的一些相关知识</p>
+
+<h2 id="定义">定义</h2>
+
+<blockquote>
+<p>统一建模语言(英语：Unified Modeling Language，缩写 UML) 是非专利的第三代建模和规约语言。UML 是一种开放的方法，用于说明、可视化、构建和编写一个正在开发的、面向对象的、软件密集系统的制品的开放方法。UML 展现了一系列最佳工程实践，这些最佳实践在对大规模，复杂系统进行建模方面，特别是在 <strong>软件架构</strong> 层次已经被验证有效。</p>
+</blockquote>
+
+<p>UML 涉及的知识太多，我主要挑选我用到的知识进行部分延展</p>
+
+<h2 id="图形">图形</h2>
+
+<p>UML2.0 一共定义了14种图形，根据各个图形的侧重点，分成3大类</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/uml/diagram.png" alt="图形" /></p>
+
+<ul>
+<li>结构型图形（Structure diagrams）： 强调的是系统式的建模
+
+<ul>
+<li>静态图（static diagram），包括 <code>类图</code>，<code>对象图</code>，<code>包图</code></li>
+<li>实现图（implementation diagram）， 包括 <code>组件图</code>，<code>部署图</code></li>
+<li><code>剖面图</code></li>
+<li><code>复合结构图</code></li>
+</ul></li>
+<li>行为型图形（Behavior diagrams）： 强调系统模型中触发的时间
+
+<ul>
+<li><code>活动图</code></li>
+<li><code>状态图</code></li>
+<li><code>用例图</code></li>
+</ul></li>
+<li>交互性图形（Interaction diagrams）： 属于行为图形的子集合，强调系统模型中的资料流程
+
+<ul>
+<li><code>通信图</code></li>
+<li><code>交互概述图</code></li>
+<li><code>时序图</code></li>
+<li><code>时间图</code></li>
+</ul></li>
+</ul>
+
+<p>具体每种图对应的细节，感兴趣的可以看看 《UML用户指南(第2版)》</p>
+
+<p>CSDN下载地址： <a href="https://download.csdn.net/download/shenzhq1980/9150941">https://download.csdn.net/download/shenzhq1980/9150941</a> (扫描版，积分不够的，建议直接淘宝找店家)</p>
+
+<h2 id="类图">类图</h2>
+
+<p>因为在学习设计模式的时候提到的 UML 图都是类图，所以接下来，主要介绍类图相关的知识</p>
+
+<blockquote>
+<p>类图是软件工程的统一建模语言一种静态结构图，该图描述了系统的类集合，类的属性和类之间的关系。</p>
+</blockquote>
+
+<h3 id="类">类</h3>
+
+<p>类（Class）一般包含3个组成部分。</p>
+
+<ul>
+<li>第一个是类名；</li>
+<li>第二个是属性（attributes）；</li>
+<li>第三个是该类提供的方法（ 类的性质可以放在第四部分；如果类中含有内部类，则会出现第五个组成部分）。</li>
+</ul>
+
+<p>类名部分是不能省略的，其他组成部分可以省略。一般情况下类的画法如下图：</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/uml/class_demo.png" alt="class_demo" /></p>
+
+<p>类名书写规范：<strong>正体字说明类是可被实例化的，斜体字说明类为抽象类</strong>。</p>
+
+<p>属性和方法书写规范：</p>
+
+<blockquote>
+<p>属性：  修饰符 属性对象 : 类型 = 默认值<br />
+方法： 修饰符 方法名称（函数参数：参数类型 = 默认值）: 返回类型</p>
+</blockquote>
+
+<p>注意： 属性的参数没有默认值 或者 方法没有传入参数或者传入参数没有默认值、方法没有返回类型都可以按照实际情况省略</p>
+
+<p>属性和方法之前可附加的可见性修饰符：</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">符号</th>
+<th align="left">表示</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">+</td>
+<td align="left">表示 public</td>
+</tr>
+
+<tr>
+<td align="left">-</td>
+<td align="left">表示 private</td>
+</tr>
+
+<tr>
+<td align="left">#</td>
+<td align="left">表示 protected</td>
+</tr>
+
+<tr>
+<td align="left">~</td>
+<td align="left">(Java)包权限（即对包内其他成员可见）</td>
+</tr>
+
+<tr>
+<td align="left">_</td>
+<td align="left">下划线表示 static</td>
+</tr>
+
+<tr>
+<td align="left">/</td>
+<td align="left">推导，由其他属性推导得出，不需要直接给定其值</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="关系">关系</h3>
+
+<p>一般来说，2个类之间的关系有6种：</p>
+
+<ul>
+<li>泛化(Generalization)</li>
+<li>实现(Realization)</li>
+<li>依赖(Dependency)</li>
+<li>关联(Association)</li>
+<li>聚合(Aggregation)</li>
+<li>组合(Composition)</li>
+</ul>
+
+<p>按照列举的顺序逐个介绍这6种关系</p>
+
+<h4 id="泛化">泛化</h4>
+
+<p>继承：子类具有父类的属性和方法或者重新定义、追加属性和方法等</p>
+
+<p>泛化，即继承的反方向，指的是一个类（称为父类、父接口）具有另外的一个（或一些）类（称为子类、子接口）的共有功能。子类可视为其父类的特例，并可以增加新功能。</p>
+
+<p>箭头指向： <strong>带空心三角箭头的实线，箭头指向父类</strong></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/uml/Generalization.png" alt="Generalization" /></p>
+
+<h4 id="实现">实现</h4>
+
+<p>实现（Realization）指的是一个class类实现接口的功能</p>
+
+<p>这里的实现主要就是针对接口：</p>
+
+<p>C++的接口是要满足下面的条件的：</p>
+
+<ul>
+<li>类中没有定义任何的成员变量</li>
+<li>所有的成员函数都是公有的</li>
+<li>所有的成员函数都是纯虚函数</li>
+<li>接口是一种特殊的抽象类</li>
+</ul>
+
+<p>箭头指向： <strong>带空心三角箭头的虚线，箭头指向接口</strong></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/uml/Realization.png" alt="Realization" /></p>
+
+<h4 id="依赖">依赖</h4>
+
+<p>依赖关系（Dependency）可以简单的理解为一个类A使用到了另一个类B， 被依赖的对象只是作为一种工具在使用，而并不持有对它的引用。而这种使用关系是具有偶然性、临时性的、非常弱的，但是B类的变化会影响到A；代码中一般指由局部变量、函数参数、返回值建立的对于其他对象的调用关系。</p>
+
+<p>依赖关系仅仅描述了类与类之间的一种使用与被使用的关系。</p>
+
+<p>箭头指向：<strong>带燕尾箭头的虚线，箭头从使用类指向被依赖的类</strong>。</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/uml/Dependency.png" alt="Dependency" /></p>
+
+<h4 id="关联">关联</h4>
+
+<p>关联关系（Association）使一个类知道另外一个类的属性和方法；通常含有“知道”、“了解”的含义。关联关系可以是单向的，也可以是双向的。双向的关联可以有箭头或是没有箭头，单向的只有一个箭头。</p>
+
+<p>箭头指向：<strong>实线，根据关联的关系，决定燕尾箭头指向</strong>。</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/uml/Association.png" alt="Association" /></p>
+
+<h4 id="聚合">聚合</h4>
+
+<p>聚合（Aggregate）是表示整体与部分的一类特殊的关联关系，是 “<strong>弱</strong>” 的包含关系，成分类可以不依靠聚合类而单独存在。例如大雁和雁群，池塘和池塘里的鸭子等等</p>
+
+<p>箭头指向：<strong>带空心菱形的实线，菱形指向整体，燕尾箭头指向部分</strong>。</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/uml/Aggregate.png" alt="Aggregate" /></p>
+
+<h4 id="组合">组合</h4>
+
+<p>组成（Composition）关系，是一类 “<strong>强</strong>” 的整体与部分的包含关系。成分类必须依靠合成类而存在。整体与部分是不可分的，整体的生命周期结束也就意味着部分的生命周期结束。合成类别完全拥有成分类别，负责创建、销毁成分类别。例如公司与公司部门，鸟和鸟的翅膀等等</p>
+
+<p>箭头指向：<strong>带实心菱形的实线，菱形指向整体，燕尾箭头指向部分</strong>。</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/uml/Composition.png" alt="Composition" /></p>
+
+<p>类之间的关系其实可以在进一步划分一下</p>
+
+<ul>
+<li>有 “上下级” 关系的泛化和实现： 都是空心三角箭头，都是指向 “上级”， 但上级是接口虚线，上级是类实线</li>
+<li>一个类使用另一个类的依赖和关联： 燕尾箭头都是指向被使用的类，但使用关系的程度比较弱，就是虚线，反之就是实线</li>
+<li>整体和部分关系的聚合和组合：都是实线，燕尾箭头指向部分，但成分类可独立存在，空心菱形指向整体， 部分整体不可分，实心菱形指向整体</li>
+</ul>
+
+<h2 id="工具">工具</h2>
+
+<p>关于 <code>UML</code> 我在使用过程中遇到的一些知识大概就这么多了，最后介绍几款我在绘制 <code>UML</code> 使寻找的一些工具，下面介绍的几个感觉都很强大好用：</p>
+
+<ul>
+<li>网页在线绘制的 <code>ProcessOn</code><br />
+<a href="https://www.processon.com">https://www.processon.com</a> 绘制简单的UML大材小用，也能做更多思维导图，流程图等等的设计，免费就够用</li>
+<li>亿图图示<br />
+直接官网下载客户端，全平台，模板很丰富，功能异常强大，但是试用版导出会有水印等小问题</li>
+<li><code>drawio</code><br />
+网页版，客户端都有，是 github 上的一个开源项目: <a href="https://github.com/jgraph/drawio">https://github.com/jgraph/drawio</a><br />
+网页版地址: <a href="https://app.diagrams.net/">https://app.diagrams.net/</a><br />
+客户端下载地址: <a href="https://github.com/jgraph/drawio-desktop/releases/tag/v13.9.8">https://github.com/jgraph/drawio-desktop/releases/tag/v13.9.8</a></li>
+</ul>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-11/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>建造者模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-11/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>原型模式</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%9a%e4%b9%89">
+												 定义
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%9b%be%e5%bd%a2">
+												 图形
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%b1%bb%e5%9b%be">
+												 类图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%b1%bb">
+												 类
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%b3%e7%b3%bb">
+												 关系
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%b3%9b%e5%8c%96">
+												 泛化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%9e%e7%8e%b0">
+												 实现
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%be%9d%e8%b5%96">
+												 依赖
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%b3%e8%81%94">
+												 关联
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%81%9a%e5%90%88">
+												 聚合
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bb%84%e5%90%88">
+												 组合
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b7%a5%e5%85%b7">
+												 工具
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
