@@ -71,7 +71,7 @@
       <pubDate>Fri, 14 Jun 2019 11:12:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/blog/2019-06/python-%E6%93%8D%E4%BD%9C-mysql%E7%A4%BA%E4%BE%8B/</guid>
-      <description>&lt;p&gt;使用python 简单操作mysql数据库,数据库的创建，表的创建，以及数据的增删改查&lt;/p&gt;</description>
+      <description>&lt;p&gt;使用 &lt;code&gt;pymysql&lt;/code&gt; 操作 &lt;code&gt;mysql&lt;/code&gt; 数据库,数据库的创建，表的创建，以及数据的增删改查&lt;/p&gt;</description>
     </item>
     
     <item>

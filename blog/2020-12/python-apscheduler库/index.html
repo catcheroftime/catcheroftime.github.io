@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="超强大的任务调度库">
+  
+  <meta property="og:title" content="Python-APScheduler库" />
+<meta property="og:description" content="超强大的任务调度库" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-12/python-apscheduler%E5%BA%93/" />
+<meta property="article:published_time" content="2020-12-20T19:35:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-12-20T19:35:00&#43;08:00"/>
+
+
+  <title>
+  
+       Python-APScheduler库 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-12/python-apscheduler%E5%BA%93/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/python"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> python </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">Python-APScheduler库</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Dec 20, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>超强大的任务调度库</p>
+
+<h2 id="简单描述">简单描述</h2>
+
+<p>Advanced Python Scheduler(APScheduler) 是 <code>python</code> 下的一个允许你安排稍后执行任务，一次执行或定期执行任务的库。你可以随时添加新的任务或删除旧的任务。如果您将任务存储在数据库中，它们也将在调度器重新启动后继续运行并保持其状态。当调度程序重新启动时，它将运行它脱机时应该运行的所有任务</p>
+
+<p>除此之外，<code>APScheduler</code> 还可以作为跨平台、特定于应用程序的替代品，替代特定于平台的调度器，例如cron守护程序或Windows任务调度器。但是，请注意，<code>APScheduler</code>  <strong>本身不是</strong> 守护程序或服务，也不附带任何命令行工具。它主要是在现有的应用程序中运行。也就是说，<code>APScheduler</code> 确实提供了一些实现方案，用于构建调度程序服务或运行专用调度程序进程。</p>
+
+<p><code>APScheduler</code> 还集成了几种常见的Python框架，如：</p>
+
+<ul>
+<li>asyncio (PEP 3156)</li>
+<li>gevent</li>
+<li>Tornado</li>
+<li>Twisted</li>
+</ul>
+
+<h2 id="安装">安装</h2>
+
+<blockquote>
+<p>python3 -m pip install apscheduler</p>
+</blockquote>
+
+<h2 id="基本概念">基本概念</h2>
+
+<p><code>APScheduler</code> 有四种组件：</p>
+
+<ul>
+<li>触发器 (triggers)</li>
+<li>任务存储 (job stores)</li>
+<li>执行器 (executors)</li>
+<li>调度器 (schedulers)</li>
+</ul>
+
+<h3 id="触发器-triggers">触发器 (triggers)</h3>
+
+<p>触发器包含调度逻辑。 每个任务都有自己的触发器，该触发器确定下一步应在何时运行该任务。 除了其初始配置外，触发器完全是无状态的。</p>
+
+<p><code>APScheduler</code> 有三个内置的调度系统，您可以使用：</p>
+
+<ul>
+<li><code>Cron-style</code> (计划任务)的调度（具有可选的开始/结束时间）</li>
+<li>基于间隔的执行（以偶数间隔运行任务，具有可选的开始/结束时间）</li>
+<li>特定时间运行一次（在设定的日期/时间运行一次任务）</li>
+</ul>
+
+<h3 id="任务存储-job-stores">任务存储 (job stores)</h3>
+
+<p>任务商店是存储所有计划，默认情况下这些任务都是直接保存在内存中的，但同时也可以将这些任务保存在各种数据库中(通过序列化保存到数据库中，执行时再从数据库中取出反序列化)，支持的存储任务的后端包括：</p>
+
+<ul>
+<li>Memory</li>
+<li>SQLAlchemy (any RDBMS supported by SQLAlchemy works)</li>
+<li>MongoDB</li>
+<li>Redis</li>
+<li>RethinkDB</li>
+<li>ZooKeeper</li>
+</ul>
+
+<h3 id="执行器-executors">执行器 (executors)</h3>
+
+<p>执行者负责处理任务。 他们通常通过将任务中的指定可调用对象提交给线程或进程池来执行此操作。 任务完成后，执行程序通知调度程序，然后发出适当的事件。</p>
+
+<h3 id="调度器-schedulers">调度器 (schedulers)</h3>
+
+<p>调度程序将其余部分绑定在一起。 通常，您的应用程序中仅运行一个调度程序。 应用程序开发人员通常不会直接处理任务存储库，执行程序或触发器。 而是，调度程序提供适当的接口来处理所有这些接口。 配置任务存储和执行程序是通过调度程序完成的，添加，修改和删除任务也是如此。</p>
+
+<h2 id="如何选择">如何选择</h2>
+
+<p>上面介绍了 <code>APScheduler</code> 核心的四部分，现在最麻烦的是如何选择合适的这四部分</p>
+
+<h3 id="job-stores-的选择"><code>job stores</code> 的选择</h3>
+
+<p>任务存储的选择基于是否需要任务持久化。如果总是在应用程序启动的时候重新创建任务，则可以使用默认设置 <code>MemoryJobStore</code>, 但是如果您需要任务在调度程序重新启动或应用程序奔溃后继续存在，那么可以依赖于一些后台服务来存储这些任务。但是如果可以自由选择的话，建议使用基于 <code>PostgreSQL</code> 的 <code>SQLAlchemyJobStore</code> ，因为它具有强大的数据完整性保护功能。</p>
+
+<h3 id="schedulers-的选择"><code>schedulers</code> 的选择</h3>
+
+<p>调度程序的选择主要取决于您的编程环境以及 <code>APScheduler</code> 的用途。 以下是选择计划程序的快速指南：</p>
+
+<ul>
+<li><strong><code>BlockingScheduler</code></strong> ：当调度程序是您的流程中唯一正在运行的东西时使用</li>
+<li><strong><code>BackgroundScheduler</code></strong> ：在不使用以下任何框架且希望调度程序在应用程序内部的后台运行时使用</li>
+<li><strong><code>AsyncIOScheduler</code></strong> ：如果您的应用程序使用 <code>asyncio</code> 模块，则使用</li>
+<li><strong><code>GeventScheduler</code></strong> ：如果您的应用程序使用 <code>gevent</code>，则使用</li>
+<li><strong><code>TornadoScheduler</code></strong> ：在构建 <code>Tornado</code> 应用程序时使用</li>
+<li><strong><code>TwistedScheduler</code></strong> ：在构建 <code>Twisted</code> 应用程序时使用</li>
+<li><strong><code>QtScheduler</code></strong> ：在构建 <code>Qt</code> 应用程序时使用</li>
+</ul>
+
+<h3 id="executors-的选择"><code>executors</code> 的选择</h3>
+
+<p>如果是使用上面中 <code>schedulers</code> 提到的框架，通常情况下会自行选择合适的执行任务方式，否则默认的 <code>ThreadPoolExecutor</code> 就可以满足大部分用途。</p>
+
+<p>但是如果任务中涉及到 <strong>CPU密集型</strong> 操作, 则应考虑改用 <code>ProcessPoolExecutor</code> 来利用多个CPU内核。 您甚至可以同时使用两者，将进程池执行程序添加为辅助执行程序。</p>
+
+<h3 id="triggers-的选择"><code>triggers</code> 的选择</h3>
+
+<p><code>APScheduler</code> 带有三种内置的触发器类型：</p>
+
+<ul>
+<li><strong><code>data</code></strong> : 在 <strong>特定时间仅执行一次</strong> 时使用</li>
+<li><strong><code>interval</code></strong> : 当需要 <strong>以固定时间间隔运行任务</strong> 时使用</li>
+<li><strong><code>cron</code></strong> : 在需要 <strong>在一天的特定时间定期运行任务</strong> 时使用</li>
+</ul>
+
+<p>也可以将多个触发器组合成一个触发器，该触发器可以在所有参与触发器约定的时间内触发，也可以在任何触发器触发时触发。官方的描述有点像组成的触发器可以使它们的并集也可以使交集，具体细节，可以在使用的时候查询官方的 <code>API</code> 说明</p>
+
+<h2 id="配置调度程序">配置调度程序</h2>
+
+<p><code>APScheduler</code> 提供了许多不同的方式来配置调度程序。您可以使用配置字典，也可以将选项作为关键字参数传递。您还可以先实例化计划程序，然后添加任务并随后配置计划程序。这样，您可以在任何环境下获得最大的灵活性。</p>
+
+<p>调度程序级别配置选项的完整列表可以在 <code>BaseScheduler</code> 该类的API参考上找到 。调度程序子类还可能具有其他选项，这些选项记录在其各自的API参考中。同样，可以在其API参考页上找到各个任务存储和执行程序的配置选项。</p>
+
+<p>假设您要使用默认任务存储和默认执行程序在应用程序中运行 <code>BackgroundScheduler</code>, 这将为您提供 <code>BackgroundScheduler</code>，它的 <code>MemoryJobStore</code> 名为 <code>default</code>，而 <code>ThreadPoolExecutor</code> 名为 <code>default</code>，默认最大线程数为 <code>10</code>。</p>
+
+<pre><code class="language-python">from apscheduler.schedulers.background import BackgroundScheduler
+
+scheduler = BackgroundScheduler()
+</code></pre>
+
+<p>但是，假设您想要更多。您要使用两个执行程序来拥有两个任务存储，还希望调整新任务的默认值，并设置不同的时区，</p>
+
+<p><strong>方法一</strong>：</p>
+
+<pre><code class="language-python">from pytz import utc
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.jobstores.mongodb import MongoDBJobStore
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
+
+jobstores = {
+    'mongo': MongoDBJobStore(),
+    'default': SQLAlchemyJobStore(url='sqlite:///jobs.sqlite')
+}
+executors = {
+    'default': ThreadPoolExecutor(20),
+    'processpool': ProcessPoolExecutor(5)
+}
+job_defaults = {
+    'coalesce': False,
+    'max_instances': 3
+}
+scheduler = BackgroundScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults, timezone=utc)
+</code></pre>
+
+<p><strong>方法二</strong>：</p>
+
+<pre><code class="language-python">from apscheduler.schedulers.background import BackgroundScheduler
+
+# The &quot;apscheduler.&quot; prefix is hard coded
+scheduler = BackgroundScheduler({
+    'apscheduler.jobstores.mongo': {
+         'type': 'mongodb'
+    },
+    'apscheduler.jobstores.default': {
+        'type': 'sqlalchemy',
+        'url': 'sqlite:///jobs.sqlite'
+    },
+    'apscheduler.executors.default': {
+        'class': 'apscheduler.executors.pool:ThreadPoolExecutor',
+        'max_workers': '20'
+    },
+    'apscheduler.executors.processpool': {
+        'type': 'processpool',
+        'max_workers': '5'
+    },
+    'apscheduler.job_defaults.coalesce': 'false',
+    'apscheduler.job_defaults.max_instances': '3',
+    'apscheduler.timezone': 'UTC',
+})
+</code></pre>
+
+<p><strong>方法三</strong>：</p>
+
+<pre><code class="language-python">from pytz import utc
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from apscheduler.executors.pool import ProcessPoolExecutor
+
+jobstores = {
+    'mongo': {'type': 'mongodb'},
+    'default': SQLAlchemyJobStore(url='sqlite:///jobs.sqlite')
+}
+executors = {
+    'default': {'type': 'threadpool', 'max_workers': 20},
+    'processpool': ProcessPoolExecutor(max_workers=5)
+}
+job_defaults = {
+    'coalesce': False,
+    'max_instances': 3
+}
+scheduler = BackgroundScheduler()
+
+# .. do something else here, maybe add jobs etc.
+
+scheduler.configure(jobstores=jobstores, executors=executors, job_defaults=job_defaults, timezone=utc)
+</code></pre>
+
+<h2 id="启动调度程序">启动调度程序</h2>
+
+<p>只需调用 <code>start()</code> 调度程序即可启动调度 程序。对于除 <code>BlockingScheduler</code>以外的调度程序，此调用将立即返回，您可以继续应用程序的初始化过程，可能会向调度程序添加任务。</p>
+
+<p>对于 <code>BlockingScheduler</code>，调用 <code>start()</code> 前需要完成所有的初始化步骤，阻塞的 <code>start()</code> 之后是没办法更改其设置的。</p>
+
+<h2 id="添加任务">添加任务</h2>
+
+<p>有两种将任务添加到调度程序 <code>schedulers</code> 的方法：</p>
+
+<ul>
+<li><strong><code>add_job()</code></strong></li>
+<li><strong><code>scheduled_job()</code></strong></li>
+</ul>
+
+<p>第一种方法是最常用的方法，第二种方法主要是方便地声明在应用程序运行时不更改的任务<br />
+<code>add_job()</code> 方法返回一个 <code>apscheduler.job.Job</code> 实例，可用于以后修改或删除任务。</p>
+
+<p>你可以在任何时候添加任务，如果在添加任务时调度程序尚未运行，则将暂定调度任务，并且仅在调度程序启动时才计算其首次运行时间</p>
+
+<h2 id="删除任务">删除任务</h2>
+
+<p>当您从调度程序中删除任务时，该任务将从其关联的任务存储中删除，并且将不再执行。有两种方式可以实现此目的：</p>
+
+<ul>
+<li><strong><code>remove_job()</code></strong> 任务的 <code>ID</code> 和任务存储别名</li>
+<li><strong><code>remove()</code></strong> <code>add_job()</code> 返回的 <code>Job</code> 实例</li>
+</ul>
+
+<p>后一种方法可能更加方便，但是它要求您将 <code>Job</code> 添加任务时收到的实例存储在某处<br />
+而通过 <code>scheduled_job()</code> 添加的计划， 第一种方法是唯一的方法</p>
+
+<p>例如 ：</p>
+
+<pre><code class="language-python">job = scheduler.add_job(myfunc, 'interval', minutes=2)
+job.remove()
+</code></pre>
+
+<p>使用 ID 来删除计划</p>
+
+<pre><code class="language-python">scheduler.add_job(myfunc, 'interval', minutes=2, id='my_job_id')
+scheduler.remove_job('my_job_id')
+</code></pre>
+
+<h2 id="暂停和恢复工作">暂停和恢复工作</h2>
+
+<p>您可以通过 <code>Job</code> 实例或调度程序本身轻松地暂停和恢复任务。暂停任务后，将清除其下一个运行时间，并且在恢复该任务之前，将不再为其计算其他运行时间。要暂停工作，请使用以下两种方法之一：</p>
+
+<pre><code class="language-python">apscheduler.job.Job.pause()
+apscheduler.schedulers.base.BaseScheduler.pause_job()
+</code></pre>
+
+<p>恢复：</p>
+
+<pre><code class="language-python">apscheduler.job.Job.resume()
+apscheduler.schedulers.base.BaseScheduler.resume_job()
+</code></pre>
+
+<h2 id="获取计划的任务列表">获取计划的任务列表</h2>
+
+<p>要获取预定任务的计算机可处理列表，可以使用该 <code>get_jobs()</code> 方法。它将返回 <code>Job</code> 实例列表 。如果您只对特定任务存储区中包含的任务感兴趣，则给任务存储区别名作为第二个参数。</p>
+
+<p>为方便起见，您可以使用该 <code>print_jobs()</code> 方法将打印出格式化的任务列表，其触发器和下一次运行时间。</p>
+
+<h2 id="修改任务">修改任务</h2>
+
+<p>您可以通过调用 <code>apscheduler.job.Job.modify()</code> 或 <code>modify_job()</code> 来修改任何任务属性。您可以修改除 <code>Job</code> 和 <code>id</code> 以外的任何属性。</p>
+
+<pre><code class="language-python">job.modify(max_instances=6, name='Alternate name')
+</code></pre>
+
+<p>如果要重新计划任务-即更改其触发器，可以使用 <code>apscheduler.job.Job.reschedule()</code>或 <code>reschedule_job()</code>。这些方法为任务构造一个新的触发器，并根据新的触发器重新计算其下一次运行时间。</p>
+
+<pre><code class="language-python">scheduler.reschedule_job('my_job_id', trigger='cron', minute='*/5')
+</code></pre>
+
+<h2 id="关闭调度程序">关闭调度程序</h2>
+
+<pre><code class="language-python">scheduler.shutdown()
+</code></pre>
+
+<p>默认情况下，调度程序关闭其任务存储和执行程序，并等待直到所有当前执行的任务完成。如果您不想等待，可以执行以下操作：</p>
+
+<pre><code class="language-python">scheduler.shutdown(wait=False)
+</code></pre>
+
+<h2 id="暂停-恢复任务处理">暂停/恢复任务处理</h2>
+
+<p>可以暂停计划任务的处理：</p>
+
+<pre><code class="language-python">scheduler.pause()
+</code></pre>
+
+<p>这将导致调度程序在恢复处理之前不唤醒：</p>
+
+<pre><code class="language-python">scheduler.resume()
+</code></pre>
+
+<p>也有可能在暂停状态下启动调度程序，即没有第一个唤醒调用：</p>
+
+<pre><code class="language-python">scheduler.start(paused=True)
+</code></pre>
+
+<p>当您需要修剪不需要的任务之前，这很有用。</p>
+
+<h2 id="限制任务的并发执行实例数">限制任务的并发执行实例数</h2>
+
+<p>默认情况下，每个任务仅允许一个实例同时运行。这意味着，如果该任务将要运行，但是上一轮尚未完成，则最新一轮将被视为断火。通过 <code>max_instances</code> 在添加任务时使用关键字参数，可以为调度程序允许并发运行的特定任务设置最大实例数。</p>
+
+<h2 id="错过了执行和合并">错过了执行和合并</h2>
+
+<p>有时，计划程序在计划运行时可能无法执行计划的任务。最常见的情况是，在持久性任务存储中调度了任务，并且在应该执行该任务之后关闭了调度程序并重新启动了该调度程序。发生这种情况时，该任务被认为是 <code>misfire(失职)</code>。然后，调度程序将对照任务的 <code>misfire_grace_time</code> 选项（可以在每个任务的基础上或在调度程序中全局设置）检查每个错过的执行时间，以查看是否仍应触发执行。这可能导致该任务连续执行多次。</p>
+
+<p>如果这种行为对于您的特定用例而言是不希望有的，则可以使用合并将所有这些遗漏的执行汇总为一个。换句话说，如果为任务启用了合并，并且调度程序看到该任务的一个或多个排队执行，则它将仅触发一次。</p>
+
+<p><strong>注意</strong> :
+如果由于池中没有可用的线程或进程而延迟了任务的执行，则执行程序可能会由于执行得太晚（与其最初指定的运行时间相比）而跳过了它。如果您的应用程序中可能会发生这种情况，则可能要增加执行程序中的线程/进程数，或者将 <code>misfire_grace_time</code> 设置调整为更高的值。</p>
+
+<h2 id="调度事件">调度事件</h2>
+
+<p>可以将事件侦听器附加到调度程序。调度程序事件在某些情况下会触发，并且可能在其中携带有关该特定事件的详细信息。通过给适当的 <code>mask</code> 参数 <code>add_listener()</code> ，或将不同的常数合在一起，可以仅侦听特定类型的事件 。使用一个参数（事件对象）调用可调用的侦听器。</p>
+
+<p>有关 <code>events</code> 可用事件及其属性的详细信息，请参见该模块的文档。</p>
+
+<pre><code class="language-python">def my_listener(event):
+    if event.exception:
+        print('The job crashed :(')
+    else:
+        print('The job worked :)')
+
+scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
+</code></pre>
+
+<h2 id="日志">日志</h2>
+
+<p>如果调度程序未按预期工作，则将记录 <code>apscheduler</code> 器的日志记录级别提高到该 <code>DEBUG</code> 级别将很有帮助。<br />
+如果首先尚未启用日志记录，则可以执行以下操作：</p>
+
+<pre><code class="language-python">import logging
+
+logging.basicConfig()
+logging.getLogger('apscheduler').setLevel(logging.DEBUG)
+</code></pre>
+
+<p>以上部分是对官方 <a href="https://apscheduler.readthedocs.io/en/stable/">https://apscheduler.readthedocs.io/en/stable/</a> 官方文档中用户指南部分的整理和翻译，官方介绍了很多核心功能，接下来我会使用几个例子，尽可能的覆盖上面提到一些功能，也方便大家使用</p>
+
+<h2 id="例子">例子</h2>
+
+<pre><code class="language-python">from apscheduler.schedulers.blocking import BlockingScheduler
+import apscheduler.events as aps_events
+import datetime
+import time
+import logging
+
+def my_listener(event):
+    if event.exception: 
+        logging.info(&quot;{} : 执行失败&quot;.format(event.job_id)) 
+    else:
+        if event.job_id == &quot;一次性任务&quot;:
+            scheduler.remove_job('定时任务')
+            logging.info(&quot;{}： 删除定时任务&quot;.format(event.job_id)) 
+        logging.info(&quot;{} : 执行成功&quot;.format(event.job_id)) 
+
+def error_task():
+    logging.info(&quot;开始执行异常任务&quot;)  
+    a = 1/0
+    
+def interval_task():
+    logging.info(&quot;循环任务 : {}&quot;.format(datetime.datetime.now()))  
+    time.sleep(5)
+
+def task(arg):
+   logging.info(&quot;{} : {}&quot;.format(datetime.datetime.now(), arg)) 
+  
+
+if __name__ == '__main__':
+    logging.basicConfig( level=logging.INFO,
+                         format=&quot;[%(asctime)s][%(levelname)s] - %(message)s&quot; )
+
+    scheduler = BlockingScheduler(logger=logging)
+    scheduler.add_job(func=interval_task, trigger='interval', seconds=2, max_instances=2, id=&quot;循环任务&quot;)
+    scheduler.add_job(func=task, args=('定时任务',), trigger='cron', second='*/5', id=&quot;定时任务&quot;)
+    scheduler.add_job(func=task, args=('一次性任务',), trigger='date', next_run_time=datetime.datetime.now() + datetime.timedelta(seconds=10), id=&quot;一次性任务&quot;)
+    scheduler.add_job(func=error_task, next_run_time=datetime.datetime.now() + datetime.timedelta(seconds=10), id=&quot;异常任务&quot;)
+    scheduler.add_listener(my_listener, aps_events.EVENT_JOB_EXECUTED | aps_events.EVENT_JOB_ERROR)
+    scheduler.start()
+</code></pre>
+
+<p>简单解释一下：<code>scheduler</code> 中添加了3种类型的4个任务，按照 <code>add_job()</code> 从上而下依次是：</p>
+
+<ul>
+<li><strong>2</strong> 秒执行 <strong>1</strong> 次，但是任务耗时 <strong>5</strong> 秒，并且允许的最大同时运行数为 <strong>2</strong> 的循环 <strong><code>interval</code></strong> 任务， 测试一下 <code>max_instances</code> 的效果</li>
+<li>时间的秒数是 <strong>5</strong> 的倍数就执行的定时 <code>cron</code> 任务</li>
+<li>预计 <strong>10</strong> 后执行的一次性 <code>date</code> 任务</li>
+<li>故意出错的异常任务， 测试测试监听函数是否好用，这里捕获的事件一个是任务执行失败和成功，当然它还有很多其他的，比如添加任务，删除任务，这些都可以监听</li>
+</ul>
+
+<p>初次之外，在执行一次性任务成功之后，会删除定时任务，测试一下 <code>remove_job()</code> 的用法, 类似 <code>pause_job()</code> 和 <code>resume_job()</code> 我就不测试了<br />
+此外，对日志输出进行了格式化处理，并打印 <code>INFO</code> 级别以上的日志(默认：WARNING), 看更多 <code>apscheduler</code> 的日志</p>
+
+<p>运行结果</p>
+
+<pre><code class="language-shell">[2020-12-19 18:21:11,101][INFO] - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+[2020-12-19 18:21:11,104][INFO] - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+[2020-12-19 18:21:11,115][INFO] - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+[2020-12-19 18:21:11,116][INFO] - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+[2020-12-19 18:21:11,116][INFO] - Added job &quot;interval_task&quot; to job store &quot;default&quot;
+[2020-12-19 18:21:11,117][INFO] - Added job &quot;task&quot; to job store &quot;default&quot;
+[2020-12-19 18:21:11,117][INFO] - Added job &quot;task&quot; to job store &quot;default&quot;
+[2020-12-19 18:21:11,117][INFO] - Added job &quot;error_task&quot; to job store &quot;default&quot;
+[2020-12-19 18:21:11,117][INFO] - Scheduler started
+[2020-12-19 18:21:13,104][INFO] - Running job &quot;interval_task (trigger: interval[0:00:02], next run at: 2020-12-19 18:21:13 CST)&quot; (scheduled at 2020-12-19 18:21:13.101294+08:00)
+[2020-12-19 18:21:13,105][INFO] - 循环任务 : 2020-12-19 18:21:13.105206
+[2020-12-19 18:21:15,018][INFO] - Running job &quot;task (trigger: cron[second='*/5'], next run at: 2020-12-19 18:21:15 CST)&quot; (scheduled at 2020-12-19 18:21:15+08:00)
+[2020-12-19 18:21:15,019][INFO] - 2020-12-19 18:21:15.019276 : 定时任务
+[2020-12-19 18:21:15,020][INFO] - Job &quot;task (trigger: cron[second='*/5'], next run at: 2020-12-19 18:21:20 CST)&quot; executed successfully
+[2020-12-19 18:21:15,021][INFO] - 定时任务 : 执行成功
+[2020-12-19 18:21:15,104][INFO] - Running job &quot;interval_task (trigger: interval[0:00:02], next run at: 2020-12-19 18:21:15 CST)&quot; (scheduled at 2020-12-19 18:21:15.101294+08:00)
+[2020-12-19 18:21:15,105][INFO] - 循环任务 : 2020-12-19 18:21:15.105198
+[2020-12-19 18:21:17,114][WARNING] - Execution of job &quot;interval_task (trigger: interval[0:00:02], next run at: 2020-12-19 18:21:17 CST)&quot; skipped: maximum number of running instances reached (2)
+[2020-12-19 18:21:18,106][INFO] - Job &quot;interval_task (trigger: interval[0:00:02], next run at: 2020-12-19 18:21:19 CST)&quot; executed successfully
+[2020-12-19 18:21:18,107][INFO] - 循环任务 : 执行成功
+[2020-12-19 18:21:19,105][INFO] - Running job &quot;interval_task (trigger: interval[0:00:02], next run at: 2020-12-19 18:21:19 CST)&quot; (scheduled at 2020-12-19 18:21:19.101294+08:00)
+[2020-12-19 18:21:19,106][INFO] - 循环任务 : 2020-12-19 18:21:19.106290
+[2020-12-19 18:21:20,012][INFO] - Running job &quot;task (trigger: cron[second='*/5'], next run at: 2020-12-19 18:21:20 CST)&quot; (scheduled at 2020-12-19 18:21:20+08:00)
+[2020-12-19 18:21:20,013][INFO] - 2020-12-19 18:21:20.013209 : 定时任务
+[2020-12-19 18:21:20,014][INFO] - Job &quot;task (trigger: cron[second='*/5'], next run at: 2020-12-19 18:21:25 CST)&quot; executed successfully
+[2020-12-19 18:21:20,015][INFO] - 定时任务 : 执行成功
+[2020-12-19 18:21:20,107][INFO] - Job &quot;interval_task (trigger: interval[0:00:02], next run at: 2020-12-19 18:21:21 CST)&quot; executed successfully
+[2020-12-19 18:21:20,107][INFO] - 循环任务 : 执行成功
+[2020-12-19 18:21:21,116][INFO] - Running job &quot;interval_task (trigger: interval[0:00:02], next run at: 2020-12-19 18:21:21 CST)&quot; (scheduled at 2020-12-19 18:21:21.101294+08:00)
+[2020-12-19 18:21:21,117][INFO] - Running job &quot;task (trigger: date[2020-12-19 18:21:11 CST], next run at: 2020-12-19 18:21:21 CST)&quot; (scheduled at 2020-12-19 18:21:21.103266+08:00)
+[2020-12-19 18:21:21,117][INFO] - 循环任务 : 2020-12-19 18:21:21.117205
+[2020-12-19 18:21:21,118][INFO] - Removed job 一次性任务
+[2020-12-19 18:21:21,118][INFO] - 2020-12-19 18:21:21.118279 : 一次性任务
+[2020-12-19 18:21:21,120][INFO] - Running job &quot;error_task (trigger: date[2020-12-19 18:21:11 CST], next run at: 2020-12-19 18:21:21 CST)&quot; (scheduled at 2020-12-19 18:21:21.115261+08:00)
+[2020-12-19 18:21:21,120][INFO] - Job &quot;task (trigger: date[2020-12-19 18:21:11 CST], next run at: 2020-12-19 18:21:21 CST)&quot; executed successfully
+[2020-12-19 18:21:21,120][INFO] - Removed job 异常任务
+[2020-12-19 18:21:21,121][INFO] - 开始执行异常任务
+[2020-12-19 18:21:21,125][INFO] - Removed job 定时任务
+[2020-12-19 18:21:21,126][ERROR] - Job &quot;error_task (trigger: date[2020-12-19 18:21:11 CST], next run at: 2020-12-19 18:21:21 CST)&quot; raised an exception
+Traceback (most recent call last):
+  File &quot;C:\Users\ubuntu\lib\site-packages\apscheduler\executors\base.py&quot;, line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File &quot;c:/Users/ubuntu/Desktop/scheduler_demo.py&quot;, line 18, in error_task
+    a = 1/0
+ZeroDivisionError: division by zero
+[2020-12-19 18:21:21,127][INFO] - 一次性任务： 删除定时任务
+[2020-12-19 18:21:21,129][INFO] - 异常任务 : 执行失败
+[2020-12-19 18:21:21,129][INFO] - 一次性任务 : 执行成功
+[2020-12-19 18:21:23,122][WARNING] - Execution of job &quot;interval_task (trigger: interval[0:00:02], next run at: 2020-12-19 18:21:23 CST)&quot; skipped: maximum number of running instances reached (2)
+[2020-12-19 18:21:24,108][INFO] - Job &quot;interval_task (trigger: interval[0:00:02], next run at: 2020-12-19 18:21:25 CST)&quot; executed successfully
+[2020-12-19 18:21:24,109][INFO] - 循环任务 : 执行成功
+[2020-12-19 18:21:25,115][INFO] - Running job &quot;interval_task (trigger: interval[0:00:02], next run at: 2020-12-19 18:21:25 CST)&quot; (scheduled at 2020-12-19 18:21:25.101294+08:00)
+[2020-12-19 18:21:25,116][INFO] - 循环任务 : 2020-12-19 18:21:25.116302
+[2020-12-19 18:21:26,120][INFO] - Job &quot;interval_task (trigger: interval[0:00:02], next run at: 2020-12-19 18:21:27 CST)&quot; executed successfully
+[2020-12-19 18:21:26,121][INFO] - 循环任务 : 执行成功
+</code></pre>
+
+<p>这一部分的日志，可以清楚执行的逻辑：</p>
+
+<ul>
+<li><code>2020-12-19 18:21:11,117</code> 完成 <code>Job</code> 任务的生成，添加到默认 <code>job store</code>， 以及调度系统的启动</li>
+<li>注意看其中的 <code>[WARNING]</code> 警告, 因为循环任务，5秒才能完成，2秒就需要执行一次，并且最多2个实例，所有第三个会被跳过<br /></li>
+<li>监听事件中监听到执行完成的 <code>一次性任务</code> 后，删除了<code>定时任务</code>，<code>定时任务</code>没有继续执行了，符合预期<br />
+同时监听事件也处理了任务执行失败的 <code>异常任务</code>，所以说，整体的测试还是和预期一样</li>
+</ul>
+
+<h2 id="总结">总结</h2>
+
+<p>整个 <code>APScheduler</code> 看下来，对于任务的调度和控制真的很丰富，使用起来也相当简单!<br />
+现在有点好奇它实现的代码逻辑了，有时间会针对它的源码，在做一个简单梳理，争取年前吧，越拖越懒~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/python" role="button">python </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-12/%E7%BB%84%E6%88%90%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>组成模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-12/apscheduler-api%E6%80%BB%E7%BB%93/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>APScheduler API总结</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%ae%80%e5%8d%95%e6%8f%8f%e8%bf%b0">
+												 简单描述
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%89%e8%a3%85">
+												 安装
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%9f%ba%e6%9c%ac%e6%a6%82%e5%bf%b5">
+												 基本概念
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%a7%a6%e5%8f%91%e5%99%a8-triggers">
+												 触发器 (triggers)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bb%bb%e5%8a%a1%e5%ad%98%e5%82%a8-job-stores">
+												 任务存储 (job stores)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%89%a7%e8%a1%8c%e5%99%a8-executors">
+												 执行器 (executors)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%b0%83%e5%ba%a6%e5%99%a8-schedulers">
+												 调度器 (schedulers)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a6%82%e4%bd%95%e9%80%89%e6%8b%a9">
+												 如何选择
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#job-stores-%e7%9a%84%e9%80%89%e6%8b%a9">
+												 job stores 的选择
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#schedulers-%e7%9a%84%e9%80%89%e6%8b%a9">
+												 schedulers 的选择
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#executors-%e7%9a%84%e9%80%89%e6%8b%a9">
+												 executors 的选择
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#triggers-%e7%9a%84%e9%80%89%e6%8b%a9">
+												 triggers 的选择
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%85%8d%e7%bd%ae%e8%b0%83%e5%ba%a6%e7%a8%8b%e5%ba%8f">
+												 配置调度程序
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%90%af%e5%8a%a8%e8%b0%83%e5%ba%a6%e7%a8%8b%e5%ba%8f">
+												 启动调度程序
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%b7%bb%e5%8a%a0%e4%bb%bb%e5%8a%a1">
+												 添加任务
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%a0%e9%99%a4%e4%bb%bb%e5%8a%a1">
+												 删除任务
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9a%82%e5%81%9c%e5%92%8c%e6%81%a2%e5%a4%8d%e5%b7%a5%e4%bd%9c">
+												 暂停和恢复工作
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%8e%b7%e5%8f%96%e8%ae%a1%e5%88%92%e7%9a%84%e4%bb%bb%e5%8a%a1%e5%88%97%e8%a1%a8">
+												 获取计划的任务列表
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bf%ae%e6%94%b9%e4%bb%bb%e5%8a%a1">
+												 修改任务
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%b3%e9%97%ad%e8%b0%83%e5%ba%a6%e7%a8%8b%e5%ba%8f">
+												 关闭调度程序
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9a%82%e5%81%9c-%e6%81%a2%e5%a4%8d%e4%bb%bb%e5%8a%a1%e5%a4%84%e7%90%86">
+												 暂停/恢复任务处理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%99%90%e5%88%b6%e4%bb%bb%e5%8a%a1%e7%9a%84%e5%b9%b6%e5%8f%91%e6%89%a7%e8%a1%8c%e5%ae%9e%e4%be%8b%e6%95%b0">
+												 限制任务的并发执行实例数
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%94%99%e8%bf%87%e4%ba%86%e6%89%a7%e8%a1%8c%e5%92%8c%e5%90%88%e5%b9%b6">
+												 错过了执行和合并
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%b0%83%e5%ba%a6%e4%ba%8b%e4%bb%b6">
+												 调度事件
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%97%a5%e5%bf%97">
+												 日志
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%be%8b%e5%ad%90">
+												 例子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="">
+  
+  <meta property="og:title" content="桥接模式" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-12/%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2020-12-07T10:10:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-12-07T10:10:00&#43;08:00"/>
+
+
+  <title>
+  
+       桥接模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-12/%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">桥接模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Dec 7, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h2 id="意图">意图</h2>
+
+<blockquote>
+<p>将抽象部分与它的实现部分分离，使它们都可以独立地变化。</p>
+</blockquote>
+
+<h2 id="动机">动机</h2>
+
+<p>还是使用 <code>GoF</code> 中提到的例子：</p>
+
+<p>我有一个用户界面的 <code>Window</code> 类<br />
+因为需要跨平台，我需要分别基于 <code>Window</code> 这个基类实现基于 <code>某个X Window System</code> 的 <code>XWindow</code> 和基于 <code>Linux System</code> 的 <code>LWindow</code><br />
+同时 <code>Window</code> 还有另外一个维度， 比如根据窗口类型来划分， <code>IconWindow</code>, <code>TextWindow</code> 等等<br />
+现在 <code>IconWindow</code> 很明显也需要实现跨平台的功能，如果按照之前继承的逻辑，现在的 UML 图应该是这样的</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/bridge/error_uml.png" alt="error_uml" /></p>
+
+<p>现在就出现以下几个明显的问题</p>
+
+<ul>
+<li>每一种类型的窗口都需要定义两个类，分别针对不同的平台实现，并且一旦需要支持第三个平台时，所有已经实现的窗口类型又需要在添加一个新的类，很容易造成类数量的爆炸</li>
+<li>客户端在使用 <code>IconWindow</code> 时，不应该由客户端去决定实例化 <code>XIconWindow</code> 或者 <code>LIconWindow</code>，也就说客户端代码在创建窗口时就不应涉及到特定的平台</li>
+</ul>
+
+<p>如果 <code>IconWIndow</code> 在实例化的时候自己决定是用 <code>Linux系统</code> 还是 <code>windows系统</code> 就好了?</p>
+
+<p>结合上面的问题，将所有 <code>Window</code> 窗口类型都依赖的平台实现这一部分进行抽象，封装成一个新的类, 例如 <code>WindowImp</code>, 最后可以得到以下这样的新的 <code>UML</code> 图</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/bridge/new_uml.png" alt="new_uml" /></p>
+
+<p>有点乱，简单解释一下：</p>
+
+<p><code>Window</code> 中引用一个 <code>WindowImp</code> 的对象，<code>Window</code> 对外提供接口，而实际上是通过 <code>WindowImp</code> 来实现，以函数 <code>DrawRect()</code> 画个矩形为例，它实际上就是画4条线 <code>imp-&gt;DevDrawLine()</code><br />
+<code>WindowImp</code> 需要将基于系统方面所有可能用到的接口进行抽象，然后具体平台的子类分别实现即可</p>
+
+<p><strong><code>Window</code> 提供给用户抽象的接口，<code>WindowImp</code> 提供可以实现 <code>Window</code> 抽象接口的基本接口，然后通过聚合的形式将 <code>Window</code> 和 <code>WindowImp</code> 连接在一起， 这种模式就是： <code>桥接模式</code></strong></p>
+
+<p>回头在看一下定义 <font color=red>将抽象部分与它的实现部分分离，使它们都可以独立地变化</font>, <code>Window</code> 方面可以根据类型，独立的进行扩展，同样 <code>WindowImp</code> 如果需要添加新的支持系统，也是独立的变化，而扩展后，需要修改的代码只有 <code>Window</code> 实例化 <code>WindowImp</code> 部分的代码</p>
+
+<blockquote>
+<p>这里其实可以在扩展一下： <code>Window</code> 如何实例化 <code>WindowImp</code>?<br />
+如果对之前总结的创建型有点印象，可以使用 <code>单例</code>+<code>抽象工厂方法</code> 来实现，<code>抽象工厂方法</code> 中提供一个返回 <code>WindowImp</code> 对象的方法，并且这个工厂处理所有与特定系统相关 (可能不仅仅是 <code>WindowImp</code>) 的对象。<br />
+为了简化代码以及工厂的唯一性，使用 <code>单例</code> 来获取这个工厂。<br />
+当然，为了更简单，写一个获取 <code>WindowImp</code> 的方法也行</p>
+</blockquote>
+
+<h2 id="使用场景">使用场景</h2>
+
+<ul>
+<li>你不希望在抽象和它的实现部分之间有一个固定的绑定关系。例如这种情况可能是因为，在程序运行时刻实现部分应可以被选择或者切换。</li>
+<li>类的抽象以及它的实现都应该可以通过生成子类的方法加以扩充。这时 <code>Bridge模式</code> 使你可以对不同的抽象接口和实现部分进行组合，并分别对它们进行扩充。</li>
+<li>一个类存在两个独立变化的维度，且这两个维度都需要进行扩展。</li>
+<li>对一个抽象的实现部分的修改应对客户端不产生影响，即客户的代码不必重新编译</li>
+<li>你想对客户端完全隐藏抽象的实现部分</li>
+</ul>
+
+<h2 id="uml-图">UML 图</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/bridge/uml.png" alt="uml" /></p>
+
+<ul>
+<li><strong><code>Abstraction</code></strong>: 定义抽象类的接口，维护一个指向 <code>Implementor</code> 类型对象的指针</li>
+<li><strong><code>RefinedAbstraction</code></strong>: 扩充由 <code>Abstraction</code> 定义的接口</li>
+<li><strong><code>Implementor</code></strong>: 定义实现类的接口，一般仅提供基本操作，而 <code>Abstraction</code> 则定义基于这些基本操作的较高层次的操作</li>
+<li><strong><code>ConcreteImplementor</code></strong>: 实现 <code>Implementor</code> 接口并定义它的具体实现</li>
+</ul>
+
+<p><code>Abstraction</code> 将 <code>client</code> 的请求转发给它的 <code>Implementor</code> 对象。</p>
+
+<p>在仔细看一下这个图，桥接模式最大的特点是：</p>
+
+<ul>
+<li>抽象层 <code>Abstraction</code> 和 <code>Implementor</code> 存在聚合关系</li>
+<li>对客户端提供的<strong>抽象</strong>接口，而这些抽象接口由 <code>Implementor</code> 这个抽象类来提供真正的<strong>实现</strong>，并且二者都可以通过生成子类的方法加以扩充，从而完成了抽象部分与它的实现部分分离，以及独立变化</li>
+</ul>
+
+<h2 id="来个例子">来个例子</h2>
+
+<p>换个 《大话设计模式》 中的例子来进一步加深对桥接模式的理解</p>
+
+<blockquote>
+<p>现在有2个手机品牌，每个手机品牌下有2个软件，通讯录和游戏，客户运行特定手机品牌下的特定的程序</p>
+</blockquote>
+
+<p>描述的有点简单，先回想一下 <code>UML</code> 图， 2个抽象层 <code>手机品牌</code> 和 <code>手机软件</code>, <code>手机软件</code> 属于 <code>手机品牌</code>，但是它也可以不依赖 <code>手机品牌</code> 独立存在，所以他们是聚合关系，并且 <code>手机品牌</code> 和 <code>手机软件</code> 二者都需要独立变化 软件提供一个 <code>run()</code> 启动的接口， <code>手机品牌</code> 启动软件 <code>runsoftware()</code></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/bridge/another_uml.png" alt="uml" /></p>
+
+<p>结合图，先实现手机软件 <code>HandsetSoft</code></p>
+
+<pre><code class="language-C++">#include &lt;iostream&gt;
+class HandsetSoft
+{
+public:
+    virtual ~HandsetSoft() {}
+    virtual void run() = 0;
+};
+// 游戏
+class HandsetGame: public HandsetSoft
+{
+public:
+    void run() { std::cout &lt;&lt; &quot;run HandsetGame&quot; &lt;&lt; std::endl; }
+};
+// 通讯录
+class HandsetAddressList: public HandsetSoft
+{
+public:
+    void run() { std::cout &lt;&lt; &quot;run HandsetAddressList&quot; &lt;&lt; std::endl; }
+};
+</code></pre>
+
+<p>接下来是手机品牌</p>
+
+<pre><code class="language-C++">#include &quot;handsetsoft.h&quot;
+#define SAFE_DELETE(p) { if(p) { delete p; p=nullptr;}}
+
+class HandsetBrand
+{
+public:
+    HandsetBrand() : m_software(nullptr) {}
+    virtual ~HandsetBrand() { SAFE_DELETE(m_software);}
+
+    void installSoftware(HandsetSoft *software){ SAFE_DELETE(m_software); m_software = software; }
+    virtual void runsoftware() = 0;
+
+protected:
+    HandsetSoft *m_software;
+};
+// A 品牌
+class HandsetBrandA : public HandsetBrand
+{
+public:
+    void runsoftware()  { std::cout &lt;&lt; &quot;HandsetBrandA: &quot;;if(m_software) m_software-&gt;run(); }
+};
+// B 品牌
+class HandsetBrandB : public HandsetBrand
+{
+public:
+    void runsoftware()  { std::cout &lt;&lt; &quot;HandsetBrandB: &quot;;if(m_software) m_software-&gt;run(); }
+};
+</code></pre>
+
+<p>最后调用部分的代码如下：</p>
+
+<pre><code class="language-C++">#include &quot;handsetbrand.h&quot;
+
+int main()
+{
+    HandsetBrandA brandA;
+    brandA.installSoftware(new HandsetGame);
+    brandA.runsoftware();
+
+    brandA.installSoftware(new HandsetAddressList);
+    brandA.runsoftware();
+
+    HandsetBrandB brandB;
+    brandB.installSoftware(new HandsetGame);
+    brandB.runsoftware();
+
+    brandB.installSoftware(new HandsetAddressList);
+    brandB.runsoftware();
+
+    return 0;
+}
+</code></pre>
+
+<p>运行结果：</p>
+
+<pre><code class="language-C++">HandsetBrandA: run HandsetGame
+HandsetBrandA: run HandsetAddressList
+HandsetBrandB: run HandsetGame
+HandsetBrandB: run HandsetAddressList
+</code></pre>
+
+<h2 id="小结">小结</h2>
+
+<p>桥接模式可能是我目前接触到最难理解的，主要难点在于抽象层需要进行聚合关联，且二者都可以独立变化</p>
+
+<p>而且在看 <code>GoF</code> 和 <code>《大话设计模式》</code> 时，我感觉二者对这个模式的侧重点是有点出入的</p>
+
+<p><code>GoF</code> 强调的是抽象部分和实现部分分离，抽象部分提供的抽象接口是实现提供的接口较高层次的呈现，举个例子：<br />
+我实现一下 <code>绘图类</code>，<code>绘图类</code> 提供画线的接口，但是 <code>windows</code> 下画线的实现肯定和 <code>Linux</code> 下画线的实现时不同的，也就出现了2个子类，而且可以随着需要支持系统的增加就需要实现更多子类，然后为了方便客户端实际的使用，不可能直接使用 <code>绘图类</code> 来绘制各种图形，所以我在这个 <code>绘图类</code> 的基础上再次封装，实现一个 <code>图形类</code>，这个 <code>图形类</code> 提供给客户端比如画矩形的接口，当然 <code>图形类</code> 可以扩展出画三角形等等其他子类, <code>图形类</code> 可以独立变化。<code>图形类</code> 提供了抽象的接口，通过调用 <code>绘图类</code> 来实现<br />
+就像 <code>《Head First 设计模式》</code> 中提到的用途时，特意指出了适合使用在需要跨越多个平台的图形和窗口系统上。</p>
+
+<p><code>《大话设计模式》</code> 给我的感觉更强调的是合成/聚合，优先使用对象的合成/聚合将有助于你保持每个类被封装，并被集中在单个任务上，这样类和类继承层次会保持较小规模，并且不太可能增长为不可控制的庞然大物<br />
+换句话说本来是 <code>m*n</code> 的数量的类，现在被封装成 <code>m</code> 和 <code>n</code> 个数量，组合的形式大大降低的类的数量<br />
+实现系统可能有多角度分类，每一种分类都有可能变化，那么就把这种多角度分离出来让它们独立变化，减少它们之间的耦合</p>
+
+<p>整个看下来，在我的理解里应该是，客户端的依赖的抽象类又依赖于另一个抽象类，这2个抽象类都可以独立变化，并且它们之间是存在一些内在联系的，不管是上层的 <code>图形类</code> 依赖于底层的 <code>绘图类</code>， 还是 <code>软件</code> 归属于 <code>手机</code>，而这样设计目的是希望现在设计的比较灵活，比较松耦合，以后扩展的时候可以少送掉命。</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-11/python-tkinter%E5%BA%93/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Python-tkinter库</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-12/%E7%BB%84%E6%88%90%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>组成模式</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%9c%ba">
+												 动机
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bd%bf%e7%94%a8%e5%9c%ba%e6%99%af">
+												 使用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#uml-%e5%9b%be">
+												 UML 图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9d%a5%e4%b8%aa%e4%be%8b%e5%ad%90">
+												 来个例子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b0%8f%e7%bb%93">
+												 小结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

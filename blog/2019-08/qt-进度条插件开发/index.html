@@ -279,10 +279,6 @@
     
   </ul>
   
-    <div class="view">
-      <img src="https://catcheroftime.github.io/images/blog/qt_plugin/waterprogress/demo.png" />
-    </div>
-  
 
 </div>
 
@@ -290,40 +286,58 @@
           <div class="post-content markdown">
             <p>在 <a href="https://www.cnblogs.com/feiyangqingyun/p/6128288.html">飞扬青云</a> 大佬的博客下,意外看到一款水波纹的进度条,整体看上去很美观,感觉适用的场景也很多 (1. 单纯的进度条显示 2. 当前状态的展示,例如CPU,内存之类使用的占比)，所以自己也尝试开发了一下.</p>
 
-<p>这篇文章主要介绍该插件的简单实现的逻辑,并且对一些使用的库和方法做一个简单的总结</p>
+<p>这篇文章主要介绍该插件实现的逻辑，以及介绍在实现过程中使用到的库和方法</p>
+
+<h2 id="功能">功能</h2>
+
+<p>对着 <code>demo</code> 图，我们先要确定自己需要实现哪些功能</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/waterprogress/function.png" alt="function" /></p>
+
+<ul>
+<li>黑色外边框，提供圆形和正方形两种，边框宽度，大小等可调节</li>
+<li>水波纹的高度与中央显示的数字需要对应上</li>
+<li>可以对水波纹进行控制，比如水波的高度，水波的宽度，波速等等</li>
+<li>所有涉及到颜色的应该都是可自定义</li>
+<li>对字体的大小，样式等等可自定义</li>
+</ul>
+
+<p>总结了需要实现的功能，接下来就是如何实现了</p>
 
 <h2 id="实现逻辑">实现逻辑</h2>
 
-<p>接下来按照下面的顺序简单理一下实现的逻辑</p>
+<p>先对功能进行分解，大概可以分为以下几个部分</p>
 
 <ul>
-<li>整体的大小, 外边框的形状,边框的宽度, 边框的颜色, 以及内部背景色<br /></li>
-<li>中间显示百分比的字体的一些属性的设置,大小颜色字体种类以及显示的数值<br /></li>
-<li>水波纹的实现, 水波纹的一个波的宽度和高度</li>
+<li>我需要实现一个带有背景色的外边框</li>
+<li>在外边框中央显示一个百分比的数字</li>
+<li>水波纹的实现</li>
 </ul>
+
+<p>而关于每个环节中实现自定义调节功能，无非就是将涉及到的参数设置成成员函数，并提供一个 <code>set</code> 设置的函数而已</p>
 
 <h3 id="边框">边框</h3>
 
-<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/waterprogress/linedemoshow.gif" alt="border_demoshow" /></p>
+<p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/waterprogress/shape.png" alt="shape" /></p>
 
 <p>目前设定的外边框形状只有2种圆形和正方形<br />
-QPainter 中 <code>drawEllipse</code> 以及 <code>drawRect</code> 这2个函数就可以实现
+<code>QPainter</code> 中 <code>drawEllipse</code> 以及 <code>drawRect</code> 这2个函数就可以实现
 至于边框的宽度,边框的颜色, 以及内部的颜色 QPainter 都可以设置</p>
 
-<pre><code>QPainter painter(this);
+<pre><code class="language-C++">QPainter painter(this);
 painter.setPen(QPen(边框颜色,边框宽度));
 painter.setBrush( QBrush(背景颜色));
 </code></pre>
 
-<p>需要注意的一点是在绘制圆形和正方形, 需要提供绘图的初始位置点 (x,y), 以及绘制的宽度和高度, 因为我们边框形状只有圆形和正方形, 所有宽度和高度是一样的值, 如果调用 <code>drawEllipse</code> 时长宽不一致, 其实也就是椭圆了.</p>
+<p>需要注意的一点是在绘制圆形和正方形, 需要提供绘图的初始位置点 (x,y), 以及绘制的宽度和高度, 因为我们边框形状只有圆形和正方形, 所以宽度和高度是一样的值, 如果调用 <code>drawEllipse</code> 时长宽不一致, 其实也就是椭圆了.</p>
 
 <p>因为我是从图像的左上角开始绘图, 所以起始点是 <code>(边框宽度/2, 边框宽度/2)</code>, 宽高的大小都是 <code>总的尺寸-边框宽度</code>, 这会存在一点问题, 因为像素是整数, 当宽度为奇数时, 会损失0.5像素, 虽然仔细看可以看出来, 但是感觉影响不大, 为了避免这个问题, 在设置边框宽度的时候添加必须为偶数的要求.</p>
 
-<h3 id="字体">字体</h3>
+<h3 id="数字">数字</h3>
 
-<p>字体很简单, 使用 QPainter 的 <code>drawText</code> 函数便可以实现</p>
+<p>数字很简单, 使用 <code>QPainter</code> 的 <code>drawText</code> 函数便可以实现</p>
 
-<pre><code>QPainter painter(this);
+<pre><code class="language-C++">QPainter painter(this);
 QFont font{字体样式种类, 字体大小};
 painter.setPen(字体颜色);
 painter.setFont(font);
@@ -338,10 +352,10 @@ painter.drawText(this-&gt;rect(), Qt::AlignCenter, 显示的数值);
 
 <p><img src="https://catcheroftime.github.io/images/blog/qt_plugin/waterprogress/linedemo.png" alt="waveprogress_linedemo" /></p>
 
-<p>边框内边距的线条 和 蓝色的水波为线条 两个区域相交的部分(intersected接口) 其实就是我们需要的水波纹区域<br />
+<p><strong>边框内边距的线条</strong> 和 <strong>蓝色的水波为线条</strong> 两个区域相交的部分(使用 <code>intersected</code> 接口，可以直接得到这个区域) 其实就是我们需要的水波纹区域<br />
 为了形成2层波浪的感觉, 再画一条水波, 调整它的偏移量, 在修改它颜色的透明度, 就能实现我们想要的结果</p>
 
-<pre><code>// m_size 为 整体尺寸
+<pre><code class="language-C++">// m_size 为 整体尺寸
 // m_waveHeight 波的高度
 // m_waveWidth 波的宽度
 // waveMidHeight 根据百分比的得到的波的位置
@@ -390,21 +404,21 @@ painter.fillPath(new_path2, QBrush(bg_waterwaveColor));
 
 <h2 id="自定义插件下的-q-property-说明">自定义插件下的 Q_PROPERTY 说明</h2>
 
-<p>Q_PROPERTY()是一个宏，主要声明类中的一个属性, 一个属性行为类似于类里面的数据成员，它基于元对象系统，它还通过信号和插槽提供对象间通信。<br />
+<p><code>Q_PROPERTY()</code> 是一个宏，主要声明类中的一个属性, 一个属性行为类似于类里面的数据成员，它基于元对象系统，它还通过信号和插槽提供对象间通信。<br />
 先简单看一下用法</p>
 
-<pre><code> Q_PROPERTY(type name
-         (READ getFunction [WRITE setFunction] |
-          MEMBER memberName [(READ getFunction | WRITE setFunction)])
-         [RESET resetFunction]
-         [NOTIFY notifySignal]
-         [REVISION int]
-         [DESIGNABLE bool]
-         [SCRIPTABLE bool]
-         [STORED bool]
-         [USER bool]
-         [CONSTANT]
-         [FINAL])
+<pre><code class="language-C++">Q_PROPERTY(type name
+        (READ getFunction [WRITE setFunction] |
+         MEMBER memberName [(READ getFunction | WRITE setFunction)])
+        [RESET resetFunction]
+        [NOTIFY notifySignal]
+        [REVISION int]
+        [DESIGNABLE bool]
+        [SCRIPTABLE bool]
+        [STORED bool]
+        [USER bool]
+        [CONSTANT]
+        [FINAL])
 </code></pre>
 
 <p>其实可以直接阅读官方文档, 文档中有很详细的介绍:　<a href="https://doc.qt.io/qt-5/properties.html">https://doc.qt.io/qt-5/properties.html</a></p>
@@ -442,10 +456,10 @@ private:
 <h2 id="qpainterpath">QPainterPath</h2>
 
 <p>谷歌翻译一波(凑字数,可略过):<br />
-QPainterPath类为绘制操作提供了一个容器，可以构造和重用图形形状。
+<code>QPainterPath</code> 类为绘制操作提供了一个容器，可以构造和重用图形形状。
 路径是由许多图形构建块组成的对象，例如矩形，椭圆，线和曲线。构建块可以在闭合的子路径中连接，例如矩形或椭圆形。闭合路径具有重合的起点和终点。或者它们可以作为未闭合的子路径独立存在，例如线条和曲线。
-QPainterPath对象可用于填充，轮廓和剪切。要为给定的painter路径生成可填充的轮廓，请使用QPainterPathStroker类。画笔路径优于普通绘图操作的主要优点是复杂的形状只需要创建一次;然后只需调用QPainter :: drawPath（）函数就可以多次绘制它们。
-QPainterPath提供了一组函数，可用于获取有关路径及其元素的信息。此外，可以使用toReversed（）函数反转元素的顺序。还有几个函数可以将此路径对象转换为多边形表示。</p>
+<code>QPainterPath</code> 对象可用于填充，轮廓和剪切。要为给定的painter路径生成可填充的轮廓，请使用QPainterPathStroker类。画笔路径优于普通绘图操作的主要优点是复杂的形状只需要创建一次;然后只需调用 <code>QPainter :: drawPath()</code> 函数就可以多次绘制它们。
+<code>QPainterPath</code> 提供了一组函数，可用于获取有关路径及其元素的信息。此外，可以使用toReversed（）函数反转元素的顺序。还有几个函数可以将此路径对象转换为多边形表示。</p>
 
 <p>简单介绍一些常用的接口, 具体的接口说明直接查看官方文档</p>
 
@@ -456,7 +470,7 @@ QPainterPath提供了一组函数，可用于获取有关路径及其元素的�
 <li>弧形 <code>arcTo</code> 以及 <code>arcMoveTo</code></li>
 <li>贝塞尔曲线 <code>cubicTo</code></li>
 <li>字体 <code>addText</code></li>
-<li>自定义线条一般实现的方法  moveTo(线条的起始点), lineTo(添加额外点)</li>
+<li>自定义线条一般实现的方法  <code>moveTo</code>(线条的起始点), <code>lineTo</code>(添加额外点)</li>
 </ul>
 
 <p>还有几个函数需要注意一下:</p>
@@ -477,8 +491,6 @@ QPainterPath提供了一组函数，可用于获取有关路径及其元素的�
 <p>官方文档介绍: <a href="https://doc.qt.io/qt-5/qpainterpath.html">https://doc.qt.io/qt-5/qpainterpath.html</a></p>
 
 <h2 id="代码地址">代码地址</h2>
-
-<p>虽然我知道根本没人看， 但是还是求 <code>Star</code></p>
 
 <p>github 地址 ：<a href="https://github.com/catcheroftime/WaterwaveProgressPlugin">https://github.com/catcheroftime/WaterwaveProgressPlugin</a></p>
           </div>
@@ -574,6 +586,28 @@ QPainterPath提供了一组函数，可用于获取有关路径及其元素的�
 								
 
 										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%9f%e8%83%bd">
+												 功能
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
 						 					<a class="nav-link" href="#%e5%ae%9e%e7%8e%b0%e9%80%bb%e8%be%91">
 												 实现逻辑
 											</a>
@@ -624,8 +658,8 @@ QPainterPath提供了一组函数，可用于获取有关路径及其元素的�
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e5%ad%97%e4%bd%93">
-												 字体
+						 					<a class="nav-link" href="#%e6%95%b0%e5%ad%97">
+												 数字
 											</a>
 										</li>
 						 
@@ -811,7 +845,7 @@ QPainterPath提供了一组函数，可用于获取有关路径及其元素的�
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
   </div>
   
 

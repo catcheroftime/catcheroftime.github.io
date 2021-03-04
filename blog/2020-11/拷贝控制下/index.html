@@ -288,9 +288,127 @@
 
 <p>在某些发生对象拷贝情况下，对象拷贝后立即被销毁，此时，移动而非拷贝对象会大幅度提高性能</p>
 
+<p>而为了支持移动操作，新标准引入了一种新的引用类型——右值引用，所谓的右值引用就是必须要绑定到右值的引用，通过 <code>&amp;&amp;</code> 来获得右值引用,并且 <strong>只能绑定到一个将要销毁的对象上</strong>。所以理解移动，首先需要先知道左值和右值的概念，</p>
+
+<h2 id="左值和右值">左值和右值</h2>
+
+<p>在C语言中有个比较方便记忆的是：左值可以位于赋值语句的左侧，右值则不能，但是C++中这个二者的区别更复杂一些</p>
+
+<ul>
+<li>左值是存储单元内的值，即是有实际存储地址的；</li>
+<li>右值则不是存储单元内的值，比如它可能是寄存器内的值也可能是立即数。</li>
+</ul>
+
+<p>而所谓右值引用就是必须绑定到右值的引用，通过 <code>&amp;&amp;</code> 获得，右值引用只能绑定到一个将要销毁的对象上，因此可以自由的移动其资源</p>
+
+<p>左值引用，也就是常规引用，不能绑定到要转换的表达式、字面常量或返回右值的表达式。而右值引用恰好想法，可以绑定到这类表达式，但不能绑定到一个左值上</p>
+
+<ul>
+<li>返回左值的表达式包括返回左值引用的函数及赋值、下标、解引用和前置递增/递减运算符</li>
+<li>返回右值的包括返回非引用类型的函数及算数、关系、位、和后置递增/递减运算符</li>
+</ul>
+
+<p>举个例子看一下</p>
+
+<pre><code class="language-C++">int i = 42;         
+int &amp;r = i;              // 正确： r 引用 i
+int &amp;&amp;r2 = i;            // 错误：不能将一个右值引用绑定到一个左值上
+int &amp;r2 = i * 42;        // 错误：i * 42 是个右值表达式，不能左值引用
+const int &amp;r3 = i * 42;  // 正确：我们可以讲一个 const 的引用绑定到一个右值上
+int &amp;&amp;rr2 = i * 42;      // 正确： 将 rr2 绑定到乘法结果上
+</code></pre>
+
+<p>更简单点说就是 <strong>左值持久；右值短暂</strong>， 左值有持久的状态，而右值要么是字面常量，要么是在表达式求值过程中创建的临时对象</p>
+
+<p>虽然不能将一个右值引用直接绑定到一个左值上，但我们可以显式的将一个左值转移为对应的右值引用类型</p>
+
+<pre><code class="language-C++">int &amp;&amp;rr1 = 42;              // 正确： 字面常量是右值
+int &amp;&amp;rr2 = rr1;             // 错误： rr1 是左值
+int &amp;&amp;rr3 = std::move(rr1);  // 正确
+</code></pre>
+
+<p>调用 <code>move</code> 就意味着承诺：除了对 <code>rr1</code> 赋值或销毁它外，我们将不再使用它</p>
+
 <h2 id="移动构造函数">移动构造函数</h2>
 
+<pre><code class="language-C++">#include &lt;iostream&gt;
+using namespace std;
+class demo{
+public:
+    demo():num(new int(0)){
+        cout&lt;&lt;&quot;construct!&quot;&lt;&lt;endl;
+    }
+    // 添加拷贝构造函数
+    demo(const demo &amp;d):num(new int(*d.num)) {
+        cout&lt;&lt;&quot;copy construct!&quot;&lt;&lt;endl;
+    }
+    // 添加移动构造函数
+    demo(demo &amp;&amp;d) noexcept :num(d.num)  {
+        d.num = NULL;
+        cout&lt;&lt;&quot;move construct!&quot;&lt;&lt;endl;
+    }
+    ~demo(){
+        cout&lt;&lt;&quot;class destruct!&quot;&lt;&lt;endl;
+    }
+private:
+    int *num;
+};
+
+int main(){
+    demo a;
+    demo b(a);
+    demo c(std::move(a));
+    return 0;
+}
+</code></pre>
+
+<p>运行结果</p>
+
+<pre><code class="language-C++">construct!
+copy construct!
+move construct!
+class destruct!
+class destruct!
+class destruct!
+</code></pre>
+
+<p>移动构造函数不分配任何新的内存，它主要就是接管传入的右值引用，在接管内存之后，它将给定对象中的指针都置为 <code>nullptr</code>, 这样就完成了从给定对象的移动操作</p>
+
+<p><strong>小 tip : 一定要记得将给定对象中·的指针置为 <code>nullptr</code>, 避免销毁给定对象时，也会释放掉我们刚刚移动的内存</strong></p>
+
 <h2 id="移动赋值运算符">移动赋值运算符</h2>
+
+<p>在上面例子的基础上在添加一个移动赋值运算符</p>
+
+<pre><code class="language-C++">demo&amp; operator=(demo &amp;&amp;d) {
+    if (this != &amp;d) {
+        // 防止内存泄漏，需要释放旧的指针数据
+        delete num;
+        this-&gt;num = d.num;
+        d.num = NULL;
+    }
+    cout&lt;&lt;&quot;move opreate!&quot;&lt;&lt;endl;
+    return *this;
+}
+</code></pre>
+
+<p>如果 <code>this</code> 指针与 <code>d</code> 的地址相同，我们不需要做任何事情，否则，我们释放左侧运算对象( <code>this</code> )使用的内存，并接管给定对象( <code>d</code> )的内存。最后再将给定对象的指针置为 <code>nullptr</code></p>
+
+<h2 id="合成的移动操作">合成的移动操作</h2>
+
+<p>与处理拷贝构造函数和拷贝赋值运算符一样，编译器也会合成移动构造函数和移动赋值运算符，但是条件不太一样</p>
+
+<p>如果我们不声明自己的拷贝构造函数或拷贝赋值运算符，编译器会为我们合成这些操作，拷贝操作要么定义为逐成员拷贝，要么被定义为对象赋值，要么被定义为删除的函数</p>
+
+<p>合成移动操作条件比较苛刻，只有当一个类没有定义任何版本的拷贝控制成员，且类的每个非 <code>static</code> 数据成员都可以移动时，编译器才会合成移动构造函数和移动赋值运算符，编译器可以移动内置类型的成员，如果一个成员是类类型，且该类有对应的移动操作，编译器也能移动这个成员。</p>
+
+<p>定义了一个移动构造函数或移动赋值运算符的类必须也定义自己的拷贝操作，否则，这些成员默认地被定义为删除。</p>
+
+<p>如果一个类没有移动操作，通过正常的函数匹配，类会使用对应的拷贝操作来代替移动操作，也就是说，如果一个类有一个可用的拷贝构造函数而没有移动构造函数，则其对象是通过拷贝构造函数来 “移动” 的，拷贝赋值运算符和移动赋值运算符的情况类似。</p>
+
+<h2 id="三五法则更新">三五法则更新</h2>
+
+<p>所有五个拷贝控制成员应该看做一个整体：一般来说，如果一个类定义了任何一个拷贝操作，它就应该定义所有五个操作。</p>
           </div>
 
           
@@ -329,6 +447,13 @@
             </div>
             
             <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-11/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>适配器模式</span>
+                  </div>
+                </a>
               
             </div>
           </div>
@@ -374,6 +499,28 @@
 								
 
 										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b7%a6%e5%80%bc%e5%92%8c%e5%8f%b3%e5%80%bc">
+												 左值和右值
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
 						 					<a class="nav-link" href="#%e7%a7%bb%e5%8a%a8%e6%9e%84%e9%80%a0%e5%87%bd%e6%95%b0">
 												 移动构造函数
 											</a>
@@ -398,6 +545,50 @@
 										<li class="nav-item">
 						 					<a class="nav-link" href="#%e7%a7%bb%e5%8a%a8%e8%b5%8b%e5%80%bc%e8%bf%90%e7%ae%97%e7%ac%a6">
 												 移动赋值运算符
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%90%88%e6%88%90%e7%9a%84%e7%a7%bb%e5%8a%a8%e6%93%8d%e4%bd%9c">
+												 合成的移动操作
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%89%e4%ba%94%e6%b3%95%e5%88%99%e6%9b%b4%e6%96%b0">
+												 三五法则更新
 											</a>
 										</li>
 						 
@@ -463,7 +654,7 @@
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
   </div>
   
 

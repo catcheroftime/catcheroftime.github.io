@@ -6,10 +6,46 @@
     <description>Recent content in Tags on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Fri, 20 Nov 2020 12:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 02 Mar 2021 19:35:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>python</title>
+      <link>https://catcheroftime.github.io/tags/python/</link>
+      <pubDate>Tue, 02 Mar 2021 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/python/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>设计模式</title>
+      <link>https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 11 Feb 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Algorithm</title>
+      <link>https://catcheroftime.github.io/tags/algorithm/</link>
+      <pubDate>Mon, 04 Jan 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/algorithm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>docker</title>
+      <link>https://catcheroftime.github.io/tags/docker/</link>
+      <pubDate>Tue, 29 Dec 2020 12:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/docker/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>C&#43;&#43;</title>
@@ -17,15 +53,6 @@
       <pubDate>Fri, 20 Nov 2020 12:15:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/tags/c&#43;&#43;/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>设计模式</title>
-      <link>https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</link>
-      <pubDate>Tue, 17 Nov 2020 12:15:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</guid>
       <description></description>
     </item>
     
@@ -71,15 +98,6 @@
       <pubDate>Wed, 11 Dec 2019 17:10:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/tags/ffmpeg/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>python</title>
-      <link>https://catcheroftime.github.io/tags/python/</link>
-      <pubDate>Tue, 05 Nov 2019 19:35:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/python/</guid>
       <description></description>
     </item>
     
@@ -134,15 +152,6 @@
       <pubDate>Thu, 05 Sep 2019 15:50:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/tags/ui%E8%AE%BE%E8%AE%A1/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>python库</title>
-      <link>https://catcheroftime.github.io/tags/python%E5%BA%93/</link>
-      <pubDate>Mon, 15 Jul 2019 16:02:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/tags/python%E5%BA%93/</guid>
       <description></description>
     </item>
     

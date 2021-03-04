@@ -12,6 +12,168 @@
     
     
     <item>
+      <title>微信公众号封面一键生成器-续</title>
+      <link>https://catcheroftime.github.io/blog/2021-03/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%B0%81%E9%9D%A2%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%99%A8-%E7%BB%AD/</link>
+      <pubDate>Tue, 02 Mar 2021 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-03/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%B0%81%E9%9D%A2%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%99%A8-%E7%BB%AD/</guid>
+      <description>&lt;p&gt;上一篇文章介绍了我对小工具的需求，实现过程中用到的 &lt;code&gt;python&lt;/code&gt; 库的信息以及 &lt;code&gt;demo&lt;/code&gt; 的展示，这篇文章主要就是对其中一些实现细节的总结&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>微信公众号封面一键生成器</title>
+      <link>https://catcheroftime.github.io/blog/2021-02/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%B0%81%E9%9D%A2%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%99%A8/</link>
+      <pubDate>Sat, 20 Feb 2021 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-02/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%B0%81%E9%9D%A2%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%99%A8/</guid>
+      <description>&lt;p&gt;先说痛点，写完一篇公众号，都要为其配一个封面，而我的封面已经很简单了，大部分情况下都是 &lt;code&gt;文章题目&lt;/code&gt; + &lt;code&gt;背景图片&lt;/code&gt; 的形式，简单使用 &lt;code&gt;PS&lt;/code&gt; 也会，但是每次还要调整图片大小，文字样式，大小等等还是太繁琐，最好给一张 &lt;code&gt;图片&lt;/code&gt; + &lt;code&gt;文字&lt;/code&gt; 按照一定大小，位置直接生成就完事了&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>模板方法模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-02/%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 11 Feb 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-02/%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;超实用的代码复用模式&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>策略模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-01/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Sat, 30 Jan 2021 10:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-01/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;如果看过一些关于如何干掉 &lt;code&gt;if...else&lt;/code&gt; 的文章，大部分都会介绍到 &lt;code&gt;策略模式&lt;/code&gt;，而今天主要就是带大家更全面的了解什么是 &lt;code&gt;策略模式&lt;/code&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>python-request库</title>
+      <link>https://catcheroftime.github.io/blog/2021-01/python-request%E5%BA%93/</link>
+      <pubDate>Fri, 15 Jan 2021 16:02:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-01/python-request%E5%BA%93/</guid>
+      <description>&lt;p&gt;在对 &lt;code&gt;http&lt;/code&gt; 的 &lt;code&gt;api&lt;/code&gt; 测试时，或者利用 &lt;code&gt;api&lt;/code&gt; 实现批量添加、删除等等重复的工作时，必然需要利用一个发送 &lt;code&gt;http&lt;/code&gt; 请求的库，今天介绍一个我在使用过程中感觉相当简单的一个库&amp;ndash; &lt;strong&gt;&lt;code&gt;requests&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>外观模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-01/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 15 Jan 2021 10:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-01/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>装饰模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-01/%E8%A3%85%E9%A5%B0%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 12 Jan 2021 10:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-01/%E8%A3%85%E9%A5%B0%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>猜数字大小</title>
+      <link>https://catcheroftime.github.io/blog/2021-01/%E7%8C%9C%E6%95%B0%E5%AD%97%E5%A4%A7%E5%B0%8F/</link>
+      <pubDate>Mon, 04 Jan 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-01/%E7%8C%9C%E6%95%B0%E5%AD%97%E5%A4%A7%E5%B0%8F/</guid>
+      <description>&lt;p&gt;偶然在别人公众号看到一篇关于&lt;strong&gt;猜数字大小&lt;/strong&gt;的题目，刚好是 &lt;code&gt;LeetCode&lt;/code&gt; 上的题目，在 &lt;code&gt;LeetCode&lt;/code&gt; 上又刚好看到一道很接近的扩展题，放一起整理一下&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>docker 常用命令</title>
+      <link>https://catcheroftime.github.io/blog/2020-12/docker-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</link>
+      <pubDate>Tue, 29 Dec 2020 12:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-12/docker-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</guid>
+      <description>&lt;p&gt;整理一下在使用 &lt;code&gt;Docker&lt;/code&gt; 过程中经常会被使用到的一些命令&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APScheduler 源码阅读(一) executors</title>
+      <link>https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B8%80-executors/</link>
+      <pubDate>Tue, 22 Dec 2020 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B8%80-executors/</guid>
+      <description>&lt;p&gt;成热打铁，学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码，很好奇任务调度控制的实现。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APScheduler 源码阅读(二) job</title>
+      <link>https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%BA%8C-job/</link>
+      <pubDate>Tue, 22 Dec 2020 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%BA%8C-job/</guid>
+      <description>&lt;p&gt;成热打铁，学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码，很好奇任务调度控制的实现。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APScheduler API总结</title>
+      <link>https://catcheroftime.github.io/blog/2020-12/apscheduler-api%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Mon, 21 Dec 2020 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-12/apscheduler-api%E6%80%BB%E7%BB%93/</guid>
+      <description>&lt;p&gt;之前比较泛泛的介绍了 &lt;code&gt;APScheduler&lt;/code&gt; 库，但是其中有一些模块的接口需要额外注意一下，本篇文章比较干，真正开发的时候，可以当成工具用&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Python-APScheduler库</title>
+      <link>https://catcheroftime.github.io/blog/2020-12/python-apscheduler%E5%BA%93/</link>
+      <pubDate>Sun, 20 Dec 2020 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-12/python-apscheduler%E5%BA%93/</guid>
+      <description>&lt;p&gt;超强大的任务调度库&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>组成模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-12/%E7%BB%84%E6%88%90%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 11 Dec 2020 10:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-12/%E7%BB%84%E6%88%90%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>桥接模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-12/%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Mon, 07 Dec 2020 10:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-12/%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Python-tkinter库</title>
+      <link>https://catcheroftime.github.io/blog/2020-11/python-tkinter%E5%BA%93/</link>
+      <pubDate>Sat, 28 Nov 2020 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-11/python-tkinter%E5%BA%93/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>代理模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-11/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 26 Nov 2020 23:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-11/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>适配器模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-11/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Wed, 25 Nov 2020 23:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-11/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;你挑的嘛，偶像&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>拷贝控制(下)</title>
       <link>https://catcheroftime.github.io/blog/2020-11/%E6%8B%B7%E8%B4%9D%E6%8E%A7%E5%88%B6%E4%B8%8B/</link>
       <pubDate>Fri, 20 Nov 2020 12:15:00 +0800</pubDate>
@@ -404,7 +566,7 @@
       <pubDate>Fri, 14 Jun 2019 11:12:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/blog/2019-06/python-%E6%93%8D%E4%BD%9C-mysql%E7%A4%BA%E4%BE%8B/</guid>
-      <description>&lt;p&gt;使用python 简单操作mysql数据库,数据库的创建，表的创建，以及数据的增删改查&lt;/p&gt;</description>
+      <description>&lt;p&gt;使用 &lt;code&gt;pymysql&lt;/code&gt; 操作 &lt;code&gt;mysql&lt;/code&gt; 数据库,数据库的创建，表的创建，以及数据的增删改查&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -458,7 +620,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://catcheroftime.github.io/blog/1-01/</guid>
-      <description></description>
+      <description> 模板 意图 动机 UML 图 应用场景 举个例子 总结 </description>
     </item>
     
     <item>
@@ -467,7 +629,16 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://catcheroftime.github.io/blog/1-01/</guid>
-      <description> 设计模式总结 创建型模式  单例模式 原型模式 简单工厂模式 工厂方法模式 抽象工厂模式 建造者模式  </description>
+      <description> 设计模式总结 创建型模式  单例模式 原型模式 简单工厂模式 工厂方法模式 抽象工厂模式 建造者模式  结构型  适配器模式 代理模式 桥接模式 外观模式 装饰模式 组成模式  行为型  策略模式 观察者模式 发布订阅模式 模板方法  未完成  享元模式
+ 解释器
+ 职责链
+ 命令
+ 迭代器
+ 中介者
+ 备忘录
+ 状态
+ 访问者
+  </description>
     </item>
     
     <item>
@@ -476,7 +647,17 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://catcheroftime.github.io/blog/1-01/</guid>
-      <description> 常见疑难杂症  常见疑难杂症  容器内获取系统时间异常 Docker 默认网段(172.17.0.0) 与主机网段冲突   容器内获取系统时间异常 Docker 默认网段(172.17.0.0) 与主机网段冲突 cat /etc/issue  1、修改 /etc/docker/daemon.json 文件，加入以下代码
+      <description> 常见疑难杂症  常见疑难杂症  port is already allocated 容器内获取系统时间异常 Docker 默认网段(172.17.0.0) 与主机网段冲突   port is already allocated docker 下的容器停止或者删除之后，而 docker-proxy 依然绑定着端口,没有正常释放
+删除所有容器，停止 docker 服务，然后删除 local-kv.db 这个文件，再启动 docker ,最后在重新部署相应容器即可
+docker rm $(docker ps -aq) sudo service docker stop sudo rm /var/lib/docker/network/files/local-kv.db sudo service docker start  容器内获取系统时间异常 容器里的服务获取系统时间出现异常，一般情况下都是差 8 小时，所以我们需要在生成 docker 镜像的时候，提前将时区相关信息设置好
+ 首先确定容器依赖的系统版本，进入容器内部，查看系统版本  docker exec -it 容器名 /bin/sh cat /etc/issue  以我 python 的服务为例
+Welcome to Alpine Linux 3.11 Kernel \r on an \m (\l)  我这个基础镜像版本是 Alpine Linux 3.11
+所以接下来就是找这个版本如何设置时区的解决办法,简单百度谷歌一下 Alpine Linux 时区设置 就能找到解决方案
+在 Dockerfile 中添加一下几行
+RUN apk add -U tzdata RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime RUN apk del tzdata  安装时区相关的文件，拷贝需要的时区文件到 localtime, 国内则直接选择 Asia/Shanghai，之后为了保证容器的精简和轻量，移除下载的时区文件。
+ 不同版本有不同的解决方法，思路大概就是这样了
+ 之后为了方便，可以将这个更新好时区的容器，当做其他服务的基础镜像包，这样其他人在使用的时候就不用考虑时区的问题了
+Docker 默认网段(172.17.0.0) 与主机网段冲突 1、修改 /etc/docker/daemon.json 文件，加入以下代码
 { &amp;quot;default-address-pools&amp;quot;: [{&amp;quot;base&amp;quot;:&amp;quot;172.10.0.0/16&amp;quot;,&amp;quot;size&amp;quot;:24}] }  其中 172.10.0.0/16 是自定义的网段地址
 2、删除docker0
 ip link delete docker0  3、重新启动docker
@@ -499,6 +680,16 @@ service stop docker service start docker  </description>
       
       <guid>https://catcheroftime.github.io/blog/1-01/</guid>
       <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://catcheroftime.github.io/blog/1-01/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/1-01/</guid>
+      <description> 源码解析 查阅接口的时候发现 class Tk(Misc, Wm) 继承 Misc 和 Wm
+ Misc 是一个内部类，主要定义了内部控件的方法 Wm 定义了主窗口提供的一些功能接口  </description>
     </item>
     
     <item>

@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="上一篇文章介绍了我对小工具的需求，实现过程中用到的 python 库的信息以及 demo 的展示，这篇文章主要就是对其中一些实现细节的总结">
+  
+  <meta property="og:title" content="微信公众号封面一键生成器-续" />
+<meta property="og:description" content="上一篇文章介绍了我对小工具的需求，实现过程中用到的 python 库的信息以及 demo 的展示，这篇文章主要就是对其中一些实现细节的总结" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-03/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%B0%81%E9%9D%A2%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%99%A8-%E7%BB%AD/" />
+<meta property="article:published_time" content="2021-03-02T19:35:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-03-02T19:35:00&#43;08:00"/>
+
+
+  <title>
+  
+       微信公众号封面一键生成器-续 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-03/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%B0%81%E9%9D%A2%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%99%A8-%E7%BB%AD/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/python"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> python </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">微信公众号封面一键生成器-续</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Mar 2, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>上一篇文章介绍了我对小工具的需求，实现过程中用到的 <code>python</code> 库的信息以及 <code>demo</code> 的展示，这篇文章主要就是对其中一些实现细节的总结</p>
+
+<h2 id="代码细节">代码细节</h2>
+
+<p>这个工程是在 <code>python 3.6</code> 下实现的小工具，主要使用到 <code>tkinter</code> 中的若干控件，以及 <code>PIL</code> 的图片生成和图片放缩，以及截图的功能</p>
+
+<p>源码地址：<a href="https://github.com/catcheroftime/CreateWxCover">https://github.com/catcheroftime/CreateWxCover</a></p>
+
+<h3 id="界面布局">界面布局</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/python/wxcover/frame.png" alt="frame" /></p>
+
+<p>代码很简单，一步一步按照预设的布局添加控件即可</p>
+
+<pre><code class="language-python">def __createMainwinow(self):
+    self.root = tk.Tk()
+    self.root.iconphoto(True, ImageTk.PhotoImage(data=base64.b64decode(logo_ico)))
+    self.root.title(&quot;一键生成微信公众号封面&quot;)
+    self.root.geometry('960x520')
+    self.root.resizable(0,0)
+
+    self.control_frame = ttk.Frame(self.root)
+    self.control_frame.pack(anchor='w', padx=10, pady=5)
+    self.__createElementframe()
+    self.__createMoveFrame()
+
+    # 创建一个Canvas，设置其背景色为白色
+    self.canvas = tk.Canvas(self.root, height=self.cv_height, width=self.cv_width,highlightthickness=0, bg = 'white')
+    self.canvas.pack()
+
+    self.__createRuler()
+</code></pre>
+
+<h3 id="选择本地图片功能">选择本地图片功能</h3>
+
+<p>点击 <code>打开图片</code> 按键，弹出选择文件选择对话框，而这一部分 <code>tkinter</code> 有现成的 <code>filedialog</code></p>
+
+<pre><code class="language-python">from tkinter import filedialog
+
+def __openLocalImage(self):
+    ftypes = [('png files', '*.png'), ('jpg files', '*.jpg') ]
+    file_path = filedialog.askopenfilename(title=&quot;选择背景图片&quot;, filetypes=ftypes )
+    if file_path:
+        self.picpath.set(file_path)
+
+        self.__clearImageInfo()
+        self.originimage = Image.open(file_path)
+        self.__canvasShowImage()
+</code></pre>
+
+<ul>
+<li><code>ftypes</code> 是一个简单的文件筛选的过滤器</li>
+<li>当用户选择图片之后，将地址显示在 <code>图片地址</code> 之后的文本框中</li>
+<li>删除旧的图片</li>
+<li>将原始图片的信息保存到 <code>self.originimage</code>, 因为之后可能需要对图片放大缩小，保存一份原始图片信息</li>
+<li>最后按照我们之前定义的规则绘制图片即可</li>
+</ul>
+
+<p>简单看一下绘制图片 <code>__canvasShowImage()</code> 的函数</p>
+
+<pre><code class="language-python">def __canvasShowImage(self):
+    ratio = self.originimage.width/self.originimage.height
+    if ratio &gt; 1:
+        self.resizeimage = self.originimage.resize((self.curImageSize, int(self.curImageSize/ratio)),Image.NEAREST)
+    else :
+        self.resizeimage = self.originimage.resize((int(self.curImageSize*ratio), self.curImageSize),Image.NEAREST)
+
+    self.tk_image = ImageTk.PhotoImage(self.resizeimage)
+    self.canvas_imgIndex = self.canvas.create_image(self.curImageCenterPos[0]-self.resizeimage.width/2, 
+                                                    self.curImageCenterPos[1]-self.resizeimage.height/2,
+                                                    anchor ='nw',
+                                                    image=self.tk_image)
+    self.__FontChange()
+    self.__createRuler()
+</code></pre>
+
+<p>上一篇文章提过我希望文字和图片尽量居中，对一张图片我需要在保证原比例的情况下，进行一定放缩，让其居中，并且考虑到还有移动功能，使用 <code>self.curImageCenterPos</code> 来保存图片当前的位置，初始值为 <code>self.curImageCenterPos = (self.cv_width/2,self.cv_height/2)</code></p>
+
+<p>哦，对了，引入 <code>PIL</code> 下 <code>ImageTk</code> 对象主要是因为 <code>self.canvas</code> 自带的 <code>PhotoImage</code> 和 <code>BitmapImage</code> 支持的图片样式太少, 并且刚好不支持 <code>png</code> 和 <code>jpg</code> 类型</p>
+
+<pre><code class="language-python">class PhotoImage(Image):
+    &quot;&quot;&quot;Widget which can display colored images in GIF, PPM/PGM format.&quot;&quot;&quot;
+    ...
+
+class BitmapImage(Image):
+    &quot;&quot;&quot;Widget which can display a bitmap.&quot;&quot;&quot;
+    ...
+</code></pre>
+
+<p>最后我还调用了 <code>__FontChange()</code> 和 <code>__createRuler()</code>, 是因为我画布上只有3个元素 <code>图片</code>，<code>文字</code>，<code>标尺</code></p>
+
+<p>并且我定义的 <code>图片</code>，<code>文字</code>，<code>标尺</code> 的关系是 ： <code>标尺</code> &gt; <code>文字</code> &gt; <code>图片</code>, 也就是说，<code>标尺</code> 在 <code>文字</code> 之上，<code>文字</code> 在 <code>图片</code> 之上</p>
+
+<ul>
+<li>当 <code>文字</code> 改动的时候，为了防止 <code>文字</code> 遮盖了 <code>标尺</code>， 需要在绘制完 <code>文字</code> 之后，再绘制 <code>标尺</code></li>
+<li>当 <code>图片</code> 改动的时候，为了防止 <code>图片</code> 遮盖了 <code>文字</code> 和 <code>标尺</code>，需要在绘制完 <code>图片</code> 之后，再绘制 <code>文字</code> 和 <code>标尺</code></li>
+</ul>
+
+<h3 id="输入框控件">输入框控件</h3>
+
+<p>这里的输入框主要有2个，一个是 <code>文本输入框</code>，另一个是 <code>图片地址展示输入框</code>，以 <code>文本输入</code> 为例 ：</p>
+
+<pre><code class="language-python">self.var_text = tk.StringVar()
+self.var_text.trace_add(&quot;write&quot;, self.__FontChange)
+ttk.Entry(self.element_frame, textvariable=self.var_text, width = 30).grid(row=1,column=1)
+</code></pre>
+
+<p><code>StringVar</code> 是 <code>tkinter</code> 中获取控件值的一个好方法，它很单纯的将控件和控件的值信息隔离开，并且 <code>StringVar</code> 也提供了绑定回调函数等功能</p>
+
+<p>作为文本输入框，当文字改变的时候，需要实时更新画面中的文字信息，所以需要给 <code>self.var_text</code> 绑定一个回调函数 <code>self.var_text.trace_add(&quot;write&quot;, self.__FontChange)</code></p>
+
+<p>简单点解释就是 指当文本输入框的值被被写入<code>write</code> 的时候，也就是有改动时候会调用我们定义的 <code>self.__FontChange</code> 函数,而关于 <code>__FontChange</code> 函数可以简单看一下</p>
+
+<pre><code class="language-python">def __FontChange(self, *args):
+    # 删除旧的字体
+    if self.canvas_textIndex :
+        self.canvas.delete(self.canvas_textIndex)
+
+    if self.var_text.get():
+        f = font.Font(  family = self.var_fontfamily.get(), 
+                        size = self.var_fontsize.get(),
+                        weight = &quot;bold&quot; if self.fontweight_status else &quot;normal&quot;,
+                        slant = &quot;italic&quot; if self.fontslant_status else &quot;roman&quot;,
+                        underline = 1 if self.fontunderline_status else 0,
+                        overstrike = 1 if self.fontoverstrike_status else 0 )
+
+        self.canvas_textIndex = self.canvas.create_text(self.curTextPos[0],
+                                                        self.curTextPos[1],
+                                                        anchor=&quot;center&quot;, 
+                                                        text=self.var_text.get(), 
+                                                        font=f, 
+                                                        fill = self.color_button[&quot;background&quot;])
+        self.__createRuler()
+</code></pre>
+
+<p>在 <code>self.canvas</code> 写文字的时候</p>
+
+<ul>
+<li>需要先将原本的文字删除掉， <code>self.canvas_textIndex</code> 是之前文字在画布上的索引</li>
+<li>然后获取文本输入框中的文字信息，结合其他文字属性的信息，生成新的 <code>font.Font()</code> 对象，其中包括文字的 <code>字体</code>，<code>大小</code>，<code>粗细</code>，<code>斜体</code>，<code>下划线</code>，<code>删除线</code> 这些设置</li>
+<li>最后在画布上绘制 <code>self.canvas.create_text()</code></li>
+<li>为了防止 <code>文字</code> 将 <code>标尺</code> 遮盖了，重新绘制一遍标尺 <code>self.__createRuler()</code></li>
+</ul>
+
+<h3 id="下拉菜单控件">下拉菜单控件</h3>
+
+<p>下拉菜单有，字体样式的下拉菜单、字体大小的下拉菜单以及移动对象选择的下拉菜单，我这里以字体样式的下拉菜单为例，介绍一下 <code>tkinter</code> 下 <code>combobox</code> 的使用方法</p>
+
+<pre><code class="language-python">def __createFontFamilyCombobox(self):
+    self.var_fontfamily = tk.StringVar()
+    self.var_fontfamily.trace_add(&quot;write&quot;, self.__FontChange)
+    # 创建字体的下拉菜单
+    fontfamily_combobox = ttk.Combobox(self.element_frame, textvariable=self.var_fontfamily)
+    fontfamily_combobox['state'] = &quot;readonly&quot;
+    # 获取当前系统中所有的字体，并筛选出首字母是中文的字体           
+    list_families = []
+    for i in font.families():
+        if '\u4e00' &lt;= i[0] &lt;= '\u9fff':
+            list_families.append(i)
+    self.families = tuple(list_families)            
+    fontfamily_combobox['value'] = self.families
+        
+    # 默认选用 微软雅黑字体
+    try:
+        currentindex = self.families.index(&quot;微软雅黑&quot;)
+    except:
+        currentindex = 0
+    fontfamily_combobox.current(currentindex)
+    return fontfamily_combobox
+</code></pre>
+
+<p>字体样式下拉菜单 <code>fontfamily_combobox</code> ：</p>
+
+<ul>
+<li>绑定一个 <code>self.var_fontfamily</code> 对象，并且当值改变的时候调用 <code>self.__FontChange</code><br /></li>
+<li><code>fontfamily_combobox</code> 设置为只读状态，防止用户输入导致样式被改动</li>
+<li>通过 <code>font.families()</code> 获取当前系统所有字体样式<br />
+系统的样式太多是一方面原因，另一方面原因是我大部分都是中文，而且恰好字体名称此时一般也是中文，所以我筛选出中文的字体名称</li>
+<li>最后下拉菜单默认值设置为 <code>微软雅黑</code></li>
+</ul>
+
+<h3 id="颜色选择器">颜色选择器</h3>
+
+<p>颜色选择器，<code>tkinter</code> 也提供了超简单的对象 <code>colorchooser</code>，仅仅需要一行代码 <code>colorchooser.askcolor()</code>, 简单看一下我摘录出的部分代码</p>
+
+<pre><code class="language-python">from tkinter import colorchooser
+
+...
+self.color_button = tk.Button(self.font_frame, text =&quot;&quot;, width = 3, background=&quot;#3C70C6&quot;,command = self.__ColorChange)
+...
+
+def __ColorChange(self):
+    result = colorchooser.askcolor()
+    if result[1]:
+        self.color_button[&quot;background&quot;] = result[1]
+        self.__FontChange()
+</code></pre>
+
+<p>我定义了一个按键 <code>self.color_button</code>, 这个按键的背景色就是当前文字的颜色，并且点击的时候调用 <code>self.__ColorChange()</code> 函数</p>
+
+<ul>
+<li>打开颜色选择器，判断用户选择结果</li>
+<li>结果不为空的时候，将得到的颜色结果（ <code>result</code> 的结构 <code>((128.5, 0.0, 255.99609375), '#8000ff')</code> ），也就是 <code>result[1]</code> 赋给 <code>self.color_button</code> 的背景色 <code>background</code> 属性</li>
+<li>最后重新绘制一下画布上的文字即可</li>
+</ul>
+
+<h3 id="按键样式">按键样式</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/python/wxcover/edit_text.gif" alt="frame" /></p>
+
+<p>我最初的本意是实现 <code>windows</code> 下自带的 <code>画图</code> 中对文本的编辑功能的样式，最后功能实现了，但是在样式上还是有点不太如意</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/python/wxcover/font_demo.png" alt="font_demo" /></p>
+
+<p>先看一下我的实现,我也还是摘录出的部分代码</p>
+
+<pre><code class="language-python">def __changeFontweightStyle(self):
+    if not self.fontweight_status:
+        self.fontweight_checkbutton['style'] = 'check_bold.TButton'
+    else:
+        self.fontweight_checkbutton['style'] = 'bold.TButton'
+
+    self.fontweight_status = bool(1-self.fontweight_status)
+    self.__FontChange()
+
+# 粗体
+def __createFontBoldCheckButton(self):
+    self.fontweight_status = False
+    ttkstyle = ttk.Style()
+    ttkstyle.configure('bold.TButton', font=('宋体', 8, 'bold'))
+    ttkstyle.configure('check_bold.TButton', font=('宋体', 8, 'bold'),background =&quot;#0078D7&quot;)
+    self.fontweight_checkbutton = ttk.Button(self.font_frame, 
+                                             text =&quot;B&quot;, 
+                                             style='bold.TButton', 
+                                             width=2, 
+                                             takefocus=False,  
+                                             command = self.__changeFontweightStyle)
+    return self.fontweight_checkbutton
+</code></pre>
+
+<p>我就是单纯使用 <code>ttk.Button</code> 按键来实现的，通过点击改变不同的样式，来实现选中和未选中的样式</p>
+
+<ul>
+<li><code>takefocus</code> 设置成 <code>False</code> 是不想按键在焦点的情况下出现虚线的外框</li>
+<li><code>style</code> 就是设置按键的样式</li>
+</ul>
+
+<p>最后效果不太理想的原因主要就是 <code>ttk.Style()</code> 是可以设置整体控件的风格，主要是以下几种</p>
+
+<p><code>('winnative', 'clam', 'alt', 'default', 'classic', 'vista', 'xpnative')</code></p>
+
+<p>而我使用风格 <code>vista</code> 虽然按键更好看，但是背景色这个属性 <code>background</code> 显示的就是不太明显，当我在设置其他风格的时候，就比较明显了,但是不好看</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/python/wxcover/altstyle.png" alt="alt_style" /></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/python/wxcover/clam.png" alt="clam_style" /></p>
+
+<p>感觉还是我对 <code>ttk.Style</code> 的用法存在问题</p>
+
+<h3 id="保存图片">保存图片</h3>
+
+<p>保存图片我使用的是比较原始的办法，直接截图，截取画布区域保存成图片</p>
+
+<pre><code class="language-python">def __saveImage(self):
+    self.__clearRuler()
+    self.canvas.update()
+    # 获取初始位置
+    x0 = self.root.winfo_rootx() + self.canvas.winfo_x()
+    y0 = self.root.winfo_rooty() + self.canvas.winfo_y()
+    # 获取结束位置
+    x1 = x0 + self.canvas.winfo_width()
+    y1 = y0 + self.canvas.winfo_height()
+    size = (x0, y0, x1, y1)
+    pic = ImageGrab.grab(size)
+    pic.save(&quot;./cover.png&quot;)
+    self.__createRuler()
+</code></pre>
+
+<p>因为保存图片的时候不能将 <code>标尺</code> 也保存下来，所有先清空 <code>标尺</code> ，然后找出画布 <strong>左上角</strong>，<strong>右下角</strong> 的2个点，截图，保存图片</p>
+
+<p>其实使用截图会存在一个问题，因为是通过截取桌面指定区域来实现的保存图片，所以当 <code>canvas</code> 不能完整在桌面上显示的时候，截图的结果其实就错误了，如下图
+<img src="https://catcheroftime.github.io/images/blog/python/wxcover/failure.png" alt="failure" /><br />
+这也是我在上一篇提到的选择 <code>940:400</code> 大小画布的原因</p>
+
+<blockquote>
+<p>现在电脑的屏幕分辨率最少都是 <code>1366*768</code>, 在 <code>2.35:1</code> 的前提下我们将画布大小固定在 <code>940:400</code>，这样封面大小感觉在电脑上呈现时应该还不错</br></p>
+</blockquote>
+
+<p>我需要保证最后画布可以完整的展示在桌面上</p>
+
+<p>当然最后保存图片也有其它的实现方式</p>
+
+<ul>
+<li>比如通过 <code>PIL</code> 生成底片，然后对应将导入的图片和写入的文字直接写到底片中，用户对应的操作，也对应在该底片上操作，最后保存图片也可以，但是我觉得还是比较麻烦；</li>
+<li>或许 <code>canvas</code> 提供类似于获取画布上所有信息的简单接口，直接保存图片也可以，但是在看 <code>canvas</code> 接口的时候没有太仔细去找</li>
+</ul>
+
+<p>所有选择 <code>截图</code> 这种比较容易讨巧，但是可能会有风险的方案了</p>
+
+<h2 id="打包细节">打包细节</h2>
+
+<p>因为最后我只想打包出一个 <code>exe</code> 的文件，那么我使用到图片等资源文件也需要想办法打包到 <code>exe</code> 中，所有第一时间想到的办法是，将图片通过 <code>base64</code> 编码成二进制信息，并且以文件名作为二进制字符串的对象名，保存到一个 python 文件中</p>
+
+<p>所以先简单实现一个转换的脚本 <code>pictobase64.py</code></p>
+
+<pre><code class="language-python">import base64
+import glob
+import os
+
+# 使用 pyinstaller 时将资源文件直接导入到 exe 时执行的脚本
+# 执行此文件，生成 `resource.py` 文件
+
+# 需要导入到 EXE 的图片地址
+import_pictures = glob.glob(r'./resource/*')
+
+# 导出途径
+target_path = r'./resource.py'
+
+# 删除旧的文件
+if os.path.exists(target_path):
+    os.remove(target_path)
+
+# 以追加的形式将通过 base64 转换后图片信息存储导出的文件中
+with open(target_path,&quot;a+&quot;) as f:
+    for file_path in import_pictures:
+        # 以 文件名称_文件类型 作为二进制信息的对象名
+        file_name = (os.path.split(file_path)[-1]).replace('.', '_')
+        with open(file_path,&quot;rb&quot;) as pic:
+            b64str = base64.b64encode(pic.read())
+            write_data = f'{file_name} = {b64str}'
+            f.write(write_data)
+            f.write('\n')
+</code></pre>
+
+<p>我们将 <code>./resource/</code> 路径下的所有的文件通过 <code>base64</code> 编码成二进制信息后存入 <code>resource.py</code></p>
+
+<p>使用起来也还算简单，通过执行 <code>pictobase64.py</code> 生成 <code>resource.py</code> 文件，导入 <code>from resource import *</code></p>
+
+<p>写一段简单的测试代码</p>
+
+<pre><code class="language-python">import tkinter as tk
+from PIL import ImageGrab, ImageTk, Image
+from resource import *
+import base64
+
+root = tk.Tk()
+root.iconphoto(True, ImageTk.PhotoImage(data=base64.b64decode(logo_ico)))
+root.title(&quot;一键生成微信公众号封面&quot;)
+root.geometry('960x520')
+root.resizable(0,0)
+root.mainloop()
+</code></pre>
+
+<h2 id="总结">总结</h2>
+
+<p>主要总结了一些我觉得还挺值得记录的细节，可能介绍的有点乱，感兴趣的可以自己看一下源码</p>
+
+<p>完整的源码地址：<a href="https://github.com/catcheroftime/CreateWxCover">https://github.com/catcheroftime/CreateWxCover</a></p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/python" role="button">python </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-02/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%B0%81%E9%9D%A2%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%99%A8/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>微信公众号封面一键生成器</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bb%a3%e7%a0%81%e7%bb%86%e8%8a%82">
+												 代码细节
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%95%8c%e9%9d%a2%e5%b8%83%e5%b1%80">
+												 界面布局
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%80%89%e6%8b%a9%e6%9c%ac%e5%9c%b0%e5%9b%be%e7%89%87%e5%8a%9f%e8%83%bd">
+												 选择本地图片功能
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%be%93%e5%85%a5%e6%a1%86%e6%8e%a7%e4%bb%b6">
+												 输入框控件
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%8b%e6%8b%89%e8%8f%9c%e5%8d%95%e6%8e%a7%e4%bb%b6">
+												 下拉菜单控件
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%a2%9c%e8%89%b2%e9%80%89%e6%8b%a9%e5%99%a8">
+												 颜色选择器
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8c%89%e9%94%ae%e6%a0%b7%e5%bc%8f">
+												 按键样式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bf%9d%e5%ad%98%e5%9b%be%e7%89%87">
+												 保存图片
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%89%93%e5%8c%85%e7%bb%86%e8%8a%82">
+												 打包细节
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

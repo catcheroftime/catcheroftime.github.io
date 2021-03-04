@@ -1,0 +1,2300 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="之前比较泛泛的介绍了 APScheduler 库，但是其中有一些模块的接口需要额外注意一下，本篇文章比较干，真正开发的时候，可以当成工具用">
+  
+  <meta property="og:title" content="APScheduler API总结" />
+<meta property="og:description" content="之前比较泛泛的介绍了 APScheduler 库，但是其中有一些模块的接口需要额外注意一下，本篇文章比较干，真正开发的时候，可以当成工具用" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-12/apscheduler-api%E6%80%BB%E7%BB%93/" />
+<meta property="article:published_time" content="2020-12-21T19:35:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-12-21T19:35:00&#43;08:00"/>
+
+
+  <title>
+  
+       APScheduler API总结 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-12/apscheduler-api%E6%80%BB%E7%BB%93/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/python"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> python </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">APScheduler API总结</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Dec 21, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>之前比较泛泛的介绍了 <code>APScheduler</code> 库，但是其中有一些模块的接口需要额外注意一下，本篇文章比较干，真正开发的时候，可以当成工具用</p>
+
+<h2 id="event">event</h2>
+
+<p><code>event</code> 主要是 <code>APScheduler</code> 中触发的事件类，我们可以通过 <code>add_listener()</code> 为调度程序绑定监听函数，在收到指定事件后做一些自定义的操作</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">事件</th>
+<th align="left">对应枚举值</th>
+<th align="left">描述</th>
+<th align="left">归属类</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">EVENT_SCHEDULER_STARTED</td>
+<td align="left">1</td>
+<td align="left">调度程序启动</td>
+<td align="left">SchedulerEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_SCHEDULER_SHUTDOWN</td>
+<td align="left">2</td>
+<td align="left">调度程序关闭</td>
+<td align="left">SchedulerEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_SCHEDULER_PAUSED</td>
+<td align="left">4</td>
+<td align="left">调度程序中任务处理暂停</td>
+<td align="left">SchedulerEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_SCHEDULER_RESUMED</td>
+<td align="left">8</td>
+<td align="left">调度程序中任务处理恢复</td>
+<td align="left">SchedulerEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_EXECUTOR_ADDED</td>
+<td align="left">16</td>
+<td align="left">将执行器添加到调度程序中</td>
+<td align="left">SchedulerEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_EXECUTOR_REMOVED</td>
+<td align="left">32</td>
+<td align="left">执行器从调度程序中删除</td>
+<td align="left">SchedulerEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_JOBSTORE_ADDED</td>
+<td align="left">64</td>
+<td align="left">将任务存储添加到调度程序中</td>
+<td align="left">SchedulerEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_JOBSTORE_REMOVED</td>
+<td align="left">128</td>
+<td align="left">任务存储从调度程序中删除</td>
+<td align="left">SchedulerEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_ALL_JOBS_REMOVED</td>
+<td align="left">256</td>
+<td align="left">所有任务从所有任务存储中删除或从一个特定的任务存储中删除</td>
+<td align="left">SchedulerEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_JOB_ADDED</td>
+<td align="left">512</td>
+<td align="left">任务添加到任务存储中</td>
+<td align="left">JobEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_JOB_REMOVED</td>
+<td align="left">1024</td>
+<td align="left">从任务存储中删除了任务</td>
+<td align="left">JobEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_JOB_MODIFIED</td>
+<td align="left">2048</td>
+<td align="left">从调度程序外部修改了任务</td>
+<td align="left">JobEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_JOB_EXECUTED</td>
+<td align="left">4096</td>
+<td align="left">任务被成功执行</td>
+<td align="left">JobExecutionEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_JOB_ERROR</td>
+<td align="left">8192</td>
+<td align="left">任务在执行期间引发异常</td>
+<td align="left">JobExecutionEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_JOB_MISSED</td>
+<td align="left">16384</td>
+<td align="left">错过了任务执行</td>
+<td align="left">JobExecutionEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_JOB_SUBMITTED</td>
+<td align="left">32768</td>
+<td align="left">任务已经提交到执行器中执行</td>
+<td align="left">JobSubmissionEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_JOB_MAX_INSTANCES</td>
+<td align="left">65536</td>
+<td align="left">任务因为达到最大并发执行时，触发的事件</td>
+<td align="left">JobSubmissionEvent</td>
+</tr>
+
+<tr>
+<td align="left">EVENT_ALL</td>
+<td align="left"></td>
+<td align="left">包含以上的所有事件</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+
+<p>不同事件因为基于不同的类，因此可以获取到的信息是不一致的<br />
+但 <code>event</code> 中有一个公共的字段 <code>code</code> (枚举值), 所以可以通过 <code>code</code> 来识别出具体是哪一种事件，然后在获取具体的一些字段信息</p>
+
+<p>主要分为4个类，主要看一下4个类下独有的字段：</p>
+
+<h3 id="schedulerevent">SchedulerEvent</h3>
+
+<ul>
+<li><code>alias</code> 添加或删除的任务存储或执行程序的别名(如果有)</li>
+</ul>
+
+<h3 id="jobevent">JobEvent</h3>
+
+<ul>
+<li><code>job_id</code> 任务的标识ID</li>
+<li><code>jobstore</code> 包含相关任务的任务存储的别名</li>
+</ul>
+
+<h3 id="jobsubmissionevent">JobSubmissionEvent</h3>
+
+<ul>
+<li><code>job_id</code> 任务的标识ID</li>
+<li><code>jobstore</code> 包含相关任务的任务存储的别名</li>
+<li><code>scheduled_run_times</code> 计划运行任务的时间列表</li>
+</ul>
+
+<h3 id="jobexecutionevent">JobExecutionEvent</h3>
+
+<ul>
+<li><code>job_id</code> 任务的标识ID</li>
+<li><code>jobstore</code> 包含相关任务的任务存储的别名</li>
+<li><code>scheduled_run_time</code> 计划运行任务的时间</li>
+<li><code>retval</code> 成功执行的任务的返回值</li>
+<li><code>exception</code> 任务运行引起的异常</li>
+<li><code>traceback</code> 任务出错的位置</li>
+</ul>
+
+<h2 id="job">Job</h2>
+
+<p><code>Job</code> 包含了很多设置，它包含了 <code>triggers(触发器)</code>, <code>executor(执行器)</code> 的信息，还有一些调度相关配置信息，例如允许运行的最多实例数，允许延迟执行的最长时间，是否合并等等，难点主要在创建，<strong>但是官方是不希望用户直接通过这个类来实例化 <code>Job</code></strong>， 而是通过调度程序 <code>scheduler</code> 中的 <code>add_job()</code> 来实现，这里简单了解一些 <code>Job</code> 保存一些信息，和关于操作 <code>Job</code> 的接口，方便我们之后阅读它的源码</p>
+
+<h3 id="job-scheduler-id-none-kwargs">Job(scheduler, id=None, **kwargs)</h3>
+
+<p>实例化任务</p>
+
+<ul>
+<li><code>scheduler</code> 需要绑定的调度程序</li>
+<li><code>id(str)</code> 任务的唯一标识符</li>
+<li><code>name(str)</code> 任务的名称</li>
+<li><code>func</code> 任务实际执行的函数</li>
+<li><code>args(tuple|list)</code> 函数可能需要的传入参数</li>
+<li><code>kwargs(dist)</code> 一些其他的可调用的关键字参数，比如描述触发器的相关字段等等</li>
+<li><code>coalesce(bool)</code> 是否在多个运行时间到期时仅运行一次任务</li>
+<li><code>trigger</code> 触发器对象</li>
+<li><code>executor(str)</code> 执行器名称</li>
+<li><code>misfire_grace_time(int)</code> 允许此任务延迟执行的最大时间(单位秒)</li>
+<li><code>max_instances(int)</code> 该任务允许的并发执行的最大实例数量</li>
+<li><code>next_run_time(datetime.datetime)</code> 此任务下一次计划运行的时间</li>
+</ul>
+
+<h3 id="modify-changes">modify(**changes)</h3>
+
+<ul>
+<li><code>Return type</code> Job 的实例</li>
+</ul>
+
+<p>对该任务的配置进行修改，并将其保存在关联的任务存储中，可接受的关键字参数与创建此类的参数相同</p>
+
+<h3 id="pasue">pasue()</h3>
+
+<ul>
+<li><code>Return type</code> Job 的实例</li>
+</ul>
+
+<p>暂停该任务的执行</p>
+
+<h3 id="remove">remove()</h3>
+
+<p>取消任务，并将其从其关联的任务存储中删除</p>
+
+<h3 id="reschedule-trigger-trigger-args">reschedule(trigger, **trigger_args)</h3>
+
+<ul>
+<li><code>Return type</code> Job 的实例</li>
+</ul>
+
+<p>在此任务上切换触发器</p>
+
+<h3 id="resume">resume()</h3>
+
+<ul>
+<li><code>Return type</code> Job 的实例</li>
+</ul>
+
+<p>如果之前已暂停，恢复该任务的计划</p>
+
+<h3 id="property-pending">property pending</h3>
+
+<p>如果引用的任务仍在等待添加到其指定的任务存储中，则返回True。</p>
+
+<h2 id="triggers">triggers</h2>
+
+<p>触发器是值得比较详细介绍的，主要是触发方式有 <strong>4</strong> 种</p>
+
+<ul>
+<li><code>date</code> 指定时间运行的一次性任务</li>
+<li><code>inteval</code> 间隔时间运行的循环任务</li>
+<li><code>cron</code> 定时任务</li>
+<li><code>combining</code> 组合任务</li>
+</ul>
+
+<h3 id="date">date</h3>
+
+<p><code>date</code> 是执行一次性任务，所有它的配置简单</p>
+
+<ul>
+<li><code>run_date</code> 任务执行的时间</li>
+<li><code>timezone</code> 时间的时区</li>
+</ul>
+
+<pre><code class="language-python">from datetime import date
+from apscheduler.schedulers.blocking import BlockingScheduler
+
+sched = BlockingScheduler()
+
+def my_job(text):
+    print(text)
+
+#您可以指定应运行任务的确切时间：
+sched.add_job(my_job, 'date', run_date=datetime(2020, 12, 16, 16, 30, 5), args=['text'])
+
+# 运行日期也可以作为文本给出
+sched.add_job(my_job, 'date', run_date='2020-12-16 16:30:05', args=['text'])
+
+# 要添加要立即运行的任务
+sched.add_job(my_job, args=['text'])
+sched.start()
+</code></pre>
+
+<h3 id="inteval">inteval</h3>
+
+<p><code>inteval</code> 是配置间隔时间运行的循环执行的任务，它可以通过以下时间来控制</p>
+
+<ul>
+<li><code>days(int)</code> 等待天数</li>
+<li><code>weeks(int)</code> 等待多少周</li>
+<li><code>hours(int)</code> 等待小时数</li>
+<li><code>minutes(int)</code> 等待的分钟数</li>
+<li><code>seconds(int)</code> 等待的秒数</li>
+<li><code>start_date(datetime|str)</code> 触发的开始日期/时间(包含)</li>
+<li><code>end_date(datetime|str)</code> 可能触发的最晚日期/时间(包含)</li>
+<li><code>timezone(datetime.tzinfo|str)</code> 用于日期/时间计算的时区(默认为调度程序的时区)</li>
+<li><code>jitter(int|None)</code> 提前或延迟执行任务的最大随机时间(单位秒)</li>
+</ul>
+
+<p>一般比如任务每隔20分钟执行一次，就可以写成</p>
+
+<pre><code class="language-python">from apscheduler.schedulers.blocking import BlockingScheduler
+
+def interval_task(text):
+    print(text)
+
+scheduler = BlockingScheduler()
+scheduler.add_job(func=interval_task, trigger='interval', minutes=20, args=['text'])
+scheduler.start()
+</code></pre>
+
+<p>一般写个简单的监控程序，监控内存网络等等，<code>inteval</code> 是一个很简单的选择</p>
+
+<h3 id="cron">cron</h3>
+
+<p><code>corn</code> 可以说是最强大的，能实现的计划也是最全面的，主要对以下参数进行配置</p>
+
+<ul>
+<li><code>year(int|str)</code> 4位数的年份</li>
+<li><code>month(int|str)</code> month (1-12 或者 &lsquo;jan&rsquo;, &lsquo;feb&rsquo;, &lsquo;mar&rsquo;, &lsquo;apr&rsquo;, &lsquo;may&rsquo;, &lsquo;jun&rsquo;, &lsquo;jul&rsquo;, &lsquo;aug&rsquo;, &lsquo;sep&rsquo;, &lsquo;oct&rsquo;, &lsquo;nov&rsquo;, &lsquo;dec&rsquo;)</li>
+<li><code>day(int|str)</code> (1-31) 天</li>
+<li><code>week(int|str)</code> ISO 周 (1-53)</li>
+<li><code>day_of_week(int|str)</code> 工作日的编号或名称 (0-6 or mon,tue,wed,thu,fri,sat,sun)</li>
+<li><code>hour(int|str)</code> 小时(0-23)</li>
+<li><code>minute(int|str)</code> 分钟(0-59)</li>
+<li><code>second(int|str)</code> 秒(0-59)</li>
+<li><code>start_date(datetime|str)</code> 触发的开始日期/时间(包含)</li>
+<li><code>end_date(datetime|str)</code> 可能触发的最晚日期/时间(包含)</li>
+<li><code>timezone(datetime.tzinfo|str)</code> 用于日期/时间计算的时区(默认为调度程序的时区)</li>
+<li><code>jitter(int|None)</code> 提前或延迟执行任务的最大随机时间(单位秒)</li>
+</ul>
+
+<p>其中 <code>year</code>, <code>month</code>, <code>day</code>, <code>week</code>, <code>day_of_week</code>, <code>hour</code>, <code>minute</code>, <code>second</code> 这些字段是支持表达式配置的</p>
+
+<p>而现在默认支持的表达式格式如下：</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">表达式</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">*</td>
+<td align="left">所有值</td>
+</tr>
+
+<tr>
+<td align="left">*/a</td>
+<td align="left">从 a 值开始，触发每个 a 值</td>
+</tr>
+
+<tr>
+<td align="left">a-b</td>
+<td align="left">对 a-b 范围内的任何值进行触发（a必须小于b）</td>
+</tr>
+
+<tr>
+<td align="left">a-b/c</td>
+<td align="left">在 a-b 范围内触发每个 c 值</td>
+</tr>
+
+<tr>
+<td align="left">xth y</td>
+<td align="left">在一个月中第 x 个 周 y 触发 ( x 支持的参数 <code>1st</code>, <code>2nd</code>, <code>3rd</code>, <code>4th</code>, <code>5th</code>, <code>last</code>)</td>
+</tr>
+
+<tr>
+<td align="left">last x</td>
+<td align="left">在一个月中最后一个 周 x 触发</td>
+</tr>
+
+<tr>
+<td align="left">last</td>
+<td align="left">在一个月的最后一天触发</td>
+</tr>
+
+<tr>
+<td align="left">x,y,z</td>
+<td align="left">可以用逗号隔开多个表达式</td>
+</tr>
+</tbody>
+</table>
+
+<p>看描述就知道这些表达式，并不是满足上面提到的所有字段，这里先不展开了，之后会有一篇关于源码的总结，会介绍这方面的知识</p>
+
+<h3 id="combining">combining</h3>
+
+<p>这个触发器主要是以不同的方式结合其他触发器的行为，生成比任何单个触发器更复杂的计划</p>
+
+<ul>
+<li><code>AndTrigger</code> <strong>始终返回所有给定触发器可以达成一致</strong> 最早的下一次触发时间。当任何给定触发器完成其计划时，触发器被视为已完成。</li>
+<li><code>OrTrigger</code> <strong>始终返回由任何给定触发器</strong>  产生的最早的下一次触发时间。当所有给定触发器都已完成其计划时，触发器将被视为已完成。</li>
+</ul>
+
+<p>它们的参数都是一样的</p>
+
+<ul>
+<li><code>triggers(list)</code> 需要组合的触发器们</li>
+<li><code>jitter (int|None)</code> 一个随机数</li>
+</ul>
+
+<p>每 2 小时运行一次，但仅在周六和周日运行：<code>job_function</code></p>
+
+<pre><code class="language-python">from apscheduler.triggers.combining import AndTrigger
+from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.triggers.cron import CronTrigger
+
+trigger = AndTrigger([IntervalTrigger(hours=2),
+                      CronTrigger(day_of_week='sat,sun')])
+scheduler.add_job(job_function, trigger)
+</code></pre>
+
+<p>每周一凌晨 2 点运行，每周二下午 3 点运行：<code>job_function</code></p>
+
+<pre><code class="language-python">trigger = OrTrigger([CronTrigger(day_of_week='mon', hour=2),
+                     CronTrigger(day_of_week='tue', hour=15)])
+scheduler.add_job(job_function, trigger)
+</code></pre>
+
+<h2 id="basejobstore">BaseJobStore</h2>
+
+<p>任务存储主要就是存储任务的库， 而 <code>BaseJobStore</code> 是以下几个类的基类，除了初始化存在一点差异，提供的接口基本是一致的，这里主要就介绍基类了</p>
+
+<ul>
+<li><code>MemoryJobStore</code></li>
+<li><code>MongoDBJobStore</code></li>
+<li><code>RedisJobStore</code></li>
+<li><code>RethinkDBJobStore</code></li>
+<li><code>SQLAlchemyJobStore</code></li>
+<li><code>ZooKeeperJobStore</code></li>
+</ul>
+
+<h3 id="add-job-job">add_job(job)</h3>
+
+<ul>
+<li><code>job(Job)</code> 需要添加的任务</li>
+<li>异常 <code>ConflictingIdError</code> 任务的标识符 <code>job_id</code> 存在相同的时候抛出异常</li>
+</ul>
+
+<p>添加一个任务到任务存储中</p>
+
+<h3 id="get-all-jobs">get_all_jobs()</h3>
+
+<ul>
+<li><code>Return type</code> list[Job]</li>
+</ul>
+
+<p>返回此任务存储中所有任务的列表，返回的任务列表按下一次运行时间(升序)排序。暂停的任务（next_run_time == None）排在最后</p>
+
+<h3 id="get-due-jobs-now">get_due_jobs(now)</h3>
+
+<ul>
+<li><code>now</code> (datetime.datetime) 当前的日期时间</li>
+<li><code>Return type</code> list[Job]</li>
+</ul>
+
+<p>返回早于或等于 <code>next_run_time</code> 的任务列表，返回的任务必须按下一个运行时间(升序)排序</p>
+
+<h3 id="get-next-run-time">get_next_run_time()</h3>
+
+<ul>
+<li><code>Return type</code> datetime.datetime</li>
+</ul>
+
+<p>返回存储在此任务存储中的所有任务的最早运行时间或者 None(如果没有活动的任务)</p>
+
+<h3 id="lookup-job-job-id">lookup_job(job_id)</h3>
+
+<ul>
+<li><code>job_id(str|unicode)</code> 任务的标识符</li>
+<li><code>Return type</code> Job</li>
+</ul>
+
+<p>返回特定的任务，或者 None (找不到)</p>
+
+<h3 id="remove-all-jobs">remove_all_jobs()</h3>
+
+<p>从该任务存储中删除所有的任务</p>
+
+<h3 id="remove-job-job-id">remove_job(job_id)</h3>
+
+<ul>
+<li><code>job_id(str|unicode)</code> 任务的标识符</li>
+<li>异常 <code>JobLookupError</code> 如果任务不存在</li>
+</ul>
+
+<p>从该任务存储中删除指定的任务</p>
+
+<h3 id="shutdown">shutdown()</h3>
+
+<p>释放该任务存储上的所有资源</p>
+
+<h3 id="start-scheduler-alias">start(scheduler,alias)</h3>
+
+<ul>
+<li><code>scheduler</code> 管理这个任务存储的调度程序</li>
+<li><code>alias</code> 此任务存储的别名</li>
+</ul>
+
+<h3 id="update-job-job">update_job(job)</h3>
+
+<ul>
+<li><code>job</code> 要更新的任务</li>
+<li>异常 <code>JobLookupError</code> 如果任务不存在</li>
+</ul>
+
+<p>用给定的较新的版本替换任务存储中的任务</p>
+
+<h2 id="baseexecutor">BaseExecutor</h2>
+
+<p>执行器在我们写代码过程中基本不会直接用到，因为我们将执行器参数在配置 <code>schedulers</code> 的时候，就传入了，接下来任务需要执行的时候，<code>schedulers</code> 会根据配置安排执行器执行</p>
+
+<p><code>BaseExecutor</code> 是以下几个类的基类，而接口主要都在这个基类中定义了，子类负责自己的实现而已</p>
+
+<ul>
+<li><code>AsyncIOExecutor</code></li>
+<li><code>DebugExecutor</code></li>
+<li><code>GeventExecutor</code></li>
+<li><code>ThreadPoolExecutor</code></li>
+<li><code>ProcessPoolExecutor</code></li>
+<li><code>TwistedExecutor</code></li>
+</ul>
+
+<h3 id="shutdown-wait-true">shutdown(wait=True)</h3>
+
+<ul>
+<li><code>wait(bool)</code> 设置成 <code>True</code> 则等待执行器中所有正在执行的任务结束在停止</li>
+</ul>
+
+<p>停止这个执行器</p>
+
+<h3 id="start-scheduler-alias-1">start(scheduler, alias)</h3>
+
+<ul>
+<li><code>scheduler(apscheduler.schedulers.base.BaseScheduler)</code> 管理这个执行器的调度程序</li>
+<li><code>alias(str|unicode)</code> 此执行器的别名</li>
+</ul>
+
+<p>当调度程序正在启动或正在将执行器添加到已在运行的调度程序时。</p>
+
+<p>简单点说就在 <code>schedulers</code> 已经启动后，如果我们需要添加新的执行器，需要手动调用 <code>start</code> 来初始化执行器</p>
+
+<h3 id="submit-job-job-run-times">submit_job(job, run_times)</h3>
+
+<ul>
+<li><code>job(Job)</code> 要执行的工作</li>
+<li><code>run_times(list[datetime])</code> 指定应在何时运行任务的日期时间列表</li>
+<li>异常 <code>MaxInstancesReachedError</code> 如果达到了这个任务能同时运行的最大实例数时抛出的异常</li>
+</ul>
+
+<p>提交任务以执行</p>
+
+<h2 id="basescheduler">BaseScheduler</h2>
+
+<p>调度程序统筹了任务存储，任务的触发器和执行器，而 <code>BaseScheduler</code> 是以下几个类的基类，所有这里主要就是介绍基类提供的接口函数</p>
+
+<ul>
+<li><code>BackgroundScheduler</code></li>
+<li><code>BlockingScheduler</code></li>
+<li><code>AsyncIOScheduler</code></li>
+<li><code>GeventScheduler</code></li>
+<li><code>TornadoScheduler</code></li>
+<li><code>TwistedScheduler</code></li>
+</ul>
+
+<h3 id="basescheduler-gconfig-options">BaseScheduler(gconfig={}, **options)</h3>
+
+<p>初始化调度程序，其中涉及到很多配置参数</p>
+
+<ul>
+<li><code>logger (str|logging.Logger)</code> 日志输出</li>
+<li><code>timezone (str|datetime.tzinfo)</code> 默认时区（默认为本地时区）</li>
+<li><code>jobstore_retry_interval (int|float)</code> 从 <code>jobstores</code> 中取任务失败后，重试的间隔</li>
+<li><code>job_defaults (dict)</code>
+
+<ul>
+<li><code>max_instances</code> : 同一个任务同时允许运行的最大实例，默认为 <strong>1</strong>, 比如一个耗时10分钟任务，但是5分钟执行一次，如果使用默认值为1， 0分钟的时候启动1个实例，那么5分钟的时候就不会在启动新的实例了，因为已经有1个实例在执行了</li>
+<li><code>coalesce</code> : 当同一个任务因为某些原因导致同时触发时，是否将任务合并成一个任务，默认 <code>False</code></li>
+<li><code>misfire_grace_time</code> : 当真正执行任务的时间与计划执行时间的误差，也就是在设置的误差范围内，任务被调用到，该任务还是会被执行，反之则改任务状态就会为 <code>EVENTJOBMISSED</code>，不执行</li>
+</ul></li>
+<li><code>jobstores (dict)</code> 设置任务商店信息，默认存储为 <code>MemoryJobStore</code></li>
+<li><code>executors (dict)</code> 设置执行器信息，默认使用 <code>ThreadPoolExecutor</code>, 也就是线程池的方式，线程池线程数 <code>10</code></li>
+</ul>
+
+<h3 id="控制调度程序">控制调度程序</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+<th align="left">异常</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">configure</td>
+<td align="left">对给定的调度程序重新设置配置</td>
+<td align="left"><code>SchedulerAlreadyRunningError</code> –如果调度程序已经在运行</td>
+</tr>
+
+<tr>
+<td align="left">start</td>
+<td align="left">启动已配置的执行程序和任务存储，并开始处理计划的任务。</td>
+<td align="left"><code>SchedulerAlreadyRunningError</code> –如果调度程序已经在运行</br> <code>RuntimeError</code> –如果在禁用线程的uWSGI下运行</td>
+</tr>
+
+<tr>
+<td align="left">shutdown</td>
+<td align="left">关闭调度程序及其执行程序和任务存储。</td>
+<td align="left"><code>SchedulerNotRunningError</code> –如果尚未启动调度程序</td>
+</tr>
+
+<tr>
+<td align="left">pause</td>
+<td align="left">暂停调度程序中的任务处理。</td>
+<td align="left"></td>
+</tr>
+
+<tr>
+<td align="left">resume</td>
+<td align="left">在调度程序中恢复任务处理。</td>
+<td align="left"></td>
+</tr>
+
+<tr>
+<td align="left">wakeup</td>
+<td align="left">通知调度程序可能有任务需要执行。</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="控制执行器">控制执行器</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+<th align="left">异常</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">add_executor</td>
+<td align="left">将执行程序添加到此调度程序。</td>
+<td align="left"><code>ValueError</code> –如果已有给定别名的执行程序</td>
+</tr>
+
+<tr>
+<td align="left">remove_executor</td>
+<td align="left">从此调度程序中删除具有给定别名的执行程序。</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="控制任务存储">控制任务存储</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+<th align="left">异常</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">add_jobstore</td>
+<td align="left">将任务存储添加到此调度程序。</td>
+<td align="left"><code>ValueError</code> –如果已经存在给定别名的任务存储</td>
+</tr>
+
+<tr>
+<td align="left">remove_jobstore</td>
+<td align="left">从此调度程序中通过给定别名删除任务存储。</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="控制事件侦听器">控制事件侦听器</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">add_listener</td>
+<td align="left">添加调度程序事件的侦听器。</td>
+</tr>
+
+<tr>
+<td align="left">remove_listener</td>
+<td align="left">删除以前添加的事件侦听器。</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="控制任务">控制任务</h3>
+
+<p><code>Job</code> 的配置参数和前面 <code>Job</code> 里介绍的差不多， <code>BaseScheduler</code> 只是将 <code>Job</code> 的接口重新封装了<br />
+但是也实现了很多任务是如何添加到任务存储，任务是如何分配给执行器等等实现，所以在 <code>Job</code> 那一部分提到，官方是不希望由用户自己实例化 <code>Job</code></p>
+
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+<th align="left">异常</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">add_job</td>
+<td align="left">将给定的任务添加到任务列表中，如果调度程序已经在运行，则将其唤醒。</td>
+<td align="left"></td>
+</tr>
+
+<tr>
+<td align="left">scheduled_job</td>
+<td align="left">使用 <code>scheduled_job</code> 装饰器来动态装饰 <code>Job</code>的实际函数</td>
+<td align="left"></td>
+</tr>
+
+<tr>
+<td align="left">modify_job</td>
+<td align="left">修改单个任务的属性。</td>
+<td align="left"></td>
+</tr>
+
+<tr>
+<td align="left">reschedule_job</td>
+<td align="left">为任务构造一个新触发器，并更新其下一个运行时间。</td>
+<td align="left"></td>
+</tr>
+
+<tr>
+<td align="left">pause_job</td>
+<td align="left">使给定任务在明确恢复之前不执行。</td>
+<td align="left"></td>
+</tr>
+
+<tr>
+<td align="left">resume_job</td>
+<td align="left">恢复给定任务的计划，如果计划已完成，则将其删除。</td>
+<td align="left"></td>
+</tr>
+
+<tr>
+<td align="left">get_jobs</td>
+<td align="left">从特定的任务存储或所有任务中返回挂起的任务</td>
+<td align="left"></td>
+</tr>
+
+<tr>
+<td align="left">get_job</td>
+<td align="left">返回与给定 <code>job_id</code> 匹配的 <code>Job</code></td>
+<td align="left"></td>
+</tr>
+
+<tr>
+<td align="left">remove_job</td>
+<td align="left">删除任务，使其无法再运行。</td>
+<td align="left"><code>JobLookupError</code> – 如果没有找到任务</td>
+</tr>
+
+<tr>
+<td align="left">remove_all_jobs</td>
+<td align="left">从指定的任务存储中删除所有任务，或者如果没有给出任何任务，则删除所有任务存储。</td>
+<td align="left"></td>
+</tr>
+
+<tr>
+<td align="left">print_jobs</td>
+<td align="left">打印出当前计划在所有任务存储库或仅特定任务存储库上的所有任务的文本列表。</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+
+<p>以上部分函数涉及到的形参合返回值我这里就不列出来了，主要是要对每个类大概提供的接口有个印象即可，真正用的时候在查阅官方文档即可，难度不大</p>
+
+<p><a href="https://apscheduler.readthedocs.io/en/stable/py-modindex.html">https://apscheduler.readthedocs.io/en/stable/py-modindex.html</a></p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/python" role="button">python </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-12/python-apscheduler%E5%BA%93/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Python-APScheduler库</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%BA%8C-job/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>APScheduler 源码阅读(二) job</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#event">
+												 event
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#schedulerevent">
+												 SchedulerEvent
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#jobevent">
+												 JobEvent
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#jobsubmissionevent">
+												 JobSubmissionEvent
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#jobexecutionevent">
+												 JobExecutionEvent
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#job">
+												 Job
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#job-scheduler-id-none-kwargs">
+												 Job(scheduler, id=None, **kwargs)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#modify-changes">
+												 modify(**changes)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#pasue">
+												 pasue()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#remove">
+												 remove()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#reschedule-trigger-trigger-args">
+												 reschedule(trigger, **trigger_args)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#resume">
+												 resume()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#property-pending">
+												 property pending
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#triggers">
+												 triggers
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#date">
+												 date
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#inteval">
+												 inteval
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#cron">
+												 cron
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#combining">
+												 combining
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#basejobstore">
+												 BaseJobStore
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#add-job-job">
+												 add_job(job)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#get-all-jobs">
+												 get_all_jobs()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#get-due-jobs-now">
+												 get_due_jobs(now)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#get-next-run-time">
+												 get_next_run_time()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#lookup-job-job-id">
+												 lookup_job(job_id)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#remove-all-jobs">
+												 remove_all_jobs()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#remove-job-job-id">
+												 remove_job(job_id)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#shutdown">
+												 shutdown()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#start-scheduler-alias">
+												 start(scheduler,alias)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#update-job-job">
+												 update_job(job)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#baseexecutor">
+												 BaseExecutor
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#shutdown-wait-true">
+												 shutdown(wait=True)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#start-scheduler-alias-1">
+												 start(scheduler, alias)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#submit-job-job-run-times">
+												 submit_job(job, run_times)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#basescheduler">
+												 BaseScheduler
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#basescheduler-gconfig-options">
+												 BaseScheduler(gconfig={}, **options)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8e%a7%e5%88%b6%e8%b0%83%e5%ba%a6%e7%a8%8b%e5%ba%8f">
+												 控制调度程序
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8e%a7%e5%88%b6%e6%89%a7%e8%a1%8c%e5%99%a8">
+												 控制执行器
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8e%a7%e5%88%b6%e4%bb%bb%e5%8a%a1%e5%ad%98%e5%82%a8">
+												 控制任务存储
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8e%a7%e5%88%b6%e4%ba%8b%e4%bb%b6%e4%be%a6%e5%90%ac%e5%99%a8">
+												 控制事件侦听器
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8e%a7%e5%88%b6%e4%bb%bb%e5%8a%a1">
+												 控制任务
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

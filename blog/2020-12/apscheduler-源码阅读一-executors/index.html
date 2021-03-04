@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="成热打铁，学习一下 APScheduler 的 python 的源码，很好奇任务调度控制的实现。">
+  
+  <meta property="og:title" content="APScheduler 源码阅读(一) executors" />
+<meta property="og:description" content="成热打铁，学习一下 APScheduler 的 python 的源码，很好奇任务调度控制的实现。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B8%80-executors/" />
+<meta property="article:published_time" content="2020-12-22T19:35:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-12-22T19:35:00&#43;08:00"/>
+
+
+  <title>
+  
+       APScheduler 源码阅读(一) executors | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B8%80-executors/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/python"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> python </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">APScheduler 源码阅读(一) executors</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Dec 22, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>成热打铁，学习一下 <code>APScheduler</code> 的 <code>python</code> 的源码，很好奇任务调度控制的实现。</p>
+
+<p>分析源码主要还是针对 <code>APScheduler</code> 下的几个关键的模块</p>
+
+<ul>
+<li><code>events</code> 事件</li>
+<li><code>executors</code> 执行器</li>
+<li><code>job</code> 任务</li>
+<li><code>jobstores</code> 任务存储</li>
+<li><code>triggers</code> 触发器</li>
+<li><code>schedulers</code> 调度程序</li>
+</ul>
+
+<p>这一篇主要瞅瞅 <code>events</code> 事件 和 <code>executors</code> 执行器</p>
+
+<h2 id="events-事件"><code>events</code> 事件</h2>
+
+<p><code>events</code> 事件主要是根据事件的类型，进行封装的，什么意思呢? 比如调度程序启动关闭等事件封装成一个 <code>SchedulerEvent</code> 类，任务执行结果封装成一个 <code>JobExecutionEvent</code> 类等，因此 <code>evnets</code> 最后划分出 <strong>4</strong> 个类, 代码很简单，主要就是使用类来区分用户关心的信息，而具体的划分细节,可以看一下前一篇,有很详细的介绍</p>
+
+<pre><code class="language-python"># 基类，任务调度过程时出现事件，例如调度程序启动 ，调度程序关闭等等
+class SchedulerEvent(object):
+    def __init__(self, code, alias=None):
+        super(SchedulerEvent, self).__init__()
+        self.code = code
+        self.alias = alias
+
+    def __repr__(self):
+        return '&lt;%s (code=%d)&gt;' % (self.__class__.__name__, self.code)
+
+# 涉及到任务和任务存储操作时的事件，例如任务添加到任务存储中，从任务存储中删除了任务  等
+class JobEvent(SchedulerEvent):
+    def __init__(self, code, job_id, jobstore):
+        super(JobEvent, self).__init__(code)
+        self.code = code
+        self.job_id = job_id
+        self.jobstore = jobstore
+
+# 涉及到将任务放到执行器时的事件，例如任务已经提交到执行器中执行，任务因为达到最大并发执行时，触发的事件
+class JobSubmissionEvent(JobEvent):
+    def __init__(self, code, job_id, jobstore, scheduled_run_times):
+        super(JobSubmissionEvent, self).__init__(code, job_id, jobstore)
+        self.scheduled_run_times = scheduled_run_times
+
+# 涉及到任务执行结果的事件， 例如任务被成功执行，任务在执行期间引发异常
+class JobExecutionEvent(JobEvent):
+    def __init__(self, code, job_id, jobstore, scheduled_run_time, retval=None, exception=None,
+                 traceback=None):
+        super(JobExecutionEvent, self).__init__(code, job_id, jobstore)
+        self.scheduled_run_time = scheduled_run_time
+        self.retval = retval
+        self.exception = exception
+        self.traceback = traceback
+</code></pre>
+
+<h2 id="执行器的-uml-图">执行器的 <code>UML</code> 图</h2>
+
+<p>首先针对它涉及到的类画一个简单 <code>UML</code> 图，大致了解代码的层级关系</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/python/apscheduler/execute.png" alt="execute uml" /></p>
+
+<p>现在在整体看一下 <code>BaseExecutor</code> 代码的逻辑</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/python/apscheduler/execute_code.png" alt="execute_code" /></p>
+
+<h2 id="异常类">异常类</h2>
+
+<p>一个继承自 <code>Exception</code> 的自定义异常 <code>MaxInstancesReachedError</code></p>
+
+<pre><code class="language-python">class MaxInstancesReachedError(Exception):
+    def __init__(self, job):
+        super(MaxInstancesReachedError, self).__init__(
+            'Job &quot;%s&quot; has already reached its maximum number of instances (%d)' %
+            (job.id, job.max_instances))
+</code></pre>
+
+<h2 id="初始化-init">初始化 __init__</h2>
+
+<pre><code class="language-python">def __init__(self):
+    super(BaseExecutor, self).__init__()
+    self._instances = defaultdict(lambda: 0)
+</code></pre>
+
+<p><code>super()</code>方法设计目的是用来解决多重继承时父类的查找问题，在涉及到子类中需要调用父类的方法时，这是个很好的习惯</p>
+
+<p><code>self._instances</code> 类型是 <code>dict</code>, 通过 <code>defaultdict(lambda: 0)</code> 来保证当从 <code>self._instances</code> 取值的时候，如果不存在的时候，返回 <code>0</code><br />
+它负责保存这个执行器中运行的 <code>Job</code> 数量，前面2篇提到过，我们是可以限制一个任务同时运行的最大实例数的</p>
+
+<h2 id="启动-start">启动 start</h2>
+
+<pre><code class="language-python">def start(self, scheduler, alias):
+    self._scheduler = scheduler
+    self._lock = scheduler._create_lock()
+    self._logger = logging.getLogger('apscheduler.executors.%s' % alias)
+</code></pre>
+
+<p>持有一个 <code>BaseScheduler</code> 对象主要是为了在任务执行成功失败后，可以将任务执行状态返回给调度程序 (因为调度程序支持用户对事件添加侦听器的功能)</p>
+
+<p>初始化完成，再调用启动后，接下来主要看一下如何让 <code>BaseScheduler</code> 执行任务</p>
+
+<h2 id="提交任务-submit-job">提交任务 submit_job</h2>
+
+<pre><code class="language-python">def submit_job(self, job, run_times):
+    assert self._lock is not None, 
+    with self._lock:
+        if self._instances[job.id] &gt;= job.max_instances:
+            raise MaxInstancesReachedError(job)
+
+        self._do_submit_job(job, run_times)
+        self._instances[job.id] += 1
+</code></pre>
+
+<ul>
+<li><code>assert</code> 是为了确保 <code>BaseScheduler</code> 已经通过 <code>start()</code> 完成了部分成员变量的初始化<br /></li>
+<li>在加锁的情况下，通过 <code>self._instances</code> 获取正在运行的任务的实例，如果超过 <code>max_instances</code> (默认为1)， 则会抛出 <code>MaxInstancesReachedError</code> 的异常<br /></li>
+<li><code>self._do_submit_job()</code> 来真正执行这个任务</li>
+<li>正在运行的任务计数加 <code>1</code></li>
+</ul>
+
+<h2 id="子类重载函数">子类重载函数</h2>
+
+<p>因为执行器的不同，这里的 <code>_do_submit_job()</code> 是一个纯虚函数，需要子类自己实现<br />
+当然，<code>shutdown(self, wait=True)</code> 也交给子类实现，但是父类提供了一个缺省的实现</p>
+
+<h2 id="操作执行结果">操作执行结果</h2>
+
+<ul>
+<li><code>_run_job_success(self, job_id, events)</code> 子类在任务执行成功后调用</li>
+<li><code>_run_job_error(self, job_id, exc, traceback=None)</code> 任务失败后调用</li>
+</ul>
+
+<p>简单看一下实现,任务执行成功后，在加锁的前提下将任务计数减取 <code>1</code>， 如果为 <code>0</code>，则删除这个键值，最后将处理的事件，返回给 <code>scheduler</code>，执行失败也差不多，只是最后返回给 <code>scheduler</code> 包含更多的错误信息</p>
+
+<pre><code class="language-python">def _run_job_success(self, job_id, events):
+    with self._lock:
+        self._instances[job_id] -= 1
+        if self._instances[job_id] == 0:
+            del self._instances[job_id]
+
+    for event in events:
+        self._scheduler._dispatch_event(event)
+</code></pre>
+
+<p><code>BaseScheduler</code> 类里的部分都分析完了，还有一个 <code>run_job(job, jobstore_alias, run_times, logger_name)</code> 的函数</p>
+
+<h2 id="run-job">run_job</h2>
+
+<p>这个函数实现了任务的执行, 并根据任务执行的结果，做相应信息的收集，是整个执行器里，最核心的部分</p>
+
+<pre><code class="language-python">def run_job(job, jobstore_alias, run_times, logger_name):
+    events = []
+    logger = logging.getLogger(logger_name)
+    for run_time in run_times:
+        if job.misfire_grace_time is not None:
+            difference = datetime.now(utc) - run_time
+            grace_time = timedelta(seconds=job.misfire_grace_time)
+            if difference &gt; grace_time:
+                events.append(JobExecutionEvent(EVENT_JOB_MISSED, job.id, jobstore_alias,
+                                                run_time))
+                logger.warning('Run time of job &quot;%s&quot; was missed by %s', job, difference)
+                continue
+
+        logger.info('Running job &quot;%s&quot; (scheduled at %s)', job, run_time)
+        try:
+            retval = job.func(*job.args, **job.kwargs)
+        except BaseException:
+            exc, tb = sys.exc_info()[1:]
+            formatted_tb = ''.join(format_tb(tb))
+            events.append(JobExecutionEvent(EVENT_JOB_ERROR, job.id, jobstore_alias, run_time,
+                                            exception=exc, traceback=formatted_tb))
+            logger.exception('Job &quot;%s&quot; raised an exception', job)
+
+            if six.PY2:
+                sys.exc_clear()
+                del tb
+            else:
+                import traceback
+                traceback.clear_frames(tb)
+                del tb
+        else:
+            events.append(JobExecutionEvent(EVENT_JOB_EXECUTED, job.id, jobstore_alias, run_time,
+                                            retval=retval))
+            logger.info('Job &quot;%s&quot; executed successfully', job)
+
+    return events
+</code></pre>
+
+<p>大致处理的逻辑是这样的：</p>
+
+<ul>
+<li>调度程序调用 <code>run_job()</code>, 携带参数 <code>任务</code> 和任务所属的 <code>任务存储别名</code>, <code>执行时间</code> 和 <code>日志logger_name</code></li>
+<li>当任务配置了 <code>misfire_grace_time</code>, 这个字段指的是当真正执行任务的时间与计划执行时间的误差，也就是在设置的误差范围内，任务被调用时，该任务还是会被执行，反之则改任务状态就会为 <code>EVENTJOBMISSED</code>，不执行</li>
+<li><code>try</code> 里执行预定的任务</li>
+<li>然后对执行结果状态按照成功失败分别处理
+
+<ul>
+<li>成功，直接将事件状态设置成 <code>EVENT_JOB_EXECUTED</code></li>
+<li>失败，通过 <code>sys.exc_info</code> 获取详细的错误信息，最后防止内存泄漏，清空错误信息堆栈</li>
+</ul></li>
+</ul>
+
+<p>关于子类，主要想介绍一下 <code>BasePoolExecutor</code></p>
+
+<h2 id="basepoolexecutor">BasePoolExecutor</h2>
+
+<p>这个是线程池和进程池的基类，从线程池中获取一个线程或进程，然后将 <code>run_job()</code> 扔进去执行就可以了</p>
+
+<pre><code class="language-python">class BasePoolExecutor(BaseExecutor):
+    @abstractmethod
+    def __init__(self, pool):
+        super(BasePoolExecutor, self).__init__()
+        self._pool = pool
+
+    def _do_submit_job(self, job, run_times):
+        def callback(f):
+            exc, tb = (f.exception_info() if hasattr(f, 'exception_info') else
+                       (f.exception(), getattr(f.exception(), '__traceback__', None)))
+            if exc:
+                self._run_job_error(job.id, exc, tb)
+            else:
+                self._run_job_success(job.id, f.result())
+
+        f = self._pool.submit(run_job, job, job._jobstore_alias, run_times, self._logger.name)
+        f.add_done_callback(callback)
+
+    def shutdown(self, wait=True):
+        self._pool.shutdown(wait)
+</code></pre>
+
+<h2 id="threadpoolexecutor">ThreadPoolExecutor</h2>
+
+<p>使用 <code>concurrent.futures</code> 下的线程池 <code>ThreadPoolExecutor</code></p>
+
+<pre><code class="language-python">class ThreadPoolExecutor(BasePoolExecutor):
+    def __init__(self, max_workers=10):
+        pool = concurrent.futures.ThreadPoolExecutor(int(max_workers))
+        super(ThreadPoolExecutor, self).__init__(pool)
+</code></pre>
+
+<h2 id="processpoolexecutor">ProcessPoolExecutor</h2>
+
+<p>使用 <code>concurrent.futures</code> 下的进程池 <code>ProcessPoolExecutor</code></p>
+
+<pre><code class="language-python">class ProcessPoolExecutor(BasePoolExecutor):
+    def __init__(self, max_workers=10):
+        pool = concurrent.futures.ProcessPoolExecutor(int(max_workers))
+        super(ProcessPoolExecutor, self).__init__(pool)
+</code></pre>
+
+<p>其它的子类在实现上区别都不是很大，这里就不展开了，有兴趣的可以自己阅读一下~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/python" role="button">python </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%BA%8C-job/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>APScheduler 源码阅读(二) job</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-12/docker-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>docker 常用命令</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#events-%e4%ba%8b%e4%bb%b6">
+												 events 事件
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%89%a7%e8%a1%8c%e5%99%a8%e7%9a%84-uml-%e5%9b%be">
+												 执行器的 UML 图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%bc%82%e5%b8%b8%e7%b1%bb">
+												 异常类
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%9d%e5%a7%8b%e5%8c%96-init">
+												 初始化 __init__
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%90%af%e5%8a%a8-start">
+												 启动 start
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8f%90%e4%ba%a4%e4%bb%bb%e5%8a%a1-submit-job">
+												 提交任务 submit_job
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ad%90%e7%b1%bb%e9%87%8d%e8%bd%bd%e5%87%bd%e6%95%b0">
+												 子类重载函数
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%93%8d%e4%bd%9c%e6%89%a7%e8%a1%8c%e7%bb%93%e6%9e%9c">
+												 操作执行结果
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#run-job">
+												 run_job
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#basepoolexecutor">
+												 BasePoolExecutor
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#threadpoolexecutor">
+												 ThreadPoolExecutor
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#processpoolexecutor">
+												 ProcessPoolExecutor
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

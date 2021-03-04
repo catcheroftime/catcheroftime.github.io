@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Algorithm on 一个懒散的程序猿</title>
+    <link>https://catcheroftime.github.io/categories/algorithm/</link>
+    <description>Recent content in Algorithm on 一个懒散的程序猿</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Mon, 04 Jan 2021 00:15:00 +0800</lastBuildDate>
+    
+	<atom:link href="https://catcheroftime.github.io/categories/algorithm/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>猜数字大小</title>
+      <link>https://catcheroftime.github.io/blog/2021-01/%E7%8C%9C%E6%95%B0%E5%AD%97%E5%A4%A7%E5%B0%8F/</link>
+      <pubDate>Mon, 04 Jan 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-01/%E7%8C%9C%E6%95%B0%E5%AD%97%E5%A4%A7%E5%B0%8F/</guid>
+      <description>&lt;p&gt;偶然在别人公众号看到一篇关于&lt;strong&gt;猜数字大小&lt;/strong&gt;的题目，刚好是 &lt;code&gt;LeetCode&lt;/code&gt; 上的题目，在 &lt;code&gt;LeetCode&lt;/code&gt; 上又刚好看到一道很接近的扩展题，放一起整理一下&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

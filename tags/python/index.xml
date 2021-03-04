@@ -6,10 +6,82 @@
     <description>Recent content in python on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Tue, 05 Nov 2019 19:35:00 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 02 Mar 2021 19:35:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>微信公众号封面一键生成器-续</title>
+      <link>https://catcheroftime.github.io/blog/2021-03/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%B0%81%E9%9D%A2%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%99%A8-%E7%BB%AD/</link>
+      <pubDate>Tue, 02 Mar 2021 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-03/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%B0%81%E9%9D%A2%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%99%A8-%E7%BB%AD/</guid>
+      <description>&lt;p&gt;上一篇文章介绍了我对小工具的需求，实现过程中用到的 &lt;code&gt;python&lt;/code&gt; 库的信息以及 &lt;code&gt;demo&lt;/code&gt; 的展示，这篇文章主要就是对其中一些实现细节的总结&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>微信公众号封面一键生成器</title>
+      <link>https://catcheroftime.github.io/blog/2021-02/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%B0%81%E9%9D%A2%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%99%A8/</link>
+      <pubDate>Sat, 20 Feb 2021 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-02/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%B0%81%E9%9D%A2%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%99%A8/</guid>
+      <description>&lt;p&gt;先说痛点，写完一篇公众号，都要为其配一个封面，而我的封面已经很简单了，大部分情况下都是 &lt;code&gt;文章题目&lt;/code&gt; + &lt;code&gt;背景图片&lt;/code&gt; 的形式，简单使用 &lt;code&gt;PS&lt;/code&gt; 也会，但是每次还要调整图片大小，文字样式，大小等等还是太繁琐，最好给一张 &lt;code&gt;图片&lt;/code&gt; + &lt;code&gt;文字&lt;/code&gt; 按照一定大小，位置直接生成就完事了&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>python-request库</title>
+      <link>https://catcheroftime.github.io/blog/2021-01/python-request%E5%BA%93/</link>
+      <pubDate>Fri, 15 Jan 2021 16:02:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-01/python-request%E5%BA%93/</guid>
+      <description>&lt;p&gt;在对 &lt;code&gt;http&lt;/code&gt; 的 &lt;code&gt;api&lt;/code&gt; 测试时，或者利用 &lt;code&gt;api&lt;/code&gt; 实现批量添加、删除等等重复的工作时，必然需要利用一个发送 &lt;code&gt;http&lt;/code&gt; 请求的库，今天介绍一个我在使用过程中感觉相当简单的一个库&amp;ndash; &lt;strong&gt;&lt;code&gt;requests&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APScheduler 源码阅读(一) executors</title>
+      <link>https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B8%80-executors/</link>
+      <pubDate>Tue, 22 Dec 2020 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B8%80-executors/</guid>
+      <description>&lt;p&gt;成热打铁，学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码，很好奇任务调度控制的实现。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APScheduler 源码阅读(二) job</title>
+      <link>https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%BA%8C-job/</link>
+      <pubDate>Tue, 22 Dec 2020 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%BA%8C-job/</guid>
+      <description>&lt;p&gt;成热打铁，学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码，很好奇任务调度控制的实现。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APScheduler API总结</title>
+      <link>https://catcheroftime.github.io/blog/2020-12/apscheduler-api%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Mon, 21 Dec 2020 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-12/apscheduler-api%E6%80%BB%E7%BB%93/</guid>
+      <description>&lt;p&gt;之前比较泛泛的介绍了 &lt;code&gt;APScheduler&lt;/code&gt; 库，但是其中有一些模块的接口需要额外注意一下，本篇文章比较干，真正开发的时候，可以当成工具用&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Python-APScheduler库</title>
+      <link>https://catcheroftime.github.io/blog/2020-12/python-apscheduler%E5%BA%93/</link>
+      <pubDate>Sun, 20 Dec 2020 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-12/python-apscheduler%E5%BA%93/</guid>
+      <description>&lt;p&gt;超强大的任务调度库&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Python-tkinter库</title>
+      <link>https://catcheroftime.github.io/blog/2020-11/python-tkinter%E5%BA%93/</link>
+      <pubDate>Sat, 28 Nov 2020 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-11/python-tkinter%E5%BA%93/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>阴阳师自动挂机脚本-python</title>
@@ -36,7 +108,7 @@
       <pubDate>Fri, 14 Jun 2019 11:12:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/blog/2019-06/python-%E6%93%8D%E4%BD%9C-mysql%E7%A4%BA%E4%BE%8B/</guid>
-      <description>&lt;p&gt;使用python 简单操作mysql数据库,数据库的创建，表的创建，以及数据的增删改查&lt;/p&gt;</description>
+      <description>&lt;p&gt;使用 &lt;code&gt;pymysql&lt;/code&gt; 操作 &lt;code&gt;mysql&lt;/code&gt; 数据库,数据库的创建，表的创建，以及数据的增删改查&lt;/p&gt;</description>
     </item>
     
     <item>

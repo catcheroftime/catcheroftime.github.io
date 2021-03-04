@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="">
+  
+  <meta property="og:title" content="外观模式" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-01/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2021-01-15T10:10:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-01-15T10:10:00&#43;08:00"/>
+
+
+  <title>
+  
+       外观模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-01/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">外观模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Jan 15, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>其实这个模式在日常使用过程中被使用到的频率特别高，只是不清楚原来这种这么简单的手法还有一个挺高大上的名字 —— <code>外观模式</code>，又叫 <code>门面模式</code></p>
+
+<h2 id="意图">意图</h2>
+
+<blockquote>
+<p>为子系统中的一组接口提供一个一致的界面，外观模式定义了一个高层接口，这个接口使得这一子系统更加容易使用</p>
+</blockquote>
+
+<h2 id="动机">动机</h2>
+
+<p>我很喜欢 《大话设计模式》 引出这种设计模式时用到的例子，基金和股票的关系</p>
+
+<p>众所周知，<strong>股票</strong> 是一种相对而言风险比较高的理财方式，一支股票由一支公司发行的，当我们持有多家的优质公司发行的股票的时候，因为涉及到对自己投资资金的规划,随着市场的波动，我们可能需要动态的调整持仓的占比等等，因此我们的操作的复杂度也上来了，可这对于大多数理财小白而言上手难度有点大</p>
+
+<p>而什么是 <strong>基金</strong> 呢？简单点说就是安排个基金经理，他用资金去投资他认为优秀的股票，债券等等领域，由他来全权负责。这意味如果我们买了基金，实际上我们是不用操作股票，只有一个简单的买卖接口</p>
+
+<p>所以对于我而言，直接选择一支优秀的基金，然后交给基金经理在后台对持仓进行复杂的调整</p>
+
+<p>关于理财感兴趣的可以看一下 B 站 UP 主 <code>这是Morty</code> 的科普视频 <a href="https://www.bilibili.com/video/BV16z4y167tz">https://www.bilibili.com/video/BV16z4y167tz</a></p>
+
+<p>扯远了，回来 <code>外观模式</code>，这里的基金其实就是股票的一个 <code>门面</code>，我们可以很简单的操作基金提供的 <code>高层接口</code>, 不用操作复杂的子系统股票，当然如果需要定制化操作时，用户也可以越过基金 (<code>门面</code>) 这一层</p>
+
+<h2 id="结构图">结构图</h2>
+
+<p>外观模式其实没有所谓的 <code>UML</code> 图, 更多是对复杂子系统调用的一种结构调整</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/facade/uml.png" alt="uml" /></p>
+
+<p>图中，客户端本来是操作 <code>对象A</code> 和 <code>对象C</code> 的，使用外观模式将整个子系统包装一下，让客户端通过 <code>Facade</code> 来操作，此时的 <code>Facade</code> 是可以提供一组更为简洁的接口</p>
+
+<ul>
+<li>它对客户屏蔽子系统组件，因而减少了客户处理的对象的数目并使得子系统使用起来更加方便。</li>
+<li>降低了客户-子系统之间的耦合度<br />
+用抽象类实现 <code>Facade</code> 而它的具体子类对应于不同的子系统的实现，这样可以进一步降低客户和子系统的耦合度</li>
+</ul>
+
+<h2 id="使用场景">使用场景</h2>
+
+<ul>
+<li>当你要为一个复杂的子系统提供一个简单的接口时。<br />
+子系统往往因为不断的演化而变得越来越复杂，大多数模式使用时都会产生更多更小的类，这使得子系统更具可重用性，也更容易对子系统进行定制，但这也给那些不需要定制子系统的用户带来一些使用上的困难。外观模式可以提供一个简单的缺省实现，而这个对大多数用户来说已经足够，而那些需要更多的可定制性的用户可以越过 <code>Facade</code> 层</li>
+<li>客户程序与抽象类的实现部分之间存在着很大的依赖性，引入 <code>Facade</code> 将这个子系统与客户端以及其他的子系统分离，可以提高子系统的独立性和可移植性</li>
+<li>当你需要构建一个层次结构的子系统时，使用外观模式定义子系统中每层的入口点。如果子系统之间是相互依赖的，你可以让他们仅通过 <code>Facade</code> 进行通信，从而简化了他们之间的依赖关系</li>
+</ul>
+
+<h2 id="来个例子">来个例子</h2>
+
+<p>直接前面提到的股票和基金的例子：</p>
+
+<p>先定义2支股票，分别是茅台和特斯拉：</p>
+
+<pre><code class="language-C++">#include &lt;iostream&gt;
+using namespace std;
+
+class MoutaiStock
+{
+public:
+    void buy(int money) {cout &lt;&lt; &quot;buy MoutaiStock: &quot; &lt;&lt; money &lt;&lt; endl;}
+};
+
+class TeslaStock
+{
+public:
+    void buy(int money) {cout &lt;&lt; &quot;buy TeslaStock: &quot;&lt;&lt; money  &lt;&lt; endl;}
+};
+</code></pre>
+
+<p>定一支基金，主要就是持有这2支股票，在买入基金的时候，7成买茅台股票，3成买特斯拉股票：</p>
+
+<pre><code class="language-C++">#include &quot;shares.h&quot;
+#define SAFE_DELETE(p) if(p) {delete p; p=nullptr;}
+
+class EFund{
+public:
+    EFund() : m_pMoutaiStock(new MoutaiStock), m_pTeslaStock(new TeslaStock) {}
+    ~EFund() { SAFE_DELETE(m_pMoutaiStock); SAFE_DELETE(m_pTeslaStock); }
+
+    void buy(int money){
+        cout &lt;&lt; &quot;buy EFund: &quot; &lt;&lt; money &lt;&lt; endl;
+        m_pMoutaiStock-&gt;buy(money/10*7);
+        m_pTeslaStock-&gt;buy(money/10*3);
+    }
+
+private:
+    MoutaiStock *m_pMoutaiStock;
+    TeslaStock *m_pTeslaStock;
+};
+</code></pre>
+
+<p>最后客户端买基金的代码就很简单了</p>
+
+<pre><code class="language-C++">#include &quot;fund.h&quot;
+
+int main()
+{
+    EFund e_fund;
+    e_fund.buy(100);
+
+    return 0;
+}
+</code></pre>
+
+<p>运行结果</p>
+
+<pre><code class="language-shell">buy EFund: 100
+buy MoutaiStock: 70
+buy TeslaStock: 30
+</code></pre>
+
+<h2 id="总结">总结</h2>
+
+<p>外观模式在我眼里更多是个重新封装的过程，将一些复杂模块的代码进行封装从而对客户隐藏具体细节，并且提供给客户更简洁的接口~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-01/%E8%A3%85%E9%A5%B0%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>装饰模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-01/python-request%E5%BA%93/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>python-request库</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%9c%ba">
+												 动机
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bb%93%e6%9e%84%e5%9b%be">
+												 结构图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bd%bf%e7%94%a8%e5%9c%ba%e6%99%af">
+												 使用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9d%a5%e4%b8%aa%e4%be%8b%e5%ad%90">
+												 来个例子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

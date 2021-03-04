@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="">
+  
+  <meta property="og:title" content="组成模式" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-12/%E7%BB%84%E6%88%90%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2020-12-11T10:10:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-12-11T10:10:00&#43;08:00"/>
+
+
+  <title>
+  
+       组成模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-12/%E7%BB%84%E6%88%90%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">组成模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Dec 11, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h2 id="意图">意图</h2>
+
+<blockquote>
+<p>将对象组合成树形结构以表示 “部分-整体” 的层次结构。组成模式使得用户对单个对象和组合对象的使用具有一致性。</p>
+</blockquote>
+
+<h2 id="动机">动机</h2>
+
+<p>一个很明显的例子，文件系统， 如下图：</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/composition/systemdemo.png" alt="uml" /></p>
+
+<p>我客户端在展示这样的层级结构的时候，很明显需要将这样的层级结构先抽象成2部分，一部分是文件(各种类型文件)，另一部分为文件夹，它下面是可以有各种类型的文件，并且可以自由添加层次</p>
+
+<p>这时候可能会有人说没有必要，毕竟只是展示，全都是 <code>Item</code> 就完事，确实，但是这样是很不利于扩展的，简单的需求变化，可能要改的就很多，比如：</p>
+
+<ol>
+<li>文件夹需要使用文件夹的图标，视频需要使用视频的图标，不同类型的文件使用不同的展示图标。文件夹(<strong><code>枝节点</code></strong>可以有子节点的节点) 是一类的， 文件(<strong><code>叶节点</code></strong>没有子节点的节点) 各有各的变化，但可以抽象成一类</li>
+<li>如果在展示的层级的列表中我需要添加一些鼠标事件，双击 <strong>文件夹</strong> 展开显示它的直接下级，这里所有的文件夹操作都是相同的， 双击 <strong>文件</strong> 使用对应的显示工具预览，比如视频文件使用播放器播放，文档文件使用记事本打开，所以在核心上，这二者的行为是不一致，需要独立设计</li>
+</ol>
+
+<p>上面一部分主要解释，树形的结构中 <strong><code>叶节点</code></strong> 和 <strong><code>枝节点</code></strong> 需要分开设计的原因, 所有的 <code>枝节点</code> 都具有相同的特性，而 <code>叶节点</code> 功能和 <code>枝节点</code> 出入很大，需要单独抽象, 并且 <code>枝节点</code> 需要管理其下的所有 <code>子节点</code>，例如图片中，视频文件属于视频文件夹，又比如 《大话设计模式》 中提到的部门和地区的关系，公司总部下有财务部门，人事部门，北京分部的地方部门也有财务部门，人事部门， 这里的树结构中，公司总部，北京分部就相当于 <code>枝节点</code>， 财务部门和人事部分就相当于 <code>叶节点</code></p>
+
+<p>说了很多，没有说明单个对象和组合对象的使用具有一致性这一点，还是以图片中文件系统为例</p>
+
+<p>我删除一个文件和我删除一个文件夹，或者将一个文件移到到另一个地方和移动一个文件夹到另一个地方，我在使用过程中必然希望代码是一致的，不可能根据对象的不同来区分操作，不管是一个文件，还是一个文件夹下的所有文件，他们就是一个 <code>部分-整体</code> 的聚合关系，再对对象的处理上应该是一致的</p>
+
+<p>所以就需要将 <code>叶节点</code> 和 <code>枝节点</code> 在进一部分抽象</p>
+
+<h2 id="使用场景">使用场景</h2>
+
+<ul>
+<li>表示对象的部分-整体层次结构</li>
+<li>希望用户忽略组合对象与单个对象的不同，用户将统一的使用组合结果中的所有对象</li>
+</ul>
+
+<h2 id="uml-图">UML 图</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/composition/uml.png" alt="uml" /></p>
+
+<ul>
+<li><strong><code>Component</code></strong> : 1. 为组合中的对象声明接口 2. 在适当情况下，实现所有类共有接口的缺省行为 3. 声明一个接口用于访问和管理 <code>Component</code> 的子部件 4.(可选)提供一个访问父部件的接口</li>
+<li><strong><code>Leaf</code></strong> : 在组合中表示叶节点对象，叶节点没有子节点</li>
+<li><strong><code>Composite</code></strong> : 1. 定义有子部件的那些部件的行为 2. 存储子部件 3. 在 <code>Component</code> 接口中实现与子部件有关的操作，比如增加 <code>Add</code> 和删除 <code>Remove</code></li>
+<li><strong><code>Client</code></strong> : 通过 <code>Component</code> 接口操作组合部件的对象</li>
+</ul>
+
+<p>这里的 UML 图分为了 <strong>透明方式</strong> 和 <strong>安全方式</strong>，因为在组合模式中，节点实际上被分为了 <code>叶节点</code> 和 <code>枝节点</code>，其中 <code>叶节点</code> 是没有子节点，这就意味着它并没有与子部件有关的操作，比如 <code>Add</code> 和 <code>Remove</code>，而 <code>Leaf(叶节点)</code> 和 <code>Composite(枝节点)</code> 都继承自 <code>Component</code></p>
+
+<p><strong>透明方式</strong> ：<code>Component</code> 中声明所有用来管理子对象的方法，包括 <code>Add</code> 和 <code>Remove</code> 等，那么叶节点和枝节点对于外界没有区别，它们具备 <strong>完全一致</strong> 的行为接口。但是问题很明显， <code>Leaf</code> 实际上是不具备 <code>Add()</code>、<code>Remove()</code> 方法，所有实现的没有意义</p>
+
+<p><strong>安全方式</strong> ：<code>Component</code> 中不去声明管理子对象的方法，那么子类的 <code>Leaf</code> 也就不需要去实现它，而是在 <code>Composite</code> 声明所有用来管理子类对象的方法，但是这样由于不够透明，所有树叶和树枝类将不再具有相同的接口，客户端的调用需要做相应的判断，带来了不便。</p>
+
+<p>为了避免 <code>Leaf</code> 执行 <code>Add()</code> 和 <code>Remove()</code> 操作, 同时又不希望通过 <strong>类型转换</strong> 来区分是否是 <code>Leaf</code> 还是 <code>Composite</code>, 可以在基类中 <code>Component</code> 中提供一个返回类型的虚函数，例如默认返回 <code>true</code> 表示 <code>Leaf</code>， <code>Composite</code> 重新实现，返回 <code>false</code><br />
+而 <code>GOF</code> 中提到的是在 <code>Component</code> 中声明一个操作 <code>Composite* GetComposite()</code>, <code>Component</code> 提供一个返回空指针的缺省操作。 <code>Composite</code> 类重新定义这个操作并通过 <code>this</code> 指针返回它自身</p>
+
+<h2 id="举个例子">举个例子</h2>
+
+<p>就是用文件系统的例子，首先是 <code>Component</code> 类，定义了 <code>Add()</code>, <code>Remove()</code>, <code>Show()</code> 以及 <code>Open()</code></p>
+
+<pre><code class="language-C++">#ifndef COMPONENT_H
+#define COMPONENT_H
+
+#include &lt;iostream&gt;
+
+#define UNUSED(x) (void)x;
+
+class Component
+{
+public:
+    Component(std::string title) : m_title(title) {}
+    virtual ~Component(){}
+
+    virtual Component *getComposite() { return nullptr; }
+
+    void Add(Component* c)
+    {
+        if (auto comp = getComposite())
+            comp-&gt;realAdd(c);
+    }
+
+    void Remove(Component* c)
+    {
+        if (auto comp = getComposite())
+            comp-&gt;realRemove(c);
+    }
+
+    virtual void Show(int iDepth = 1) = 0;
+    virtual void Open() = 0;
+
+private:
+    virtual void realAdd(Component* c) { UNUSED(c) }
+    virtual void realRemove(Component* c) { UNUSED(c) }
+
+protected:
+
+    std::string m_title;
+};
+
+#endif // COMPONENT_H
+
+</code></pre>
+
+<p>接下来就是文件夹的实现, 这里析构需要将它管理的 <code>Component</code> 删除</p>
+
+<pre><code class="language-C++">#ifndef COMPOSITE_H
+#define COMPOSITE_H
+
+#include &quot;component.h&quot;
+#include &lt;list&gt;
+#include &lt;iostream&gt;
+
+class Folder : public Component
+{
+public:
+    Folder(std::string title) :Component(title) {}
+    ~Folder()
+    {
+        std::cout &lt;&lt; __func__ &lt;&lt; &quot; : &quot;&lt;&lt; m_title &lt;&lt; std::endl;
+        while (!m_listComponents.empty()) {
+          delete m_listComponents.front(),m_listComponents.pop_front();
+        }
+    }
+
+    Component *getComposite() { return this; }
+
+    virtual void Show(int iDepth)
+    {
+        std::cout &lt;&lt; std::string(iDepth, '-') &lt;&lt; m_title &lt;&lt; std::endl;
+        for (auto comp : m_listComponents) {
+            comp-&gt;Show(iDepth+1);
+        }
+    }
+
+    virtual void Open()
+    {
+        std::cout &lt;&lt; &quot;\&quot;&quot;&lt;&lt;  m_title &lt;&lt; &quot;\&quot;文件夹下文件为：&quot;&lt;&lt; std::endl;
+        for (auto comp : m_listComponents) {
+            comp-&gt;Show(0);
+        }
+    }
+
+private:
+    virtual void realAdd(Component* c) {  m_listComponents.push_back(c); }
+    virtual void realRemove(Component* c) { m_listComponents.remove(c);}
+
+private:
+    std::list&lt;Component *&gt; m_listComponents;
+};
+
+#endif // COMPOSITE_H
+</code></pre>
+
+<p>文件这一块比较简单,但是为了之后的扩展，顺便实现了 <code>VideoFile</code>, <code>DocmFile</code>, <code>ImageFile</code> 它们的打开方式自己实现</p>
+
+<pre><code class="language-C++">#ifndef LEAF_H
+#define LEAF_H
+
+#include &quot;component.h&quot;
+#include &lt;iostream&gt;
+
+class File : public Component
+{
+public:
+    File(std::string title) : Component(title) {}
+    ~File() {}
+
+    virtual void Show(int iDepth)  { std::cout &lt;&lt; string(iDepth,'-') &lt;&lt; m_title &lt;&lt; std::endl; }
+    virtual void Open() = 0;
+};
+
+class VideoFile : public File
+{
+public:
+    VideoFile(std::string title) : File(title) {}
+    ~VideoFile() { std::cout &lt;&lt; __func__ &lt;&lt; std::endl; }
+
+    void Open() { std::cout &lt;&lt; &quot;视频文件使用 vlc 打开&quot; &lt;&lt; std::endl; }
+};
+
+class DocmFile : public File
+{
+public:
+    DocmFile(std::string title) : File(title) {}
+    ~DocmFile() { std::cout &lt;&lt; __func__ &lt;&lt; std::endl; }
+
+    void Open() { std::cout &lt;&lt; &quot;文本文件使用 记事本 打开&quot; &lt;&lt; std::endl; }
+};
+
+class ImageFile : public File
+{
+public:
+    ImageFile(std::string title) : File(title) {}
+    ~ImageFile() { std::cout &lt;&lt; __func__ &lt;&lt; std::endl; }
+
+    void Open() { std::cout &lt;&lt; &quot;图片文件使用 相片 打开&quot; &lt;&lt; std::endl; }
+};
+
+#endif // LEAF_H
+</code></pre>
+
+<p>为了方便对文件的创建，所有使用一个简单工厂对文件进行了封装</p>
+
+<pre><code class="language-C++">#ifndef FILEFACTORY_H
+#define FILEFACTORY_H
+
+#include &quot;leaf.h&quot;
+
+class FileFactory
+{
+public:
+    static FileFactory&amp; getInstance()
+    {
+        static FileFactory value;
+        return value;
+    }
+
+    File * getFile(std::string type, std::string title)
+    {
+        if ( type == &quot;video&quot;) {
+            return new VideoFile(title);
+        } else if ( type == &quot;docm&quot;) {
+            return new DocmFile(title);
+        } else if ( type == &quot;image&quot;) {
+            return new ImageFile(title);
+        } else {
+            return nullptr;
+        }
+    }
+
+private:
+    FileFactory() = default;
+    FileFactory(const FileFactory&amp; other)=delete;
+    FileFactory&amp; operator=(const FileFactory&amp;)=delete;
+};
+
+#endif // FILEFACTORY_H
+</code></pre>
+
+<p>最后便是客户端的调用了</p>
+
+<pre><code class="language-C++">#include &lt;iostream&gt;
+
+#include &quot;component.h&quot;
+#include &quot;composite.h&quot;
+#include &quot;filefactory.h&quot;
+
+#define SAFE_DELETE(x) {if(x){ delete x; x= nullptr;}}
+
+int main()
+{
+    Component *root_folder = new Folder(&quot;Demo&quot;);
+
+    Component *video_folder = new Folder(&quot;视频&quot;);
+    Component *video =FileFactory::getInstance().getFile(&quot;video&quot;, &quot;xiamu.mp4&quot;);
+    video_folder-&gt;Add(video);
+
+    Component *image_folder = new Folder(&quot;图片&quot;);
+    Component *image = FileFactory::getInstance().getFile(&quot;image&quot;, &quot;function.png&quot;);
+    image_folder-&gt;Add(image);
+
+    Component *docm_folder = new Folder(&quot;文档&quot;);
+    Component *docm = FileFactory::getInstance().getFile(&quot;docm&quot;, &quot;组成模式.md&quot;);
+    docm_folder-&gt;Add(docm);
+
+    root_folder-&gt;Add(video_folder);
+    root_folder-&gt;Add(image_folder);
+    root_folder-&gt;Add(docm_folder);
+
+    std::cout &lt;&lt; &quot;展示树结构:&quot;&lt;&lt; std::endl;
+    root_folder-&gt;Show();
+
+    std::cout &lt;&lt; string(20, '-')&lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;依次打开文件:&quot;&lt;&lt; std::endl;
+    video-&gt;Open();
+    image-&gt;Open();
+    docm-&gt;Open();
+
+    std::cout &lt;&lt; string(20, '-')&lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;展示文件夹下的文件名称:&quot;&lt;&lt; std::endl;
+    video_folder-&gt;Open();
+    image_folder-&gt;Open();
+    docm_folder-&gt;Open();
+
+    std::cout &lt;&lt; string(20, '-')&lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;析构：&quot;&lt;&lt; std::endl;
+    SAFE_DELETE(root_folder);
+
+    return 0;
+}
+
+</code></pre>
+
+<p>运行结果:</p>
+
+<pre><code class="language-C++">展示树结构：
+-Demo
+--视频
+---xiamu.mp4
+--图片
+---function.png
+--文档
+---组成模式.md
+--------------------
+依次打开文件:
+视频文件使用 vlc 打开
+图片文件使用 相片 打开
+文本文件使用 记事本 打开
+--------------------
+展示文件夹下的文件名称：
+&quot;视频&quot;文件夹下文件为：
+xiamu.mp4
+&quot;图片&quot;文件夹下文件为：
+function.png
+&quot;文档&quot;文件夹下文件为：
+组成模式.md
+--------------------
+析构：
+~Folder : Demo
+~Folder : 视频
+~VideoFile
+~Folder : 图片
+~ImageFile
+~Folder : 文档
+~DocmFile
+</code></pre>
+
+<h2 id="补充">补充</h2>
+
+<p>而关于存储子部件部分，其实还有几点值得说道的</p>
+
+<ul>
+<li>存储子部件应该使用怎样的数据结构?<br />
+效率优先</li>
+<li>枝叶节点保存的 <code>Composite</code> 指针应该由谁删除的问题?<br />
+当一个 <code>Composite</code> 被销毁的时候，通常最好由 <code>Composite</code> 负责删除其子节点</li>
+<li>树的深度过深且频繁遍历和查找，如何保证速度?<br />
+<code>Composite</code> 可以缓冲存储对它的子节点进行遍历或查找的相关信息。注意一点：当底层一个组件发生改变，原先的缓冲存储的信息也就是失效了，所以这时候需要定义一个接口来通知父部件</li>
+</ul>
+
+<p>关于 <code>组成模式</code> 的总结大概就这些了~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-12/%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>桥接模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-12/python-apscheduler%E5%BA%93/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>Python-APScheduler库</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%9c%ba">
+												 动机
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bd%bf%e7%94%a8%e5%9c%ba%e6%99%af">
+												 使用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#uml-%e5%9b%be">
+												 UML 图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%be%e4%b8%aa%e4%be%8b%e5%ad%90">
+												 举个例子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%a1%a5%e5%85%85">
+												 补充
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

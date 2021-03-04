@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="你挑的嘛，偶像">
+  
+  <meta property="og:title" content="适配器模式" />
+<meta property="og:description" content="你挑的嘛，偶像" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2020-11/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2020-11-25T23:10:00&#43;08:00"/>
+<meta property="article:modified_time" content="2020-11-25T23:10:00&#43;08:00"/>
+
+
+  <title>
+  
+       适配器模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2020-11/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">适配器模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Nov 25, 2020</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>你挑的嘛，偶像</p>
+
+<h2 id="意图">意图</h2>
+
+<p>将一个类的接口转换成客户希望的另一个接口， 适配器模式使得原本由于接口不兼容而不能一起工作的那些类可以一起工作</p>
+
+<h2 id="动机">动机</h2>
+
+<p>举个现实的例子，我有一个蓝牙耳机，可以连接手机，平板，电脑，因为他们都有一套规定好的蓝牙连接的规则<br />
+但是我用 <code>switch游戏机</code> 打游戏的时候也想用这个蓝牙耳机，但游戏机并没有蓝牙模块，接口不兼容，怎么办？<br />
+所以需要一个蓝牙适配器，把蓝牙适配器插在游戏机上音频输出的接口上，耳机通过蓝牙连接蓝牙适配器，耳机在结果上就是连接上了游戏机<br />
+这个时候，蓝牙适配器相对于把游戏机包装成了一个支持蓝牙功能的设备，所以 <strong><code>适配器模式</code> 也被称为 <code>包装器(Wrapeer)模式</code></strong></p>
+
+<table><tr>
+<td><img src="https://catcheroftime.github.io/images/blog/designpatterns/adapter/bluetooth.png" border=0></td>
+<td><img src="https://catcheroftime.github.io/images/blog/designpatterns/adapter/swtich.png" border=0></td>
+</tr></table>
+
+<p>这个蓝牙适配器就是 <code>适配器(Adapter)</code>, 游戏机就是 <code>适配者(Adaptee)</code></p>
+
+<h2 id="应用场景">应用场景</h2>
+
+<ul>
+<li>你想使用一个已经存在的类，而它的接口不符合你的需求</li>
+<li>你想创建一个可以复用的类，该类可以与其他不相关的类或不可预见的类（即那些接口可能不一定兼容的类）协同工作</li>
+<li>(仅适用于对象 Adapter)你想使用一些已经存在的子类，但是不可能对每一个都进行子类化以匹配它们的接口。对象适配器可以适配它的父类接口。</li>
+</ul>
+
+<p>主要解释一下第三条的意思：一般情况下，一个适配器适配一个对象的接口，但是当有一类对象(共同父类)都需要适配的时候，适配器可以直接适配它们的父类接口</p>
+
+<h2 id="uml">UML</h2>
+
+<p>关于适配器的结构现在主要分为2种：<code>类适配器</code> 和 <code>对象适配器</code></p>
+
+<p>类适配器使用多继承对一个接口与另一个接口进行匹配，如下图所示：</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/adapter/classuml.png" alt="class_uml" /></p>
+
+<p>对象匹配器依赖于对象的组合，如下图所示：</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/adapter/objectuml.png" alt="object_uml" /></p>
+
+<ul>
+<li><code>Target</code> : 定义 <code>Client</code> 使用的接口</li>
+<li><code>Client</code> : 调用 <code>Target</code> 提供的结构</li>
+<li><code>Adaptee</code> : 定义好的一个已经存在的接口，这个接口需要适配</li>
+<li><code>Adapter</code> : 对 <code>Adaptee</code> 的接口与 <code>Target</code> 接口进行适配</li>
+</ul>
+
+<p><code>Client</code> 在 <code>Adapter</code> 实例上调用一些操作。接着适配器调用 <code>Adaptee</code> 操作实现这个请求</p>
+
+<p>注意区分一下这2种结构的不同，<code>类适配器</code> 是 <strong>继承</strong> 被适配者的形式，而 <code>对象适配器</code> 是 <strong>适配器对象</strong> 持有一个 <strong>适配者对象</strong>，也就是对象组合的形式</p>
+
+<p>继承的方式避免不了的一个问题是，一旦 <code>Adaptee</code> 有更新，比如添加了抽象函数，客户端虽然不关心这些细节，但是 <code>Adapter</code> 还是需要改动，换句话说就是强耦合, 所以如果要推荐的话，可能还是使用 <code>对象适配器</code> 的方式比较好</p>
+
+<p>在看 GoF 中还提到一点关于 <code>类适配器</code> 的细节</p>
+
+<blockquote>
+<p>使用 <code>C++</code> 实现类适配器时， <code>Adapter</code> 类应该采用 <strong>公共方式继承</strong> <code>Target</code> 类，并且用 <strong>私有方式继承</strong> <code>Adaptee</code> 类。因此，<code>Adapter</code> 类应该是 <code>Target</code> 的子类型，但不是 <code>Adaptee</code> 的子类型。</p>
+</blockquote>
+
+<h2 id="优缺点">优缺点</h2>
+
+<p>上面介绍了很多，是不是有这样的一个感觉，为什么一开始设计的时候不直接让 <code>Adaptee</code> 继承 <code>Target</code> ? 那就不存在接口不一致的问题了~</p>
+
+<p>其实在实际开发过程中，新旧代码接口不一致的问题可能大家都遇到过，虽然对旧代码进行重构是解决问题的最好方法，但是成熟的稳定的旧代码重构后是否会产生新问题，谁都不敢打保票，那就只能换个思路解决问题</p>
+
+<p>所以适配器模式就是来解决问题，解决接口不兼容的问题，能解决问题就是它的优点，如果非要说缺点的话，一个适配器一次只能适配一个适配者类，写来写去有点累</p>
+
+<h2 id="来个例子">来个例子</h2>
+
+<p>例子就用前面动机中提到的蓝牙耳机和游戏机这个例子，简单实现一下这个逻辑</p>
+
+<p>首先先实现UML中 <code>Target</code>, 也就是这个例子中的支持蓝牙连接的设备</p>
+
+<pre><code class="language-C++">class BlueToothDevice
+{
+public:
+    BlueToothDevice(){}
+    virtual ~BlueToothDevice(){}
+    virtual void connect() = 0;
+};
+</code></pre>
+
+<p>一个正常的支持蓝牙功能的设备，比如 <code>Ipad</code> ，代码如下：</p>
+
+<pre><code class="language-C++">class Ipad : public BlueToothDevice
+{
+public:
+    void connect() { std::cout &lt;&lt; &quot;IPad connected to Bluetooth&quot; &lt;&lt; std::endl;}
+};
+</code></pre>
+
+<p>接着是我们的 <code>NintendoSwitch</code> 游戏机，它是没有蓝牙连接功能，只有插入耳机这种方式</p>
+
+<pre><code class="language-C++">class NintendoSwitch
+{
+public:
+    void pluginHeadphones() { std::cout &lt;&lt; &quot;Nintendo Switch plug in headphones&quot; &lt;&lt; std::endl;}
+};
+</code></pre>
+
+<p>接下来，我们分别按照上面我们提的 <code>类适配器</code> 和 <code>对象适配器</code> 分别实现一下</p>
+
+<pre><code class="language-C++">// 类适配器
+class ClassAdapter : public BlueToothDevice, private NintendoSwitch
+{
+public:
+    void connect() { pluginHeadphones(); }
+};
+
+// 对象适配器
+class ObjectAdapter : public BlueToothDevice
+{
+public:
+    void connect() { m_ns.pluginHeadphones();}
+private:
+    NintendoSwitch m_ns;
+};
+</code></pre>
+
+<p>适配器模式主要部分就实现了，接下来看一下 <code>main()</code> 函数中的调用</p>
+
+<pre><code class="language-C++">#define SAFE_DELETE(x) {if(x){ delete x; x= nullptr;}}
+#define UNUSED(x) (void)x;
+
+int main(int argc, char *argv[])
+{
+    UNUSED(argc);
+    UNUSED(argv);
+
+    BlueToothDevice *device1 = new Ipad;
+    device1-&gt;connect();
+
+    BlueToothDevice *device2 = new ObjectAdapter;
+    device2-&gt;connect();
+
+    BlueToothDevice *device3 = new ClassAdapter;
+    device3-&gt;connect();
+
+    SAFE_DELETE(device1);
+    SAFE_DELETE(device2);
+    SAFE_DELETE(device3);
+
+    return 0;
+}
+</code></pre>
+
+<p>最后看一下运行结果</p>
+
+<pre><code class="language-C++">IPad connected to Bluetooth
+Nintendo Switch plug in headphones
+Nintendo Switch plug in headphones
+</code></pre>
+
+<h2 id="总结">总结</h2>
+
+<p>适配器模式是一种 <strong>解决方案</strong>，它的目标是将一个类的接口转换成客户希望的另一个接口， 从而使得原本由于接口不兼容而不能一起工作的那些类可以一起工作</p>
+
+<p>所以在设计的时候不要为了用而用~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2020-11/%E6%8B%B7%E8%B4%9D%E6%8E%A7%E5%88%B6%E4%B8%8B/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>拷贝控制(下)</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-11/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>代理模式</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%9c%ba">
+												 动机
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">
+												 应用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#uml">
+												 UML
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bc%98%e7%bc%ba%e7%82%b9">
+												 优缺点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9d%a5%e4%b8%aa%e4%be%8b%e5%ad%90">
+												 来个例子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

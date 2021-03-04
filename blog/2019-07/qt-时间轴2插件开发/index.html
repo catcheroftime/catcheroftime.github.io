@@ -333,7 +333,7 @@
 
 <p>根据上面的逻辑， 在 <code>paintEvent(QPaintEvent *)</code> 函数中对每一部分需要做的做一个简单说明</p>
 
-<pre><code>void DrawTimeline::paintEvent(QPaintEvent *)
+<pre><code class="language-C++">void DrawTimeline::paintEvent(QPaintEvent *)
 {
     // 绘制背景
     QPainter painter(this);
@@ -370,7 +370,7 @@
 第一部分是一个红色的竖线，位置在视图中间位置，只需要确定y方向的高度<br />
 第二部分是一个类似标签一样的5边形，可以通过提供5个点的位置， 使用 <code>drawPolygon()</code> 函数直接绘制得到</p>
 
-<pre><code>void DrawTimeline::drawTimeCursor(QPainter &amp;painter)
+<pre><code class="language-C++">void DrawTimeline::drawTimeCursor(QPainter &amp;painter)
 {
     painter.setPen( QPen{QColor{255,0,0,200},2});
     painter.drawLine(this-&gt;width()/2+1, CURSORHEIGTH, this-&gt;width()/2+1, 105);
@@ -397,7 +397,7 @@
 <code>QVector&lt;TimeForDistance&gt; m_vecStep</code> 存储我所有的精度信息<br />
 <code>int m_sizeLevel</code> 存储当前绘图使用的精度等级(0-7),对应 <code>m_vecStep</code> 中的信息</p>
 
-<pre><code>struct TimeForDistance
+<pre><code class="language-C++">struct TimeForDistance
 {
     int timestep;
     float pixelstep;
@@ -424,7 +424,7 @@ int m_sizeLevel;
 
 <p>接下来简单看一下代码，代码就是按照这个逻辑实现的</p>
 
-<pre><code>void DrawTimeline::drawTimescale(QPainter &amp;painter)
+<pre><code class="language-C++">void DrawTimeline::drawTimescale(QPainter &amp;painter)
 {
     // 绘制容纳时间的矩形
     painter.setPen( QColor{150,150,150});
@@ -461,7 +461,7 @@ int m_sizeLevel;
 <p><code>QVector&lt;TimeRange&gt; m_vecTimeRangeInfo</code> 存储所有的时间信息<br />
 结构体 <code>TimeRange</code> 中只记录每个时间信息的开始时间和结束时间</p>
 
-<pre><code>struct TimeRange
+<pre><code class="language-C++">struct TimeRange
 {
     QDateTime starttime;
     QDateTime endtime;
@@ -470,7 +470,7 @@ int m_sizeLevel;
 
 <p>在得到开始时间和结束时间之后， 通过计算开始时间的位置，以及时间的长度，在时间轴中绘制一个矩形</p>
 
-<pre><code>void DrawTimeline::drawTimeRangeInfo(QPainter &amp;paint)
+<pre><code class="language-C++">void DrawTimeline::drawTimeRangeInfo(QPainter &amp;paint)
 {
     for (int i=0; i&lt;m_vecTimeRangeInfo.count(); ++i) {
         QDateTime stime = m_vecTimeRangeInfo.at(i).starttime;
@@ -497,7 +497,7 @@ int m_sizeLevel;
 
 <p>这一部分比较简单主要重新实现以下几个函数</p>
 
-<pre><code>virtual void mousePressEvent(QMouseEvent *event);
+<pre><code class="language-C++">virtual void mousePressEvent(QMouseEvent *event);
 virtual void mouseReleaseEvent(QMouseEvent *event);
 virtual void mouseMoveEvent(QMouseEvent *event);
 </code></pre>
@@ -1038,7 +1038,7 @@ virtual void mouseMoveEvent(QMouseEvent *event);
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
   </div>
   
 

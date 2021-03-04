@@ -6,10 +6,82 @@
     <description>Recent content in 设计模式 on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Tue, 17 Nov 2020 12:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 11 Feb 2021 20:15:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>模板方法模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-02/%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 11 Feb 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-02/%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;超实用的代码复用模式&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>策略模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-01/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Sat, 30 Jan 2021 10:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-01/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;如果看过一些关于如何干掉 &lt;code&gt;if...else&lt;/code&gt; 的文章，大部分都会介绍到 &lt;code&gt;策略模式&lt;/code&gt;，而今天主要就是带大家更全面的了解什么是 &lt;code&gt;策略模式&lt;/code&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>外观模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-01/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 15 Jan 2021 10:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-01/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>装饰模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-01/%E8%A3%85%E9%A5%B0%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 12 Jan 2021 10:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-01/%E8%A3%85%E9%A5%B0%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>组成模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-12/%E7%BB%84%E6%88%90%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 11 Dec 2020 10:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-12/%E7%BB%84%E6%88%90%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>桥接模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-12/%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Mon, 07 Dec 2020 10:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-12/%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>代理模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-11/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 26 Nov 2020 23:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-11/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>适配器模式</title>
+      <link>https://catcheroftime.github.io/blog/2020-11/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Wed, 25 Nov 2020 23:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2020-11/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;你挑的嘛，偶像&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>原型模式</title>

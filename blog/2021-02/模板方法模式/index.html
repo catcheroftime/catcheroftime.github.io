@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="超实用的代码复用模式">
+  
+  <meta property="og:title" content="模板方法模式" />
+<meta property="og:description" content="超实用的代码复用模式" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-02/%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2021-02-11T20:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-02-11T20:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       模板方法模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-02/%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">模板方法模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Feb 11, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>超实用的代码复用模式</p>
+
+<h2 id="意图">意图</h2>
+
+<blockquote>
+<p>定义一个操作中的算法的骨架，而将一些步骤延迟到子类中。 <code>TemplateMethod</code> 使得子类可以不改变一个算法的接口即可重定义该算法的某些特定步骤。</p>
+</blockquote>
+
+<h2 id="uml-图">UML 图</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/templatemethod/uml.png" alt="uml" /></p>
+
+<ul>
+<li><strong><code>AbstractClass</code></strong><br />
+
+<ul>
+<li>定义抽象的操作(<code>PrimitiveOpreation1</code> 和 <code>PrimitiveOpreation12</code>)，具体的子类将重定义它们以实现一个算法的各步骤</li>
+<li>实现一个模板方法(<code>TemplateMethod</code>)，定义一个算法的骨架。该模板方法不仅调用抽象操作，也调用定义在 <code>AbstractClass</code> 或其他对象中的操作</li>
+</ul></li>
+<li><strong><code>ConcreteClass</code></strong> : 实现原语操作以完成算法中与特定子类相关的步骤</li>
+</ul>
+
+<p>看完 UML 图，其实这个设计模式还是很简单的，主要就是尽可能将不变的行为移动到父类中，去除子类中重复的代码</p>
+
+<h2 id="应用场景">应用场景</h2>
+
+<ul>
+<li>一次性实现一个算法的不变部分，并将可变的行为留给子类来实现</li>
+<li>各子类中公共的行为应被提取出来并集中到一个公共父类中以避免代码重复</li>
+<li>控制子类扩展，父类可以提供的抽象函数的默认实现方式(不用定义成纯虚函数)，子类有选择的重新实现这些虚函数</li>
+</ul>
+
+<h2 id="举个例子">举个例子</h2>
+
+<p>老师出题使用 <code>我一边...一边...</code>造句，然后让同学填空</p>
+
+<p>那么出题的试卷类应该如下：</p>
+
+<pre><code class="language-C++">#ifndef TESTPAPER_H
+#define TESTPAPER_H
+
+#include &lt;iostream&gt;
+using namespace std;
+
+class TestPaper {
+public:
+    void makeSentences() {
+        string user = this-&gt;user();
+        string first = this-&gt;part1();
+        string second = this-&gt;part2();
+        std::cout &lt;&lt; user &lt;&lt;&quot;: 我一边&quot; &lt;&lt; first &lt;&lt; &quot;, 一边&quot; &lt;&lt; second &lt;&lt; std::endl;
+    }
+
+protected:
+    virtual string user() {return &quot;参考答案&quot;;}
+    virtual string part1() { return &quot;认真听课&quot;;}
+    virtual string part2() { return &quot;仔细做笔记&quot;;}
+};
+
+#endif // TESTPAPER_H
+</code></pre>
+
+<p>学生A 的回答如下</p>
+
+<pre><code class="language-C++">#ifndef STUDENTA_H
+#define STUDENTA_H
+
+#include &quot;testpaper.h&quot;
+
+class StudentA : public TestPaper {
+protected:
+    virtual string user() {return &quot;StudentA&quot;;}
+    virtual string part1() { return &quot;哭&quot;;}
+    virtual string part2() { return &quot;笑&quot;;}
+};
+
+#endif // STUDENTA_H
+</code></pre>
+
+<p>学生B的回答如下：</p>
+
+<pre><code class="language-C++">#ifndef STUDENTB_H
+#define STUDENTB_H
+
+#include &quot;testpaper.h&quot;
+
+class StudentB : public TestPaper {
+protected:
+    virtual string user() {return &quot;StudentB&quot;;}
+    virtual string part1() { return &quot;睡觉&quot;;}
+    virtual string part2() { return &quot;起床&quot;;}
+};
+
+#endif // STUDENTB_H
+</code></pre>
+
+<p>main 函数中的调用如下：</p>
+
+<pre><code class="language-C++">#include &quot;testpaper.h&quot;
+#include &quot;studenta.h&quot;
+#include &quot;studentb.h&quot;
+
+int main()
+{
+    TestPaper paper;
+    paper.makeSentences();
+
+    StudentA studenta;
+    studenta.makeSentences();
+
+    StudentB studentb;
+    studentb.makeSentences();
+
+    return 0;
+}
+</code></pre>
+
+<p>运行结果</p>
+
+<pre><code class="language-shell">参考答案: 我一边认真听课, 一边仔细做笔记
+StudentA: 我一边哭, 一边笑
+StudentB: 我一边睡觉, 一边起床
+</code></pre>
+
+<h2 id="注意事项">注意事项</h2>
+
+<ul>
+<li>C++ 访问控制<br />
+在 <code>C++</code> 中，一个模板方法 (<code>TemplateMethod</code>) 调用的抽象函数 (<code>PrimitiveOpreation</code>) 可以被定义为保护成员，这保证它们只能被模板方法调用，<strong><code>必须</code></strong> 重定义的抽象函数需要定义为 <strong>纯虚函数</strong>，模板方法自身不需要被重定义，因此可以将模板方法定义为一个非虚成员函数</li>
+<li>尽量减少 <code>PrimitiveOpreation</code><br />
+定义模板方法的一个重要目的是尽量减少一个子类具体实现该算法时必须重定义的那些抽象函数的数目，<strong>需要重定义的操作越多，客户程序就越冗长</strong></li>
+</ul>
+
+<h2 id="总结">总结</h2>
+
+<p>在继承和多态中，模板方法模式使用的频率还是很高的，很好的遵守了软件开发流行的原则：<code>don't repeat yourself</code></p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-01/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>策略模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-02/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%B0%81%E9%9D%A2%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%99%A8/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>微信公众号封面一键生成器</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#uml-%e5%9b%be">
+												 UML 图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">
+												 应用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%be%e4%b8%aa%e4%be%8b%e5%ad%90">
+												 举个例子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a1%b9">
+												 注意事项
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

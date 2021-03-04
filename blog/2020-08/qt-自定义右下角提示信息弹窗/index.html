@@ -316,7 +316,7 @@
 
 <p>messageshow.h</p>
 
-<pre><code>// 窗口最后稳定不动时的坐标
+<pre><code class="language-C++">// 窗口最后稳定不动时的坐标
 QPoint end_showPoint;
 // 因为是从右下角滑出， x 方向是固定的，所以需要记录一下当前窗口的实时 y 坐标
 int m_currentHeight;
@@ -334,7 +334,7 @@ double m_transparent;
 
 <p>messageshow.cpp</p>
 
-<pre><code>// 所有定时器对应执行的信号槽
+<pre><code class="language-C++">// 所有定时器对应执行的信号槽
 connect(m_showTimer, SIGNAL(timeout()),  this, SLOT(slotMsgMove()));
 connect(m_stayTimer, SIGNAL(timeout()),  this, SLOT(slotMsgStay()));
 connect(m_closeTimer, SIGNAL(timeout()), this, SLOT(slotMsgClose()));
@@ -414,7 +414,7 @@ void MessageShow::slotMsgClose()
 
 <p>鼠标进入后，弹窗一直停留， 鼠标离开弹窗，停留 1s 后，逐渐淡化消失</p>
 
-<pre><code>void MessageShow::enterEvent(QEvent *event)
+<pre><code class="language-C++">void MessageShow::enterEvent(QEvent *event)
 {
     Q_UNUSED(event);
 
@@ -444,13 +444,13 @@ void MessageShow::leaveEvent(QEvent *event)
 
 <p>messageshow.h</p>
 
-<pre><code>void setInfomation(QString titleInfo, QString msg);
+<pre><code class="language-C++">void setInfomation(QString titleInfo, QString msg);
 void setInfomation(QString titleInfo, QString msg, QString extraInfo);
 </code></pre>
 
 <p>messageshow.cpp</p>
 
-<pre><code>// ui 界面里简单用 label_titleInfo 显示 title 内容， label_msg 里显示具体的信息
+<pre><code class="language-C++">// ui 界面里简单用 label_titleInfo 显示 title 内容， label_msg 里显示具体的信息
 // 此接口主要显示简单的弹窗内容
 void MessageShow::setInfomation(QString titleInfo, QString msg)
 {
@@ -465,7 +465,7 @@ void MessageShow::setInfomation(QString titleInfo, QString msg, QString extraInf
     ui-&gt;label_titleInfo-&gt;setText(titleInfo);
     ui-&gt;label_msg-&gt;setText(QString(&quot;&lt;a style='color: gray;'href=\&quot;&quot;) + extraInfo + QString(&quot;\&quot;&gt;&quot;)+msg);
     ui-&gt;label_msg-&gt;setToolTip(msg);
-
+        
     // void sigClickUrl(QString), 使用弹窗的对象捕获 sigClickUrl 信号，处理用户自定义的超链接
     connect(ui-&gt;label_msg,SIGNAL(linkActivated(QString)),this,SIGNAL(sigClickUrl(QString)));
 }
@@ -488,7 +488,7 @@ void MessageShow::setInfomation(QString titleInfo, QString msg, QString extraInf
 
 <p>popupmanage.h</p>
 
-<pre><code>class PopupManage : public QObject
+<pre><code class="language-C++">class PopupManage : public QObject
 {
     Q_OBJECT
 
@@ -518,11 +518,11 @@ private:
     static PopupManage * m_popupManager;
     QList&lt;MessageShow *&gt; m_popupList;
 }
-</code></pre>
 
-<p>popupmanage.cpp</p>
+popupmanage.cpp
 
-<pre><code>// 创建 MessageShow 对象后，需要执行的一些操作
+```C++
+// 创建 MessageShow 对象后，需要执行的一些操作
 void PopupManage::addMessageShow(MessageShow *popup)
 {
     connect(popup, &amp;MessageShow::sigClose, this, &amp;PopupManage::deleteMessageShow);
@@ -572,7 +572,7 @@ void PopupManage::setInfomation(QString titleInfo, QString msg, QString extraInf
 
 <p>这里 <code>MessageShow</code> 有个函数 <code>updatePosition()</code>, 在创建 <code>MessageShow</code> 对象之后，直接调用了 <code>updatePosition()</code>, 所有这里的 <code>updatePosition()</code> 一方面的作用是在弹窗第一次显示的 <code>showMessage</code> 功能，另一方面是创建新的弹窗之后的改变位置功能</p>
 
-<pre><code>void MessageShow::updatePosition()
+<pre><code class="language-C++">void MessageShow::updatePosition()
 {
     // 如果是第一次显示，调用 showMessage 函数， 否则是改变位置 
     if(m_firstShow){
@@ -588,7 +588,7 @@ void PopupManage::setInfomation(QString titleInfo, QString msg, QString extraInf
 
 <p>这里 <code>PopupManage</code> 也可以这样实现</p>
 
-<pre><code>void PopupManage::setInfomation(QString titleInfo, QString msg)
+<pre><code class="language-C++">void PopupManage::setInfomation(QString titleInfo, QString msg)
 {
     MessageShow * popup = new MessageShow();
     popup-&gt;setInfomation(titleInfo, msg);
@@ -978,7 +978,7 @@ void PopupManage::setInfomation(QString titleInfo, QString msg, QString extraInf
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
   </div>
   
 
