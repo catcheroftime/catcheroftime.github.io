@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="沃日，竟然被小怪打死了，先回个档 ~">
+  
+  <meta property="og:title" content="备忘录模式" />
+<meta property="og:description" content="沃日，竟然被小怪打死了，先回个档 ~" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-04/%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2021-04-06T20:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-04-06T20:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       备忘录模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-04/%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">备忘录模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Apr 6, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>沃日，竟然被小怪打死了，先回个档 ~</p>
+
+<h2 id="意图">意图</h2>
+
+<blockquote>
+<p>在不破坏封装性的前提下,捕获一个对象的内部状态,并在该对象之外保存这个状态,这样以后就可将该对象恢复到原先保存的状态.</p>
+</blockquote>
+
+<h2 id="动机">动机</h2>
+
+<p>在大多数的软件，例如 <code>word</code>，<code>excel</code>，<code>photoshop</code> 等等都是支持 <code>Ctrl+Z</code> 撤销的操作，他们不仅能撤销一步，甚至有一个执行过操作的列表. 而能撤销，意味着需要保存一个对象操作前的状态，有点类似游戏的存档功能，但是又只希望这是一个档，不会暴露过多额外信息，被外界随意篡改，而备忘录模式恰好提供了记录对象内部状态，同时可以避免暴露过多的实现细节，不破坏对象的封装性的一种思路.</p>
+
+<h2 id="uml-图">UML 图</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/memento/uml.png" alt="uml" /></p>
+
+<ul>
+<li><strong><code>Memento</code></strong> (备忘录)
+
+<ul>
+<li>备忘录存储原发器对象的内部状态，原发器 <strong>根据需要</strong> 决定备忘录存储原发器的哪些内部状态。</li>
+<li>防止原发器以外的其他对象访问备忘录。管理者 (caretaker) 只能看到备忘录的窄接口&ndash;它只能将备忘录传递给其他对象; 原发器能够看到一个宽接口，允许它访问返回到先前状态所需的数据。理想的情况是只允许生成备忘录的那个原发器访问被备忘录的内部状态。</li>
+</ul></li>
+<li><strong><code>Originator</code></strong> (原发器)
+
+<ul>
+<li>原发器创建一个备忘录，用以记录当前时刻它的内部状态</li>
+<li>使用备忘录恢复内部状态</li>
+</ul></li>
+<li><strong><code>Caretaker</code></strong> (负责人)
+
+<ul>
+<li>负责保存好备忘录</li>
+<li>不能对备忘录的内容进行操作或检查</li>
+</ul></li>
+</ul>
+
+<p>这里有两点我觉得值得再好好提一下</p>
+
+<h3 id="类间的协作">类间的协作</h3>
+
+<ul>
+<li>这里的 <code>Originator</code> 就是我们正常使用的对象</li>
+<li><strong>需要备份</strong> 的时候，<code>Originator</code> 根据需要，用它内部状态创建一个备份对象 <code>Memento</code>，而这个中间件对象可以通过 <code>Caretaker</code> 来管理，比如以一个列表的形式展示所有存档的记录形式等等</li>
+<li><strong>还原备份</strong> 的时候，从 <code>Caretaker</code> 取出需要的还原的备份状态 <code>Memento</code>，将这个对象设置给 <code>Originator</code>，<code>Originator</code> 从 <code>Memento</code> 取出保存的状态即可恢复备份的状态。</li>
+</ul>
+
+<p>这里的 <code>Caretaker</code> 可能也不是必须的，它只是用来管理 <code>Memento</code> 的对象，算是备忘录模式的 “编外人员”</p>
+
+<h3 id="封装细节">封装细节</h3>
+
+<p><code>Memento</code> 需要对 <code>Caretaker</code> 等其他对象隐藏对象属性和实现细节，避免状态被篡改等问题，所以也就出现了宽窄接口的需求，而这一部分可以通过将重要的接口函数定义从 <code>private</code> 以及友元的形式来实现。而上文提到的理想情况只允许生成备忘录的那个原发器访问被备忘录的内部状态，之后我会尝试用例子说明。</p>
+
+<h2 id="应用场景">应用场景</h2>
+
+<ul>
+<li>必须保存一个对象在某一个时刻的 (部分) 状态，这样以后需要时它才能恢复到先前的状态。</li>
+<li>如果一个用接口来让其它对象直接得到这些状态，将会暴露对象的实现细节并破坏对象的封装性。</li>
+</ul>
+
+<h2 id="举个例子">举个例子</h2>
+
+<p>举个比较简单例子，而且这个例子不涉及 <code>Caretaker</code>，所以只有 <code>Memento</code> 和 <code>Originator</code></p>
+
+<p>首先看一下 <code>Memento</code>，我这里除了保存 <code>Originator</code> 需要它保存的内部状态，还引入了 <code>uuid</code> 这个字段，主要目的就是只能允许生成备忘录的原发器才能访问备忘录的内部状态信息<br />
+本来需要同时提供 <code>getState()</code> 和 <code>setState()</code> 2个接口，但是因为初始化的时候就完成了赋值，所有就省略了 <code>setState()</code> 函数了</p>
+
+<p>而且这部分最关键的部分就是 <code>friend class Originator</code>， <code>Memento</code> 的接口都声明为 <code>private</code>，而将 <code>Originator</code> 声明为 <code>Memento</code> 的友元类。从而达到封装的功效</p>
+
+<pre><code class="language-C++">#include &lt;iostream&gt;
+using namespace std;
+
+class Memento {
+public:
+    ~Memento(){}
+
+private:
+    friend class Originator;
+    Memento(string state, const string uuid) : m_state(state), m_uuid(uuid){}
+
+    bool getState(string &amp;state, string uuid) {
+        if (m_uuid == uuid) {
+            state = m_state;
+            return true;
+        }
+        return false;
+    }
+
+private:
+    string m_state;
+    string m_uuid;
+};
+</code></pre>
+
+<p>接下来就是 <code>Originator</code>，因为需要有个 <code>UUID</code> 的信息传入 <code>Memento</code>  中，为了简单，就先用当前的时间戳代替一下</p>
+
+<pre><code class="language-C++">#include &lt;time.h&gt;
+#include &quot;memento.h&quot;
+
+class Originator {
+public:
+    Originator() : m_state(&quot;NULL&quot;) {
+        time(&amp;m_uuid);
+    }
+
+    void setState(string state) {
+        m_state = state;
+    }
+
+    void showState() {
+        cout &lt;&lt; &quot;Current state : &quot;&lt;&lt; m_state &lt;&lt; endl;
+    }
+
+    Memento *createMemento() {
+        cout &lt;&lt; &quot;backup state : &quot; &lt;&lt; m_state &lt;&lt; endl;
+        return new Memento(m_state, std::to_string(m_uuid));
+    }
+
+    void setMemento(Memento* memento) {
+        if (memento) {
+            bool success = memento-&gt;getState(m_state, std::to_string(m_uuid) );
+            if (success)
+                cout &lt;&lt; &quot;Undo Success&quot; &lt;&lt; endl;
+            else
+                cout &lt;&lt; &quot;Undo Failure&quot; &lt;&lt; endl;
+        }
+    }
+
+private:
+    string m_state;
+    time_t m_uuid;
+};
+</code></pre>
+
+<p>最后看一下 <code>main()</code> 函数调用部分：</p>
+
+<pre><code class="language-C++">#include &quot;originator.h&quot;
+#include &lt;windows.h&gt;
+
+#define SAFE_DELETE(p) if(p) {delete p; p=nullptr;}
+
+int main()
+{
+    Originator *originator1 = new Originator;
+    originator1-&gt;showState();
+
+    originator1-&gt;setState(&quot;first&quot;);
+    originator1-&gt;showState();
+
+    Memento *backup1 = originator1-&gt;createMemento();
+
+    originator1-&gt;setState(&quot;second&quot;);
+    originator1-&gt;showState();
+
+    originator1-&gt;setMemento(backup1);
+    originator1-&gt;showState();
+
+    cout &lt;&lt; &quot;--------------------&quot; &lt;&lt; endl;
+    Sleep(1000);
+
+    Originator *originator2 = new Originator;
+    originator2-&gt;showState();
+    originator2-&gt;setMemento(backup1);
+    originator2-&gt;showState();
+
+
+    SAFE_DELETE(originator1);
+    SAFE_DELETE(originator2);
+    SAFE_DELETE(backup1);
+
+    return 0;
+}
+</code></pre>
+
+<p>运行结果</p>
+
+<pre><code class="language-shell">Current state : NULL
+Current state : first
+backup state : first
+Current state : second
+Undo Success
+Current state : first
+--------------------
+Current state : NULL
+Undo Failure
+Current state : NULL
+</code></pre>
+
+<h2 id="总结">总结</h2>
+
+<p>将需要备忘的内部信息封装进 <code>Memento</code> 对象中，并通过将接口定义成 <code>private</code> 以及友元函数的形式进一步加强封装，而对 <code>Memento</code> 的管理则可以提供新的类进行管理~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-04/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>职责链模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-04/%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>中介者模式</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%9c%ba">
+												 动机
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#uml-%e5%9b%be">
+												 UML 图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%b1%bb%e9%97%b4%e7%9a%84%e5%8d%8f%e4%bd%9c">
+												 类间的协作
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b0%81%e8%a3%85%e7%bb%86%e8%8a%82">
+												 封装细节
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">
+												 应用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%be%e4%b8%aa%e4%be%8b%e5%ad%90">
+												 举个例子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="趁热打铁，学习一下 APScheduler 的 python 的源码，很好奇任务调度控制的实现。">
+  
+  <meta property="og:title" content="APScheduler 源码阅读(四) triggers(四)" />
+<meta property="og:description" content="趁热打铁，学习一下 APScheduler 的 python 的源码，很好奇任务调度控制的实现。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E5%9B%9B/" />
+<meta property="article:published_time" content="2021-03-25T19:35:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-03-25T19:35:00&#43;08:00"/>
+
+
+  <title>
+  
+       APScheduler 源码阅读(四) triggers(四) | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E5%9B%9B/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/python"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> python </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">APScheduler 源码阅读(四) triggers(四)</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Mar 25, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>趁热打铁，学习一下 <code>APScheduler</code> 的 <code>python</code> 的源码，很好奇任务调度控制的实现。</p>
+
+<p>分析源码主要还是针对 <code>APScheduler</code> 下的几个关键的模块</p>
+
+<ul>
+<li><code>events</code> 事件</li>
+<li><code>executors</code> 执行器</li>
+<li><code>job</code> 任务</li>
+<li><code>jobstores</code> 任务存储</li>
+<li><code>triggers</code> 触发器</li>
+<li><code>schedulers</code> 调度程序</li>
+</ul>
+
+<p>这一篇主要瞅瞅 <code>triggers</code> 触发器的混合模式 <code>CombiningTrigger</code></p>
+
+<h2 id="basecombiningtrigger">BaseCombiningTrigger</h2>
+
+<p><code>BaseCombiningTrigger</code> 是混合使用的 <code>trigger</code> 的基类, 它有 <strong>2</strong> 个子类 <code>AndTrigger</code> 和 <code>OrTrigger</code>, 先看一下基类定义函数, 然后分别看一下子类的实现</p>
+
+<h3 id="初始化">初始化</h3>
+
+<p>传入一个 <code>triggers</code> 的包含多个 <code>trigger</code> 对象的列表, 以及一个提前或延迟执行的时间参数 <code>jitter</code></p>
+
+<pre><code class="language-python">def __init__(self, triggers, jitter=None):
+    self.triggers = triggers
+    self.jitter = jitter
+</code></pre>
+
+<h3 id="序列化和反序列化">序列化和反序列化</h3>
+
+<p>这一部分是基类 <code>BaseCombiningTrigger</code> 中直接定义的, 先介绍一下这一部分</p>
+
+<pre><code class="language-python">def __getstate__(self):
+    return {
+        'version': 1,
+        'triggers': [(obj_to_ref(trigger.__class__), trigger.__getstate__())
+                     for trigger in self.triggers],
+        'jitter': self.jitter
+    }
+
+def __setstate__(self, state):
+    if state.get('version', 1) &gt; 1:
+        raise ValueError(
+            'Got serialized data for version %s of %s, but only versions up to 1 can be '
+            'handled' % (state['version'], self.__class__.__name__))
+
+    self.jitter = state['jitter']
+    self.triggers = []
+    for clsref, state in state['triggers']:
+        cls = ref_to_obj(clsref)
+        trigger = cls.__new__(cls)
+        trigger.__setstate__(state)
+        self.triggers.append(trigger)
+</code></pre>
+
+<p>因为没有仔细研究过 <code>cPickle</code> 针对不同数据类型序列化过程中的差异，比如 <code>jobstore</code> 在序列化 <code>job</code> 时，<code>job</code> 提供的 <code>__getstate__()</code> 函数大致是这样的</p>
+
+<pre><code class="language-python">return {
+    'version': 1,
+    'id': self.id,
+    'func': self.func_ref,
+    'trigger': self.trigger,
+    'executor': self.executor,
+    'args': args,
+    'kwargs': self.kwargs,
+    'name': self.name,
+    'misfire_grace_time': self.misfire_grace_time,
+    'coalesce': self.coalesce,
+    'max_instances': self.max_instances,
+    'next_run_time': self.next_run_time
+}
+</code></pre>
+
+<p>其中</p>
+
+<ul>
+<li><code>self.func_ref</code> 通过 <code>obj_to_ref()</code> 函数提前序列化成 <code>str</code> 了</li>
+<li><code>self.trigger</code> 是基于的 <code>BaseTrigger</code> 的子类对象类型，所以他们的基类都提供了 <code>__getstate__()</code> 和 <code>__setstate__()</code> 方法</li>
+<li><code>self.executor</code> 其实是一个 <code>executor</code> 对象的别名 <code>str</code>，这个别名对应的对象被存储在 <code>schedulers</code> 中</li>
+<li><code>args</code> 是 <code>self.func_ref</code> 函数的传入参数，是 <code>tuple</code> 或者 <code>list</code> 类型</li>
+<li><code>self.kwargs</code> 是 <code>self.func_ref</code> 函数的传入参数, 是 <code>dict</code> 类型</li>
+<li><code>self.id</code>, <code>self.name</code> 是 <code>str</code> 类型</li>
+<li><code>self.next_run_time</code> 是 <code>datetime.datetime</code> 对象类型</li>
+<li><code>self.misfire_grace_time</code> 和 <code>self.max_instances</code> 是 <code>int</code> 类型</li>
+<li><code>self.coalesce</code> 是 <code>bool</code> 类型</li>
+</ul>
+
+<p>但是像 <code>DateTrigger</code> 和 <code>IntervalTrigger</code> 以及 <code>CronTrigger</code> 提供的 <code>__getstate__()</code> 函数都很简单，可能是因为他们的成员变量里没有复杂的类型</p>
+
+<p>这里可能说的有点复杂，简单说就是， <code>cPickle</code> 在做序列化过程中对 <code>trigger</code> 对象可以直接序列化，但是对于包含 <code>trigger</code> 的 <code>list</code> 这种嵌套结构，可能并做不到直接序列化，所以就有着这段代码</p>
+
+<pre><code class="language-python">'triggers': [(obj_to_ref(trigger.__class__), trigger.__getstate__())
+             for trigger in self.triggers]
+</code></pre>
+
+<p>以 <code>IntervalTrigger</code> 为例：</p>
+
+<ul>
+<li>通过 <code>obj_to_ref()</code> 函数将类的序列化得到这样的字符串 <code>apscheduler.triggers.interval:IntervalTrigger</code></li>
+<li>然后通过 <code>__getstate__()</code> 获取到 <code>trigger</code> 的实际状态数据</li>
+</ul>
+
+<p>这篇文章就先不验证 <code>cPickle</code> 关于序列化和反序列化的细节，之后会抽时间详细，完整的测试一下</p>
+
+<p>关于反序列化的 <code>__setstate__()</code> 函数就要稍微简单一点了</p>
+
+<pre><code class="language-python">for clsref, state in state['triggers']:
+    cls = ref_to_obj(clsref)
+    trigger = cls.__new__(cls)
+    trigger.__setstate__(state)
+    self.triggers.append(trigger)
+</code></pre>
+
+<ul>
+<li>从 <code>triggers</code> 的 <code>list</code> 中逐个取出经过 <code>obj_to_ref()</code> 的 <code>clsref</code> 以及通过 <code>__getstate__()</code> 的 <code>state</code></li>
+<li>通过 <code>ref_to_obj()</code> 函数反序列出的对象</li>
+<li><code>cls.__new__(cls)</code> 创建对象</li>
+<li><code>trigger.__setstate__(state)</code> 恢复 <code>trigger</code> 的状态</li>
+<li>最后 <code>append</code> 进 <code>self.triggers</code> 中</li>
+</ul>
+
+<p>关于 <code>BaseCombiningTrigger</code> 的基本介绍完了，接下来就是它的 <strong>2</strong> 个子类</p>
+
+<h2 id="ortrigger">OrTrigger</h2>
+
+<p>先看并集的 <code>OrTrigger</code>, 它只需要实现一个函数 <code>get_next_fire_time()</code></p>
+
+<pre><code class="language-python">def get_next_fire_time(self, previous_fire_time, now):
+    fire_times = [trigger.get_next_fire_time(previous_fire_time, now)
+                  for trigger in self.triggers]
+    fire_times = [fire_time for fire_time in fire_times if fire_time is not None]
+    if fire_times:
+        return self._apply_jitter(min(fire_times), self.jitter, now)
+    else:
+        return None
+</code></pre>
+
+<ul>
+<li>先让每一个 <code>trigger</code> 都调用 <code>get_next_fire_time()</code> 函数获取下次执行时间，得到一个 <code>fire_times</code> 的 <code>list</code></li>
+<li>然后用了一个超简洁的一行代码，将 <code>fire_times</code> 中所有不为 <code>None</code> 的筛选出来</li>
+<li>最后判断 <code>fire_times</code>
+
+<ul>
+<li>不为空，取 <code>fire_times</code> 中最小的一个下次执行时间，先返回</li>
+<li>为空，则返回 <code>None</code></li>
+</ul></li>
+</ul>
+
+<p>没毛病，很简单，就是那一行筛选的语句平时用的比较少，感觉还挺有意思的</p>
+
+<p><code>OrTrigger</code> 看上去逻辑很合理,但是有没有可能存在的什么问题吗?</p>
+
+<h3 id="ortrigger-潜在-bug"><code>OrTrigger</code> 潜在 bug</h3>
+
+<p>假设存在多个 <code>DateTrigger</code>, 先假设这里只有 2 个 <code>DateTrigger</code>, 也就是说我让这个任务在 2 个固定时间执行, 当然这 2 个时间是不同的, 继续假设分别是 <code>date1</code> 和 <code>date2</code>, 并且 <code>date1 &gt; date2 &gt; now</code></p>
+
+<p>根据 <code>OrTrigger</code> 的逻辑第一次执行的时候, 因为 <code>previous_fire_time=None</code>, <code>fire_times</code> 等于得到 <code>[date1, date2]</code>, 那么返回较小值, 也就是 <code>date2</code>, 上层会把 <code>date2</code> 赋值给 <code>job</code> 的 <code>next_run_time</code></p>
+
+<p>那么下次调取 <code>get_next_fire_time()</code> 函数的时候, <code>date2</code> 其实就是 <code>previous_fire_time</code>, 所以问题来了</p>
+
+<pre><code class="language-python">def get_next_fire_time(self, previous_fire_time, now):
+    return self.run_date if previous_fire_time is None else None
+</code></pre>
+
+<p>根据前面 <code>DateTrigger</code> 的函数了解 <code>previous_fire_time</code> 不为 <code>None</code> 的时候会返回 <code>None</code>, 这 2 个 <code>DateTrigger</code> 实际上都是返回 <code>None</code>, 也就是说 <code>date1</code> 是不会触发的</p>
+
+<p>所以在 <strong>我的思路</strong> 里有 3 个方案解决这个问题</p>
+
+<p>方案一: 既然存在问题, 那就不使用 <code>OrTrigger</code>, 添加任务的时候, 将这个任务, 使用不同 <code>DateTrigger</code> 多添加几遍</p>
+
+<pre><code class="language-python">scheduler.add_job(job_function, DateTrigger(run_date=date1) )
+scheduler.add_job(job_function, DateTrigger(run_date=date2) )
+</code></pre>
+
+<p>方案二: 需要改源码, 既然是一次性执行的任务, 其实可以不关心 <code>previous_fire_time</code>, 只要你 <code>now</code> 大于 <code>self.run_date</code> 可以就返回 <code>None</code>, 执行完之后, 再获取下次执行时间的时候其实 <code>now</code> 肯定大于 <code>self.run_date</code></p>
+
+<pre><code class="language-python">def get_next_fire_time(self, previous_fire_time, now):
+    return self.run_date if self.run_date &gt; now else None
+</code></pre>
+
+<p>方案三: 也需要改源码,可能比较麻烦, 定义一个任务是否被执行的标志位, 这也是源码的设计大佬们开发 <code>4.0</code> 版本的方案</p>
+
+<blockquote>
+<p><strong>需要额外重申一遍, 这个系列的所有源码分析是基于 <code>3.6.3</code> 版本的 <code>apscheduler</code></strong></p>
+</blockquote>
+
+<h3 id="ortrigger-bug-结论"><code>OrTrigger</code> bug 结论</h3>
+
+<p>bug 只会出现在同时存在多个 <code>DateTrigger</code> 的时候, 所以使用的时候额外注意就好</p>
+
+<h2 id="andtrigger">AndTrigger</h2>
+
+<p>接着看交集的 <code>AndTrigger</code>, 它也只需要实现一个函数 <code>get_next_fire_time()</code></p>
+
+<pre><code class="language-python">def get_next_fire_time(self, previous_fire_time, now):
+    while True:
+        fire_times = [trigger.get_next_fire_time(previous_fire_time, now)
+                      for trigger in self.triggers]
+        if None in fire_times:
+            return None
+        elif min(fire_times) == max(fire_times):
+            return self._apply_jitter(fire_times[0], self.jitter, now)
+        else:
+            now = max(fire_times)
+</code></pre>
+
+<p>又是一段很有意思的代码</p>
+
+<ul>
+<li>跟 <code>OrTrigger</code> 一样，先得到一个 <code>fire_times</code></li>
+<li>因为是求并集，所以就一个目标，<code>fire_times</code> 中的值都一样
+
+<ul>
+<li>存在 <code>None</code>，按照之前的逻辑，代表需要删除任务，所有直接返回 <code>None</code></li>
+<li>最大值和最小值一样，则调用 <code>self._apply_jitter()</code> 后返回</li>
+<li>如果都不满足，取最大值赋值给 <code>now</code> 在重新计算，直到出现满足条件的</li>
+</ul></li>
+</ul>
+
+<p><code>AndTrigger</code> 看上去逻辑也挺合理,但是好像也有点问题</p>
+
+<h3 id="andtrigger-潜在-bug"><code>AndTrigger</code> 潜在 bug</h3>
+
+<p>首先看一下官方提到的例子 <a href="https://apscheduler.readthedocs.io/en/v3.6.3/modules/triggers/combining.html#module-apscheduler.triggers.combining">https://apscheduler.readthedocs.io/en/v3.6.3/modules/triggers/combining.html#module-apscheduler.triggers.combining</a></p>
+
+<p>它例子的代码只说明了 <code>AndTrigger</code> 如何初始化, 剩下的我来补齐</p>
+
+<pre><code class="language-python">from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.triggers.combining import AndTrigger
+from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.triggers.cron import CronTrigger
+
+from datetime import datetime, timedelta
+
+def job_function():
+   print(&quot;-----------------------&quot;)   
+
+scheduler = BlockingScheduler()
+trigger = AndTrigger([IntervalTrigger(hours=2),
+                      CronTrigger(day_of_week='sat,sun')])
+scheduler.add_job(job_function, trigger)
+scheduler.start()
+</code></pre>
+
+<p>先看一下官方对于这个 <code>AndTrigger</code> 的介绍</p>
+
+<blockquote>
+<p>Run <code>job_function</code> every 2 hours, but only on Saturdays and Sundays<br />
+每2小时运行一次<code>job_function</code>，但仅在周六和周日运行 (腾讯翻译)</p>
+</blockquote>
+
+<p>解释的好像和我们想象中是一样的,但是实际却不是这样的 !</p>
+
+<p>其中的 <code>IntervalTrigger(hours=2)</code> 确实是每隔 <strong>2</strong> 个小时执行一次, 但是没有定义开始时间 <code>start_date</code>, 我在 <a href="地址">APScheduler 源码阅读(四) triggers(一)</a> 中介绍了 <code>IntervalTrigger</code> 的源码实现逻辑, 它每次的运行时间实际上都是 <code>start_date</code> 基础上加上若干个指定的时间间隔, 在这里就是加上若干个 <strong>2</strong> 小时, 而没有初始化<code>start_date</code> 就会默认使用 <code>start_date = start_date or (datetime.now(self.timezone) + self.interval)</code></p>
+
+<blockquote>
+<p>假设现在的时间是 <code>2021-03-28 02:13:09.347022</code>, 那么 <code>IntervalTrigger(hours=2)</code> 就是每次都是在这个时间基础上加若干个 <strong>2</strong> 小时</p>
+</blockquote>
+
+<p><code>CronTrigger(day_of_week='sat,sun')</code>  也简单分析一下, 首先是这个 <code>CronTrigger</code> 的初始化问题, 因为只设置了 <code>day_of_week</code>, 那么会让 <code>day_of_week</code> 后面的字段全部按照默认值设置, 所以实际上 <code>CornTrigger</code> 定义应该是</p>
+
+<table>
+<thead>
+<tr>
+<th align="left"><code>year</code></th>
+<th align="left"><code>month</code></th>
+<th align="left"><code>day</code></th>
+<th align="left"><code>week</code></th>
+<th align="left"><code>day_of_week</code></th>
+<th align="left"><code>hour</code></th>
+<th align="left"><code>minute</code></th>
+<th align="left"><code>second</code></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><code>*</code></td>
+<td align="left"><code>*</code></td>
+<td align="left"><code>*</code></td>
+<td align="left"><code>*</code></td>
+<td align="left"><code>sat,sun</code></td>
+<td align="left"><code>0</code></td>
+<td align="left"><code>0</code></td>
+<td align="left"><code>0</code></td>
+</tr>
+</tbody>
+</table>
+
+<p>这意味它会在每个周六周日的 <code>00:00:00</code> 执行一次任务</p>
+
+<blockquote>
+<p>假设现在的时间是 <code>2021-03-28 02:13:09.347022</code>, 那么 <code>CronTrigger(day_of_week='sat,sun')</code> 接下来第一次执行的时间应该是 <code>2021-04-03 00:00:00</code></p>
+</blockquote>
+
+<p>光 <code>IntervalTrigger</code> 秒后面携带的毫秒值, 很显然这个时间永远都不会有交集, 也就不存在 <code>Run 'job_function' every 2 hours, but only on Saturdays and Sundays</code> 这种解释</p>
+
+<h3 id="andtrigger-进一步"><code>AndTrigger</code> 进一步</h3>
+
+<p>但是假设我们强行让这 2 个有交集, 无非就是给 <code>IntervalTrigger</code> 指定一个开始时间, 所以改一下代码, 让 <code>IntervalTrigger</code> 从 <code>00:00:00</code> 开始执行</p>
+
+<pre><code class="language-python">trigger = AndTrigger([IntervalTrigger(hours=2, start_date=datetime(2021 ,4, 1 ,0 ,0, 0)),
+                      CronTrigger(day_of_week='sat,sun')])
+</code></pre>
+
+<p>这样写确实可以求出一个公共的 <code>next_run_time</code>, 也就是 <code>2021-04-03 00:00:00</code>, 虽然还没有介绍 <code>schedulers</code> 的源码, 但是有必要简单说一下实际任务的处理流程, 详细的流程图之类的会放到后面一篇中</p>
+
+<ul>
+<li><code>scheduler.start()</code> 启动之后, 会初始化各个组件 <code>executor</code>, <code>jobstore</code> 等</li>
+<li><code>scheduler.start()</code> 前通过的 <code>add_job()</code> 函数添加的任务信息也会真正初始化, 并且以 <code>previous_fire_time=None</code> 为条件第一次计算任务下次执行时间, 并将这个值赋值给 <code>job</code> 的<code>next_run_time</code> 变量中</li>
+<li>随后会启动线程, 执行 <code>_process_jobs()</code> 函数, 这个函数也是真正统筹任务调度的函数, 这里其实还有线程的睡眠和唤醒的调度的涉及, 先不展开</li>
+<li>先假设到了 <code>2021-04-03 00:00:00</code> 这个时间线程被唤醒, <code>_process_jobs()</code> 函数会先获取一下当前时间, 那么 <code>now</code> 肯定是大于 <code>2021-04-03 00:00:00</code> 这个值,当然多出来的时间很小很小,只有几毫秒或者几十毫秒, <code>_process_jobs()</code> 函数会先从 <code>jobstore</code> 中取出小于 <code>now</code> 的任务, 刚好误差几毫秒, 完美把任务取出来, 但是从 <code>job</code> 中获取执行时间的同时,会额外计算下一次执行时间, 也就是调用 <code>trigger</code> 的<code>get_next_fire_time(self, previous_fire_time, now)</code> 函数, 但是此时传入函数的 <code>previous_fire_time</code> 值就是 <code>next_run_time</code>, 也就是 <code>2021-04-03 00:00:00</code></li>
+</ul>
+
+<p>但是不管是 <code>IntervalTrigger</code> 还是 <code>CronTrigger</code> 在 <code>get_next_fire_time(self, previous_fire_time, now)</code> 函数中 <code>previous_fire_time</code> 不为 <code>None</code> 的时候处理都不能满足实际情况, 还是分别看一下部分代码</p>
+
+<pre><code class="language-python"># IntervalTrigger
+def get_next_fire_time(self, previous_fire_time, now):
+    if previous_fire_time:
+        next_fire_time = previous_fire_time + self.interval
+    ...
+
+# CronTrigger
+def get_next_fire_time(self, previous_fire_time, now):
+    if previous_fire_time:
+        start_date = min(now, previous_fire_time + timedelta(microseconds=1))
+        if start_date == previous_fire_time:
+            start_date += timedelta(microseconds=1)
+    else:
+        start_date = max(now, self.start_date) if self.start_date else now
+
+    next_date = datetime_ceil(start_date).astimezone(self.timezone)
+    ...
+</code></pre>
+
+<p>它们的逻辑在 <code>previous_fire_time</code> 有值的时候, <code>now</code> 是没有任何用的</p>
+
+<ul>
+<li><strong><code>IntervalTrigger</code></strong> : 在 <code>previous_fire_time</code> 基础上加一个时间间隔 <code>self.interval</code></li>
+<li><strong><code>CronTrigger</code></strong> : 在 <code>now</code> 和 <code>previous_fire_time</code> 中取较小值, 还有一个向上取整, 实际上就是 <code>previous_fire_time</code> 向上取整 1 秒</li>
+</ul>
+
+<p>所以不匹配之后 <code>AndTrigger</code> 的 <code>now = max(fire_times)</code> 设计也没有任何意义了</p>
+
+<p>所以就算命中一次, 之后也不可能算出相同的 <code>next_run_time</code>, 而且 <code>while True</code> 也会是一个死循环</p>
+
+<h3 id="andtrigger-结论"><code>AndTrigger</code> 结论</h3>
+
+<p>感觉这个是在设计上就存在问题, 尽量避免使用 <code>AndTrigger</code>, 但是很多情况下都可以仅使用 <code>CronTrigger</code> 来解决, 比如官方的例子, 每2小时运行一次 <code>job_function</code>，但仅在周六和周日运行</p>
+
+<pre><code class="language-python">CronTrigger(day_of_week='sat,sun', hour='2')
+</code></pre>
+
+<p>而关于解决方案, 我考虑了一段时间也没想到切实可行的方案, 但是在现在的设计思路下, 我觉得有几个方面一定要改</p>
+
+<ul>
+<li><code>CornTrigger</code> 是取整之后算下次执行时间, <code>IntervalTrigger</code> 和 <code>DateTrigger</code> 返回的时间如果不取整, 比较时候永远不可能恰好相等, 当然比较的时候取整比较也行</li>
+<li>通过 <code>get_next_fire_time(self, previous_fire_time, now)</code> 获取到的下次执行时间, 不能单纯通过 <code>min(fire_times) == max(fire_times)</code> 来比较, 我觉得可能需要将其中 <code>max(fire_times)</code> 最大值, 传递给其他 <code>trigger</code>, 让他们计算一下它们在之后的时间中是否会触发, 更简单点说, 有点像在这一堆 <code>fire_times</code> 中找出最小公倍数的感觉</li>
+</ul>
+
+<p>但是找最小公倍数看着挺简单, 其实也没有想象中的简单, 我说一下我觉得问题</p>
+
+<p><code>AndTrigger</code> 是一个多 <code>Trigger</code> 复合的情况, 两两组合,甚至三个一起, 感觉找最小公倍数的逻辑就不太一样了</p>
+
+<ul>
+<li><code>DateTrigger</code> 是一次性, 如果它的时间不被其他 <code>trigger</code> 触发, 等于这个任务是不可能执行的</li>
+<li>只存在 <code>IntervalTrigger</code>, 就一定需要取整比较, 或者设置相同的 <code>start_date</code>, 但是需要提前算出最小公倍数, 利用 <code>previous_fire_time=None</code> 结合 <code>now</code> 算出第一个执行时间, 之后每次加最小公倍数</li>
+</ul>
+
+<p>以下两种的混合目前基本没有什么思路</p>
+
+<p>只存在 <code>CornTrigger</code> 或者 <code>IntervalTrigger</code> 和 <code>CornTrigger</code> 混用, 因为 <code>CornTrigger</code> 的存在, 可能会出现时间一直不能同时兼得的情况, 比如</p>
+
+<pre><code class="language-python">CronTrigger(day_of_week='sat,sun')
+CronTrigger(day_of_week='mon')
+</code></pre>
+
+<p>一直找不到 <code>next_run_time</code> 的死循环, 如何处理这个我也一点好的思路也没有</p>
+
+<h2 id="总结">总结</h2>
+
+<p>不要在 <code>OrTrigger</code> 中同时设置多个 <code>DateTrigger</code> 的时候 !</p>
+
+<p>不要使用 <code>AndTrigger</code> !</p>
+
+<p>当然上面的建议是基于 <code>3.6.3</code> 版本的, <code>4.0</code> 版本大佬们正在开发, 期待他们的实现思路~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/python" role="button">python </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E4%BA%8C/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>APScheduler 源码阅读(四) triggers(二)</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E4%B8%89/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>APScheduler 源码阅读(四) triggers(三)</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#basecombiningtrigger">
+												 BaseCombiningTrigger
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%9d%e5%a7%8b%e5%8c%96">
+												 初始化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%8f%e5%88%97%e5%8c%96%e5%92%8c%e5%8f%8d%e5%ba%8f%e5%88%97%e5%8c%96">
+												 序列化和反序列化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#ortrigger">
+												 OrTrigger
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#ortrigger-%e6%bd%9c%e5%9c%a8-bug">
+												 OrTrigger 潜在 bug
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#ortrigger-bug-%e7%bb%93%e8%ae%ba">
+												 OrTrigger bug 结论
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#andtrigger">
+												 AndTrigger
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#andtrigger-%e6%bd%9c%e5%9c%a8-bug">
+												 AndTrigger 潜在 bug
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#andtrigger-%e8%bf%9b%e4%b8%80%e6%ad%a5">
+												 AndTrigger 进一步
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#andtrigger-%e7%bb%93%e8%ae%ba">
+												 AndTrigger 结论
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

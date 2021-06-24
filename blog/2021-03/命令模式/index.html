@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="小明, 你妈让我喊你回去吃饭啦~">
+  
+  <meta property="og:title" content="命令模式" />
+<meta property="og:description" content="小明, 你妈让我喊你回去吃饭啦~" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-03/%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2021-03-13T20:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-03-13T20:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       命令模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-03/%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">命令模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Mar 13, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>小明, 你妈让我喊你回去吃饭啦~</p>
+
+<h2 id="意图">意图</h2>
+
+<blockquote>
+<p>将一个请求封装为一个对象，从而使你可以用不同的请求对客户进行参数化；对请求排队或记录请求日志，以及支持可撤销的操作。</p>
+</blockquote>
+
+<h2 id="动机">动机</h2>
+
+<p>有时必须向某对象提交请求，但并不知道关于被请求的操作或请求的接收者的任何信息。举个简单例子：</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/command/example.png" alt="uml" /></p>
+
+<p>菜单栏里的 <code>编辑</code> 按钮下的各个按键，按键本身并不知道该由哪个对象做哪个操作，执行操作的对象应该是 <code>App</code> 里跟踪用户已打开的 <code>Document</code> 对象</p>
+
+<p>命令模式通过将请求本身变成一个对象，来使工具栏对象可向未指定的应用程序提出请求。</p>
+
+<p>在简单点，当按键按下的时候，<code>App</code> 生成一个指定 <code>命令</code> 的对象，然后 <code>App</code> 动态给 <code>命令</code> 对象设置执行命令的对象 (<code>Document</code>)，并将这个 <code>命令</code> 对象传递给按键，交由按键执行 <code>命令</code></p>
+
+<h2 id="uml-图">UML 图</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/command/uml.png" alt="uml" /></p>
+
+<ul>
+<li><code>Command</code> : <strong>抽象命令类</strong><br />
+声明执行操作的接口</li>
+<li><code>ConcreteCommand</code> ： <strong>具体命令类</strong><br />
+将一个接受者对象绑定于一个动作<br />
+调用接收者相应的操作</li>
+<li><code>Invoker</code> ： <strong>命令调用者</strong><br />
+要求该命令执行这个请求</li>
+<li><code>Receiver</code>  ： <strong>接收者</strong><br />
+知道如何实施与执行一个请求相关的操作，任何类都可能作为一个接收者</li>
+<li><code>Client</code><br />
+创建一个具体命令对象并设定它的接受者</li>
+</ul>
+
+<p>这里 <code>ConcreteCommand</code> 的 <code>state</code> 主要是考虑到，如果该命令可撤销，那么就需要在 <code>ConcreteCommand</code> 在执行 <code>Execute</code> 操作之前存储当前状态以用于取消该命令</p>
+
+<ul>
+<li><code>Client</code> 创建一个 <code>ConcreteCommand</code> 对象并指定它的 <code>Receiver</code> 对象，<code>Invoker</code> 对象存储该 <code>ConcreteCommand</code> 对象</li>
+<li><code>Invoker</code> 通过调用 <code>Command</code> 对象的 <code>Execute</code> 操作来提交一个请求</li>
+</ul>
+
+<p>从这里可以看出，命令模式将调用者和接收者 (以及它执行的请求) 完全解耦了。</p>
+
+<h2 id="应用场景">应用场景</h2>
+
+<p>其实在意图中就已经很好的将它的应用场景介绍清楚了</p>
+
+<ul>
+<li>命令需要支持撤销和恢复操作。</li>
+<li>需要支持事务。其实和撤销相似，都需要保存操作前的状态</li>
+</ul>
+
+<p>此外</p>
+
+<ul>
+<li>如果需要请求发送者和接收者解耦，使得发送者和接收者互不影响</li>
+<li>在不同的时刻指定、排列和执行请求。因为引入了 <code>Invoker</code> 这个中间件，一个 <code>Command</code> 对象可以有一个与初始请求无关的生命周期</li>
+</ul>
+
+<h2 id="举个例子">举个例子</h2>
+
+<p>如果结合应用场景中提到的支持 <strong>撤销</strong> 和 <strong>事务</strong> 等，举出来的例子都过于复杂，这里就只使用 <code>UML</code> 图中的最基本的 <code>demo</code></p>
+
+<p>首先实现 <code>Receiver</code></p>
+
+<pre><code class="language-C++">class Receiver{
+public:
+    void Action1() {
+        std::cout &lt;&lt; &quot;Action1 执行请求！&quot; &lt;&lt; std::endl;
+    }
+
+    void Action2() {
+        std::cout &lt;&lt; &quot;Action2 执行请求！&quot; &lt;&lt; std::endl;
+    }
+};
+</code></pre>
+
+<p>接着是抽象的命令类 <code>Command</code> 和具体的命令类 <code>ConcreteCommand1</code> 和 <code>ConcreteCommand2</code></p>
+
+<pre><code class="language-C++">class Command{
+public:
+    Command(Receiver receiver) : m_receiver(receiver) {}
+    ~Command() {}
+
+    virtual void Execute() = 0;
+
+protected:
+    Receiver m_receiver;
+};
+
+class ConcreteCommand1 : public Command {
+public:
+    ConcreteCommand1(Receiver receiver) : Command(receiver) {}
+
+    virtual void Execute() { m_receiver.Action1(); }
+};
+
+class ConcreteCommand2 : public Command {
+public:
+    ConcreteCommand2(Receiver receiver) : Command(receiver) {}
+
+    virtual void Execute() { m_receiver.Action2(); }
+};
+</code></pre>
+
+<p>接着是管理命令的 <code>Invoker</code> 类</p>
+
+<pre><code class="language-C++">class Invoker {
+public:
+    void setCommand(Command *command) {
+        m_commandList.push_back( command );
+    }
+
+    void ExecuteCommand() {
+        for ( auto command : m_commandList)
+            command-&gt;Execute();
+    }
+
+private:
+    list&lt;Command *&gt; m_commandList;
+};
+</code></pre>
+
+<p>最后是 <code>main</code> 调用部分</p>
+
+<pre><code class="language-C++">#include &quot;command.h&quot;
+
+int main()
+{
+    Receiver r;
+    ConcreteCommand1 command1{r};
+    ConcreteCommand2 command2{r};
+
+    Invoker invoker;
+    invoker.setCommand(&amp;command1);
+    invoker.setCommand(&amp;command2);
+
+    invoker.ExecuteCommand();
+}
+</code></pre>
+
+<p>执行结果</p>
+
+<pre><code class="language-C++">Action1 执行请求！
+Action2 执行请求！
+</code></pre>
+
+<h2 id="实现的细节问题">实现的细节问题</h2>
+
+<h3 id="支持取消和重做的问题">支持取消和重做的问题</h3>
+
+<p>为了实现这个功能，就需要 <code>ConcreteCommand</code> 存储额外的状态信息，其中包括</p>
+
+<ul>
+<li>接收者对象，它真正执行处理该请求的各操作</li>
+<li>接收者上执行操作的参数</li>
+<li>如果处理请求的操作会改变接收者对象中的某些值，那么这些值也必须先存储起来，这里可以结合 <code>原型模式</code>，接收者还必须提供一些操作，以使该命令可将接收者恢复到它先前的状态</li>
+</ul>
+
+<p>此外，如果实现撤销多步的情况，就还需要维护一个已被执行命令的 <code>历史操作列表</code></p>
+
+<h3 id="使用-c-模板">使用 C++ 模板</h3>
+
+<p>这是 <code>GoF</code> 中提到的一个很有意思的思路，如果我们的命令模式，一方面不需要撤销功能，另一方面执行不需要参数的函数时，可以使用 C++ 模板来实现，可以看代码：</p>
+
+<pre><code class="language-C++">template &lt;class Receiver&gt;
+class SimpleCommand : public Command {
+public:
+    typedef void (Receiver::* Action) ();
+
+    SimpleCommand (Receiver r, Action a) :  Command(r), m_action(a) {}
+
+    virtual void Execute() { (m_receiver.*m_action) (); }
+
+private:
+    Action m_action;
+};
+</code></pre>
+
+<p><code>main</code> 函数部分则如下 ：</p>
+
+<pre><code class="language-C++">int main()
+{
+    Receiver r;
+    SimpleCommand&lt;Receiver&gt; aCommand (r, &amp;Receiver::Action1);
+
+    Invoker invoker;
+    invoker.setCommand(&amp;aCommand);
+    invoker.ExecuteCommand();
+}
+</code></pre>
+
+<p>不过这一方案只适用于简单的命令</p>
+
+<h2 id="总结">总结</h2>
+
+<p>命令模式给我的最强烈的感觉就是引入了 <code>命令</code> 这个抽象的对象, 使发出请求的发送者 <code>invoker</code>和执行请求的接收者 <code>receiver</code> 分割开。这样两者之间通过命令对象进行沟通，这样方便将命令对象进行储存、传递、调用、增加与管理，从而可以实现 <code>撤销</code>、<code>重做</code>、<code>记录</code> 这些额外的功能</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-03/%E8%A7%A3%E9%87%8A%E5%99%A8%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>解释器模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E4%B8%80/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>APScheduler 源码阅读(四) triggers(一)</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%9c%ba">
+												 动机
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#uml-%e5%9b%be">
+												 UML 图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">
+												 应用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%be%e4%b8%aa%e4%be%8b%e5%ad%90">
+												 举个例子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%9e%e7%8e%b0%e7%9a%84%e7%bb%86%e8%8a%82%e9%97%ae%e9%a2%98">
+												 实现的细节问题
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%94%af%e6%8c%81%e5%8f%96%e6%b6%88%e5%92%8c%e9%87%8d%e5%81%9a%e7%9a%84%e9%97%ae%e9%a2%98">
+												 支持取消和重做的问题
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bd%bf%e7%94%a8-c-%e6%a8%a1%e6%9d%bf">
+												 使用 C&#43;&#43; 模板
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

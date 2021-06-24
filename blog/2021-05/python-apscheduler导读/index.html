@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="APScheduler 的从初识到源码阅读已经完结撒花了，再来一个导读的目录，就算是真正的完整了~">
+  
+  <meta property="og:title" content="Python-APScheduler导读" />
+<meta property="og:description" content="APScheduler 的从初识到源码阅读已经完结撒花了，再来一个导读的目录，就算是真正的完整了~" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-05/python-apscheduler%E5%AF%BC%E8%AF%BB/" />
+<meta property="article:published_time" content="2021-05-01T19:35:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-05-01T19:35:00&#43;08:00"/>
+
+
+  <title>
+  
+       Python-APScheduler导读 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-05/python-apscheduler%E5%AF%BC%E8%AF%BB/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/python"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> python </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">Python-APScheduler导读</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>May 1, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p><code>APScheduler</code> 的从初识到源码阅读已经完结撒花了，再来一个导读的目录，就算是真正的完整了~</p>
+
+<p><code>Advanced Python Scheduler(APScheduler)</code> 是 <code>python</code> 下一个超强大的定时任务框架，整体的使用难度不大，还是很值得学习和使用的</p>
+
+<p>这篇文章是自己学习 <code>APScheduler</code> 过程中，对自己整理的所有笔记做了一个导读的目录，其中包括使用的说明，常用 API 的整理， 以及对它所有核心模块的源码阅读</p>
+
+<p>一个必须强调的点，我所有的源码解析都是基于 <code>APScheduler</code> 的 <strong><code>3.6.3</code></strong> 版本</p>
+
+<blockquote>
+<p>温馨提示: 本文的标题可以直接跳转到具体的文章~</p>
+</blockquote>
+
+<h2 id="python-apscheduler入门-https-blog-csdn-net-qq-20821119-article-details-114537217"><a href="https://blog.csdn.net/qq_20821119/article/details/114537217">Python APScheduler入门</a></h2>
+
+<p>这篇文章主要翻译 <a href="https://apscheduler.readthedocs.io/en/v3.6.3/userguide.html">官方</a> 对于 <code>APScheduler</code> 入门级的介绍，提供了哪些功能，可以实现哪些需求等等<br />
+自己也顺便举了一些比较方便阅读的例子，方便快速的使用这个库</p>
+
+<h2 id="apscheduler-api总结-https-blog-csdn-net-qq-20821119-article-details-114700985"><a href="https://blog.csdn.net/qq_20821119/article/details/114700985">APScheduler API总结</a></h2>
+
+<p>这篇文章主要总结了 <code>APScheduler</code> 各个模块提供的一些关键的常用 API</p>
+
+<p>更完整的 API 整理 ，可以查看 <a href="https://apscheduler.readthedocs.io/en/stable/py-modindex.html">官方文档</a></p>
+
+<h2 id="apscheduler-源码阅读-一-executors-https-blog-csdn-net-qq-20821119-article-details-115031484"><a href="https://blog.csdn.net/qq_20821119/article/details/115031484">APScheduler 源码阅读(一) executors</a></h2>
+
+<p>分析 <code>APScheduler</code> 执行器 <code>executor</code> 的源码，先从最简单的开始分析</p>
+
+<h2 id="apscheduler-源码阅读-一-job-https-blog-csdn-net-qq-20821119-article-details-115234087"><a href="https://blog.csdn.net/qq_20821119/article/details/115234087">APScheduler 源码阅读(一) job</a></h2>
+
+<p>分析 <code>APScheduler</code> 任务 <code>job</code> 的源码</p>
+
+<p><code>Job</code> 比较核心的部分应该算是修改的 <code>_modify()</code> 函数，以及序列化和反序列化这部分代码</p>
+
+<h2 id="apscheduler-源码阅读-三-jobstores-https-blog-csdn-net-qq-20821119-article-details-115277289"><a href="https://blog.csdn.net/qq_20821119/article/details/115277289">APScheduler 源码阅读(三) jobstores</a></h2>
+
+<p>主要介绍了基类 <code>BaseJobStore</code> 以及 2 个比较特色的子类 <code>MemoryJobStore</code> 以及 <code>RedisJobStore</code></p>
+
+<p>可以发现 <code>JobStore</code> 核心就是如何维护好一个以 <code>job.next_run_time</code> 大小为标准排好序的列表以及如何保存所有任务以便于检索~</p>
+
+<h2 id="apscheduler-源码阅读-四-triggers-一-https-blog-csdn-net-qq-20821119-article-details-115399365"><a href="https://blog.csdn.net/qq_20821119/article/details/115399365">APScheduler 源码阅读(四) triggers(一)</a></h2>
+
+<p>详细的介绍了基类 <code>BaseTrigger</code> 以及在固定时间执行一次的 <code>DateTrigger</code> 和以固定时间间隔运行任务的 <code>IntervalTrigger</code>，整体代码难度不大~</p>
+
+<h2 id="apscheduler-源码阅读-四-triggers-二-https-blog-csdn-net-qq-20821119-article-details-115450070"><a href="https://blog.csdn.net/qq_20821119/article/details/115450070">APScheduler 源码阅读(四) triggers(二)</a></h2>
+
+<p>这篇文章主要是为 <code>CronTrigger</code> 触发器铺路，整理所有的正则表达式匹配的类的实现</p>
+
+<h2 id="apscheduler-源码阅读-四-triggers-三-https-blog-csdn-net-qq-20821119-article-details-115649617"><a href="https://blog.csdn.net/qq_20821119/article/details/115649617">APScheduler 源码阅读(四) triggers(三)</a></h2>
+
+<p>详细介绍了 <code>CronTrigger</code> 的实现，针对时间的每一字段做了定制化的设置，实现的思路还是很值得好好理解的~</p>
+
+<h2 id="apscheduler-源码阅读-四-triggers-四-https-blog-csdn-net-qq-20821119-article-details-115732578"><a href="https://blog.csdn.net/qq_20821119/article/details/115732578">APScheduler 源码阅读(四) triggers(四)</a></h2>
+
+<p>分析了 <code>OrTrigger</code> 和 <code>AndTrigger</code> 这 2 种复合的触发器，意外的发现了一些设计上的<code>bug</code>， 最后得出以下 2 个建议：</p>
+
+<ul>
+<li>不要在 <code>OrTrigger</code> 中同时设置多个 <code>DateTrigger</code> 的时候 !</li>
+<li>不要使用 <code>AndTrigger</code> !</li>
+</ul>
+
+<p>当然上面的建议是基于 <code>3.6.3</code> 版本的， <code>4.0</code> 版本大佬们正在开发， 期待他们的实现思路</p>
+
+<h2 id="apscheduler-源码阅读-五-schedulers-https-blog-csdn-net-qq-20821119-article-details-116307323"><a href="https://blog.csdn.net/qq_20821119/article/details/116307323">APScheduler 源码阅读(五) schedulers</a></h2>
+
+<p>调度所有的模块的基类 <code>BaseScheduler</code> 以及它其中一个子类 <code>BlockingScheduler</code> 的源码分析</p>
+
+<p>算是自己整理完的第一个系列，要个赞不过分吧~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/python" role="button">python </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-04/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%BA%94-schedulers/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>APScheduler 源码阅读(五) schedulers</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-05/%E8%AE%BF%E9%97%AE%E8%80%85%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>访问者模式</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#python-apscheduler%e5%85%a5%e9%97%a8-https-blog-csdn-net-qq-20821119-article-details-114537217">
+												 Python APScheduler入门
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#apscheduler-api%e6%80%bb%e7%bb%93-https-blog-csdn-net-qq-20821119-article-details-114700985">
+												 APScheduler API总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#apscheduler-%e6%ba%90%e7%a0%81%e9%98%85%e8%af%bb-%e4%b8%80-executors-https-blog-csdn-net-qq-20821119-article-details-115031484">
+												 APScheduler 源码阅读(一) executors
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#apscheduler-%e6%ba%90%e7%a0%81%e9%98%85%e8%af%bb-%e4%b8%80-job-https-blog-csdn-net-qq-20821119-article-details-115234087">
+												 APScheduler 源码阅读(一) job
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#apscheduler-%e6%ba%90%e7%a0%81%e9%98%85%e8%af%bb-%e4%b8%89-jobstores-https-blog-csdn-net-qq-20821119-article-details-115277289">
+												 APScheduler 源码阅读(三) jobstores
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#apscheduler-%e6%ba%90%e7%a0%81%e9%98%85%e8%af%bb-%e5%9b%9b-triggers-%e4%b8%80-https-blog-csdn-net-qq-20821119-article-details-115399365">
+												 APScheduler 源码阅读(四) triggers(一)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#apscheduler-%e6%ba%90%e7%a0%81%e9%98%85%e8%af%bb-%e5%9b%9b-triggers-%e4%ba%8c-https-blog-csdn-net-qq-20821119-article-details-115450070">
+												 APScheduler 源码阅读(四) triggers(二)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#apscheduler-%e6%ba%90%e7%a0%81%e9%98%85%e8%af%bb-%e5%9b%9b-triggers-%e4%b8%89-https-blog-csdn-net-qq-20821119-article-details-115649617">
+												 APScheduler 源码阅读(四) triggers(三)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#apscheduler-%e6%ba%90%e7%a0%81%e9%98%85%e8%af%bb-%e5%9b%9b-triggers-%e5%9b%9b-https-blog-csdn-net-qq-20821119-article-details-115732578">
+												 APScheduler 源码阅读(四) triggers(四)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#apscheduler-%e6%ba%90%e7%a0%81%e9%98%85%e8%af%bb-%e4%ba%94-schedulers-https-blog-csdn-net-qq-20821119-article-details-116307323">
+												 APScheduler 源码阅读(五) schedulers
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

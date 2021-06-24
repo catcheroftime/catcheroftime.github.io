@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="你确定你真的对记住了所有的设计模式了吗？">
+  
+  <meta property="og:title" content="设计模式-导读&amp;助记" />
+<meta property="og:description" content="你确定你真的对记住了所有的设计模式了吗？" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%AF%BC%E8%AF%BB%E5%8A%A9%E8%AE%B0/" />
+<meta property="article:published_time" content="2021-05-24T00:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-05-24T00:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       设计模式-导读&amp;助记 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%AF%BC%E8%AF%BB%E5%8A%A9%E8%AE%B0/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/algorithm"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Algorithm </a></li>
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">设计模式-导读&amp;助记</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>May 24, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>你确定你真的对记住了所有的设计模式了吗？</p>
+
+<p>各个设计模式的详细介绍都已经完成，但是不经常用总会忘，所以我想用 <code>一句话</code> 总结设计模式，思考模式的真正意图，再用 <code>一点提示</code> 来思考代码如何实现</p>
+
+<h2 id="写在前面">写在前面</h2>
+
+<p>我整理的设计模式这一个系列，主要是结合了以下几本书 :</p>
+
+<ul>
+<li><code>《设计模式：可复用面向对象软件的基础》</code> ： 个人觉得如果想系统学习设计模式必须看的一本书，阅读是有一定难度的，但是它有很多其他书没有涉及到细节介绍</li>
+<li><code>《大话设计模式》</code> ： 设计模式入门必看的书籍，用对话的形式以及很多形象的例子很生动的介绍各个设计模式，就一句话，看着不累的书就很厉害</li>
+<li><code>《head first 设计模式》</code> 和 <code>《设计模式之禅》</code> 等： 个人是将这些做补充的来看的，在阅读前 2 本书出现一些疑惑的时候，这些书会以一些其他巧妙的角度带我加深理解</li>
+</ul>
+
+<p>这些书怎么找 pdf 版本呢? 之前分享过 <a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484488&amp;idx=1&amp;sn=bd685ee6a740794404f6533632d3b995&amp;chksm=fdb132f9cac6bbef3d7abcb1eddc2f8b152df41065a87dd9dc6b8464b0a620b8d0de848b596e&amp;scene=21#wechat_redirect">私货</a> ，我也是在上面直接搜索下载的~</p>
+
+<p>接下来将按设计模式目的分类，逐个<code>一句话</code> 和 <code>一点提示</code> 总结设计模式，如果发现对某种设计模式记忆不清晰或者说有什么疑惑，可以直接跳转到该设计模式的详细介绍中再回味一下~</p>
+
+<blockquote>
+<p>注意：我整理的设计模式代码实现部分使用的语言是 <code>C++</code></p>
+</blockquote>
+
+<h2 id="创建型模式">创建型模式</h2>
+
+<ul>
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247483787&amp;idx=1&amp;sn=7b0973157ed92acad41519f016f88113&amp;chksm=fdb1373acac6be2c3f8a0fa0036269a05264d9466a00d434c84d7840a7ee2a0acdba20d617bd&amp;scene=21#wechat_redirect">简单工厂模式</a> (<code>SimpleFactory</code>)<br />
+提供创建对象的接口<br />
+通过专门定义一个类来负责创建其他类的实例，被创建的实例通常都具有共同的父类</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247483787&amp;idx=2&amp;sn=68aad90b00c9008db9cf1ee75c9ad6d0&amp;chksm=fdb1373acac6be2cc3db0b0ac0841763d402a143c909d8e30ace5d0c99a61727c72cebcd23dc&amp;scene=21#wechat_redirect">工厂方法模式</a> (<code>FactoryMethod</code>)<br />
+定义一个用于创建对象的接口，让子类决定实例化哪一个类<br />
+继承抽象工厂的具体工厂重载父类创建产品的接口，返回它自己对应具体产品</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247483796&amp;idx=1&amp;sn=7f0201f3815947fb59c6a07e5a904067&amp;chksm=fdb13725cac6be33a8d93a0126f2b2273d34079fd0d12753ab265a2c8ca13f9e4c99c0ffc61c&amp;scene=21#wechat_redirect">抽象工厂模式</a> (<code>AbstractFactory</code>)<br />
+提供一个创建一系列或相关依赖对象的接口，而无需指定它们具体的类<br />
+<code>A</code> 风格的具体工厂重载抽象工厂提供创建继承基类的 <code>widget</code> 的 <code>awidget</code> 和继承基类的 <code>label</code> 的 <code>alabel</code> 等等对象接口<br />
+<code>B</code> 风格的具体工厂重载返回 <code>bwidget</code> 和 <code>blabel</code> 等等对象</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247483773&amp;idx=1&amp;sn=aa02ced8c25aac6eeea9d9dd44572463&amp;chksm=fdb137cccac6bedad35eb1527cbb462013cebfe8790b0aef7d5c518c9e97234d53d4587d70d7&amp;scene=21#wechat_redirect">单例模式</a>  (<code>Singleton</code>)<br />
+保证一个类仅有一个实例，并提供一个访问它的全局访问点。<br />
+需要统一管理资源或者资源共享的时候都可以使用单例模式<br />
+(饿汉模式，懒汉模式)</p></li>
+</ul>
+
+<pre><code class="language-c++">  // C++ 11 推荐方式，局部静态变量
+  static Singleton&amp; getInstance()
+  {
+    static Singleton value;
+    return value;
+  }
+</code></pre>
+
+<ul>
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247483808&amp;idx=1&amp;sn=122486fd98b66187da1513c17685835f&amp;chksm=fdb13711cac6be07645672e9dac917623f8e77af6f40184ac7e0e0e23f54726887753b7d0eae&amp;scene=21#wechat_redirect">建造者模式</a>  (<code>Builder</code>)<br />
+将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示<br />
+指挥者在收到一个待构建对象后，由指挥者决定具体构建过程，当然指挥者可以根据实际情况扩展不同的子类</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247483848&amp;idx=1&amp;sn=d9afbb9b93479d5aaaa9b2ab554bbecc&amp;chksm=fdb13779cac6be6f1c048593bee824952f2e48d2bbaa8bb8aa740b97bcd265b82761e31fe600&amp;scene=21#wechat_redirect">原型模式</a>  (<code>Prototype</code>)<br />
+用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象<br />
+原对象提供类似 <code>clone()</code> 接口，直接获取一个克隆对象</p></li>
+</ul>
+
+<h2 id="结构型">结构型</h2>
+
+<ul>
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247483858&amp;idx=1&amp;sn=6aab6bf49e0c9b48bb728bd1d9f91ee5&amp;chksm=fdb13763cac6be75f2003bc4c578d8169dc759da22d6071b59ce045fff567dbaf078dcf62385&amp;scene=21#wechat_redirect">适配器模式</a>  (<code>Adapter</code>)<br />
+将一个类的接口转换成客户希望的另一个接口<br />
+适配器模式使得原本由于接口不兼容而不能一起工作的那些类可以一起工作</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247483895&amp;idx=1&amp;sn=00e35b3a3f49198e89b8f7e4a516ed87&amp;chksm=fdb13746cac6be50540b941b2fad575c3e02e1c77d2c8a4f5a04e119d808711fb765fc8be742&amp;scene=21#wechat_redirect">代理模式</a> (<code>Proxy</code>)<br />
+为其他对象提供一种代理以控制对这个对象的访问<br />
+通过增加中间层(代理层)，代理类和真正的对象都继承自相同的基类，客户调用代理类，代理类根据实际情况来操纵真正的对象</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247483904&amp;idx=1&amp;sn=d8db289daad9dc7868dcf227b1cc1b49&amp;chksm=fdb134b1cac6bda744a288a46a58abf5d8f55dbfc3dc7cc8d4cb5d2db18a579628948b7b9432&amp;scene=21#wechat_redirect">桥接模式</a>  (<code>Bridge</code>)<br />
+将抽象部分与它的实现部分分离，使它们都可以独立地变化。<br />
+需要跨越多个平台的图形和窗口系统上， 例如: 封装好 <code>绘图</code> 的基类， 基于 <code>windows</code> 或者 <code>linux</code> 等等实现自己的 <code>绘图</code> 子类， <code>图形</code> 的基类使用 <code>绘图</code> 基类提供的接口绘制， 在此基础上可以实现 <code>三角形</code> 和 <code>正方形</code> 等等基于 <code>图形</code> 的子类</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484050&amp;idx=1&amp;sn=abbdd49ec4dfd6c6d43e8f315ee4aa0e&amp;chksm=fdb13423cac6bd355fe9240c06c7b111aca0cebea188ebcb0ef0dc3e2959d7b7d3902b20c710&amp;scene=21#wechat_redirect">外观模式</a>  (<code>Facade</code>)<br />
+为子系统中的一组接口提供一个一致的界面，外观模式定义了一个高层接口，这个接口使得这一子系统更加容易使用<br />
+将一些复杂模块的代码进行封装从而对客户隐藏具体细节，并且提供给客户更简洁的接口</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484031&amp;idx=1&amp;sn=8b84e60e9416b01cf69179fe2acdbd52&amp;chksm=fdb134cecac6bdd8385edd790a1f179fae4d886b778895c2545b972b879b7a3c60b737a0f40e&amp;scene=21#wechat_redirect">装饰模式</a>  (<code>Decorator</code>)<br />
+动态地给一个对象添加一些额外的职责<br />
+小姐姐: 我的奶茶加冰加奶盖</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247483928&amp;idx=1&amp;sn=fb4f4c96c337a5cd910067a2c56cd025&amp;chksm=fdb134a9cac6bdbf5811bc61ae622d2c664c3c298be5601165cb4bb7c7a540ddb6e4821415ae&amp;scene=21#wechat_redirect">组成模式</a>  (<code>Composite</code>)<br />
+将对象组合成树形结构以表示 “部分-整体” 的层次结构。组成模式使得用户对单个对象和组合对象的使用具有一致性<br />
+文件系统下文件管理系统</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484187&amp;idx=1&amp;sn=307eab23e6ddda1ffec3bd698c0ef974&amp;chksm=fdb135aacac6bcbcc099a13a8bfeb287609c455489addbe50e3c3418048326f9617ea88d6d52&amp;scene=21#wechat_redirect">享元模式</a>  (<code>Flyweight</code>)<br />
+运用共享技术有效地支持大量细粒度的对象<br />
+<code>享元池</code>，用户需要对象时，首先从 <code>享元池</code> 中获取，如果享元池中不存在，则创建一个新的享元对象返回给用户，并在享元池中保存该新增对象。</p></li>
+</ul>
+
+<h2 id="行为型">行为型</h2>
+
+<ul>
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484098&amp;idx=1&amp;sn=0fe4325c4e62bb3f88f6d930b07326af&amp;chksm=fdb13473cac6bd65d71d5103e3e2ea469ed1c4ce1fce3395fbd873519e21a9d37745a8aa714b&amp;scene=21#wechat_redirect">策略模式</a>  (<code>Strategy</code>)<br />
+将可以互换的行为封装起来，然后使用 “委托” 的方法，决定使用哪一种行为<br />
+新用户立减 10 元， 老用户 9 折， 会员 8 折</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484202&amp;idx=1&amp;sn=d8b1d2845c4cfc4e121ce50cfe5309ef&amp;chksm=fdb1359bcac6bc8dc8cce8b481dd52a88bf51b1f03be45283e1c378b264189dfc6f6a55b24b9&amp;scene=21#wechat_redirect">命令模式</a>  (<code>Command</code>)<br />
+将一个请求封装为一个对象，从而使你可以用不同的请求对客户进行参数化；对请求排队或记录请求日志，以及支持可撤销的操作<br />
+小明妈妈让小张给小明带句话少玩会儿， 早点回家吃饭， 小张刚转身准备去喊，小明妈妈说算了算了，你们玩的开心就好</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484152&amp;idx=1&amp;sn=fc3dd239c6c486fa0c619d6e6e57dbeb&amp;chksm=fdb13449cac6bd5f37664635435e720b47cf64e7c730e9fbb432aa626820c7a54fb4ace752fd&amp;scene=21#wechat_redirect">模板方法</a>  (<code>Template</code>)<br />
+由子类决定如何实现算法的某些步骤<br />
+出题人把题目出好了， 写答案的位置也留白出来了， 轮到你们答一答了</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247483725&amp;idx=1&amp;sn=87bc1371e4c431711b9105aeebef9123&amp;chksm=fdb137fccac6beea5680daa8150d960102d99c25cebad8b50b2092462f5297818984ecf34511&amp;scene=21#wechat_redirect">观察者模式</a>  (<code>Observer</code>)<br />
+当对象间存在一对多的依赖关系时，让多个观察者对象同时监听某一个主题对象，这个主题对象在状态发生改变时，会通知所有的观察者对象，使它们能够自动更新自己<br />
+前台漂亮的小姐姐， 我把手机号码给你了，老板来了，你可要给我打电话啊!</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247483735&amp;idx=1&amp;sn=7ea7831aefb12cfbd8a0b6a15173e6b9&amp;chksm=fdb137e6cac6bef0f97e4705494a30e3a8d80663d7f4572068c2eba352fc064f1f300a17e40b&amp;scene=21#wechat_redirect">发布订阅模式</a> (<code>Publish/Subscribe</code>)<br />
+在观察者模式的基础上进一步解耦合，引入中间件管理复杂的消息分发的规则， 并将状态的改变抽象成任务的发布<br />
+<code>rabbitmq</code> 等消息中间件</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484251&amp;idx=1&amp;sn=48c251bfcd06434a3a206f2f78c31d2e&amp;chksm=fdb135eacac6bcfc9407372d7f487c45f41c8d4858a72addc0687232d42d89a07d8c63ec2e27&amp;scene=21#wechat_redirect">解释器模式</a>  (<code>Interpreter</code>)<br />
+给定一个语言，定义它的文法的一种表示，并定义一个解释器，这个解释器使用该表示来解释语言中的句子<br />
+数字的乐谱转换成标准乐谱</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484295&amp;idx=1&amp;sn=9cf77800adc36dd8762572f030b4dec0&amp;chksm=fdb13536cac6bc206bd38522dd7f424cd2347cb3024b5b2de4980e7bd30a863abcafea58d0b9&amp;scene=21#wechat_redirect">职责链模式</a>  (<code>Chain Of Responsibility</code>)<br />
+使多个对象都有机会处理请求，从而避免请求的发送者和接收者之间的耦合关系。将这些对象连成一条链，并沿着这条链传递该请求，直到有一个对象处理它为止<br />
+&ndash; [组长，我想请5天假? &ndash; [我没权利批准，我去帮你问问我上级~</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484334&amp;idx=1&amp;sn=e90ef60682731a81e6e120bd6f155f2a&amp;chksm=fdb1351fcac6bc096ec9ca442d9b6391bc29494cccd6f100d2d7f04e0abf4b9d8234abf10233&amp;scene=21#wechat_redirect">备忘录模式</a>  (<code>Memento</code>)<br />
+在不破坏封装性的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态，这样以后就可将该对象恢复到原先保存的状态<br />
+从需要备份的对象中生成一个保存关键数据的备忘录对象，需要恢复的时候，传入这个备忘录对象来还原状态</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484395&amp;idx=1&amp;sn=f164a907dc7e20e80e10a2506db73c80&amp;chksm=fdb1355acac6bc4cd625cf8cfc6aef43bbd32a5e3cc4c6e1bbbc29611b241a1af461a09f17df&amp;scene=21#wechat_redirect">中介者模式</a>  (<code>Mediator</code>)<br />
+控制和协调一组对象间的交互，中介者充当一个中介以使组中的对象不再相互显式引用，这些对象仅知道中介者，从而减少相互连接的数目<br />
+图像化界面一个按键的点击会出现弹窗等等行为</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484428&amp;idx=1&amp;sn=8627720969effe6ed36a8763e601c1f3&amp;chksm=fdb132bdcac6bbab7aa19300ab1779702f08523774aa046a3927e6962b00d888577493ca72ff&amp;scene=21#wechat_redirect">状态模式</a>  (<code>State</code>)<br />
+封装基于状态的行为，并将行为委托到当前状态<br />
+红绿灯切换</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484483&amp;idx=1&amp;sn=011a552c752b87cbc1bb4d439b740ad9&amp;chksm=fdb132f2cac6bbe4f37d58d981e592df4c34caacc3f73565e0aa821a14896af87c72c673a8d9&amp;scene=21#wechat_redirect">迭代器模式</a>  (<code>Iterator</code>)<br />
+提供一种方法顺序访问一个聚合对象中各个元素， 而又不需暴露该对象的内部表示<br />
+想想 <code>std::list</code> 等标准库中的源码实现</p></li>
+
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU4Mjk1MTkwMg==&amp;mid=2247484466&amp;idx=1&amp;sn=89d2496a641b899f44767b8cd8e68c70&amp;chksm=fdb13283cac6bb95d168fdae3ec4eca4c8de7d8754225eff886f7f36dae32bad0705a0c043d2&amp;scene=21#wechat_redirect">访问者模式</a>  (<code>Visitor</code>)<br />
+表示一个作用于某对象结构中的各元素的操作。它使你可以在不改变各元素的类的前提下定义作用于这些元素的新操作<br />
+将基于共同基类的不同子类元素提供的各种功能抽象成 <code>accept(Visitor *)</code> 接口， <code>Visitor</code> 来封装这些真正的行为</p></li>
+</ul>
+
+<h2 id="小结">小结</h2>
+
+<p>如果可以从这么简单的提醒就能完整的想象出具体的代码实现，那么我的目的就实现了<br />
+最后希望大家都能在实际项目灵活的使用这些设计模式，提高代码的可读性和扩展性，当然切记不要硬套~</p>
+
+<p>所以，所以要个 <code>赞</code>，要个 <code>再看</code> 不过分吧~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/algorithm" role="button">Algorithm </a></li>
+      
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-05/%E5%85%8D%E8%B4%B9%E6%89%BE%E7%94%B5%E5%AD%90%E4%B9%A6%E7%9A%84%E7%BD%91%E7%AB%99%E6%80%BB%E7%BB%93/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>免费找电子书的网站总结</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-05/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>查缺补漏-贪心算法</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%86%99%e5%9c%a8%e5%89%8d%e9%9d%a2">
+												 写在前面
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%9b%e5%bb%ba%e5%9e%8b%e6%a8%a1%e5%bc%8f">
+												 创建型模式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bb%93%e6%9e%84%e5%9e%8b">
+												 结构型
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%a1%8c%e4%b8%ba%e5%9e%8b">
+												 行为型
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b0%8f%e7%bb%93">
+												 小结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="封装，继承，多态可以说是 C&#43;&#43; 老生常谈的三大特性，简单总结一下基本概念，以及附带一些拓展的内容~">
+  
+  <meta property="og:title" content="C&#43;&#43; 三大特性" />
+<meta property="og:description" content="封装，继承，多态可以说是 C&#43;&#43; 老生常谈的三大特性，简单总结一下基本概念，以及附带一些拓展的内容~" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-06/c-%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/" />
+<meta property="article:published_time" content="2021-06-18T12:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-06-18T12:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       C&#43;&#43; 三大特性 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-06/c-%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/c&#43;&#43;"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> C&#43;&#43; </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">C&#43;&#43; 三大特性</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Jun 18, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>封装，继承，多态可以说是 C++ 老生常谈的三大特性，简单总结一下基本概念，以及附带一些拓展的内容~</p>
+
+<h2 id="封装">封装</h2>
+
+<p>在 <strong>面向对象</strong> 编程方法中，<strong>封装</strong> 是指，一种将抽象性函数接口的实现细节部分包装、隐藏起来的方法。<br />
+同时，它也是一种防止外界调用端，去访问对象内部实现细节的手段，这个手段是由编程语言本身来提供的。<br />
+封装被视为是面向对象的四项原则(<code>抽象</code>、<code>封装</code>、<code>继承</code>、<code>多态</code>)之一。</p>
+
+<p>适当的封装，可以将对象使用接口的程序实现部分隐藏起来，不让用户看到，同时确保用户无法任意更改对象内部的重要资料，若想接触资料只能通过公开接入方法的方式（ 如：“get” 和 “set” ）。它可以让代码更容易理解与维护，也加强了代码的安全性。</p>
+
+<h2 id="继承">继承</h2>
+
+<p><strong>继承</strong> 是面向对象软件技术当中的一个概念。<br />
+如果一个类 <code>B</code> <strong>继承自</strong> 另一个类 <code>A</code>，就把这个 <code>B</code> 称为 <code>A</code> 的 <strong>子类</strong>，而把 <code>A</code> 称为 <code>B</code> 的 <strong>父类</strong>，也可以称 <code>A</code> 是 <code>B</code> 的 <strong>超类</strong>。<br />
+继承可以使得子类具有父类的各种属性和方法，而不需要再次编写相同的代码。在令子类继承父类的同时，可以重新定义某些属性，并重写某些方法，即覆盖父类的原有属性和方法，使其获得与父类不同的功能。<br />
+另外，为子类追加新的属性和方法也是常见的做法。 一般静态的面向对象编程语言，继承属于静态的，意即在子类的行为在编译期就已经决定，无法在运行期扩展。</p>
+
+<h3 id="继承方式">继承方式</h3>
+
+<p>类成员的访问权限可以分为以下三种</p>
+
+<ul>
+<li><code>public</code> 成员可以通过对象来访问</li>
+<li><code>private</code> 成员不能通过对象访问。</li>
+<li><code>protected</code> 成员和 <code>private</code> 成员类似，也不能通过对象访问。但是当存在继承关系时，父类中的 <code>protected</code> 成员可以在子类中使用</li>
+</ul>
+
+<p>列个表格，看一下子类不同的继承方式和父类成员在子类中的访问权限的关系。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">父类成员属性(竖)\ </br>继承方式(横)</th>
+<th align="left"><code>public</code> 继承</th>
+<th align="left"><code>protected</code> 继承</th>
+<th align="left"><code>private</code> 继承</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><code>public</code> 成员</td>
+<td align="left"><code>public</code></td>
+<td align="left"><code>protected</code></td>
+<td align="left"><code>private</code></td>
+</tr>
+
+<tr>
+<td align="left"><code>protected</code> 成员</td>
+<td align="left"><code>protected</code></td>
+<td align="left"><code>protected</code></td>
+<td align="left"><code>private</code></td>
+</tr>
+
+<tr>
+<td align="left"><code>private</code> 成员</td>
+<td align="left">不可见</td>
+<td align="left">不可见</td>
+<td align="left">不可见</td>
+</tr>
+</tbody>
+</table>
+
+<p>简单点说，也就是说，继承方式中的 <code>public</code>、<code>protected</code>、<code>private</code> 是用来指明父类成员在子类中的 <strong>最高访问权限</strong> 的。</p>
+
+<p>父类的 <code>private</code> 成员不能在子类中使用，不是说父类的 <code>private</code> 成员不能被继承。实际上，父类的 <code>private</code> 成员是能够被继承的，并且（成员变量）会占用子类对象的内存，<strong>它只是在子类中不可见</strong>，导致无法使用。<code>private</code> 成员的这种特性，能够很好的对子类隐藏父类的实现，以体现 <strong>面向对象的封装性</strong>。</p>
+
+<h3 id="多继承">多继承</h3>
+
+<p>这一块我平时接触的比较少，建议看一下下面几篇大佬的文章，介绍的都很详细</p>
+
+<p>多继承，虚继承的内存环境<br />
+<a href="https://www.oschina.net/translate/cpp-virtual-inheritance">https://www.oschina.net/translate/cpp-virtual-inheritance</a><br />
+<a href="https://blog.csdn.net/chlele0105/article/details/22654869">https://blog.csdn.net/chlele0105/article/details/22654869</a></p>
+
+<p>C++多继承中重写不同基类中相同原型的虚函数<br />
+<a href="https://blog.csdn.net/starlee/article/details/2825522">https://blog.csdn.net/starlee/article/details/2825522</a></p>
+
+<h2 id="多态">多态</h2>
+
+<p>多态指为不同数据类型的实体提供统一的接口，或使用一个单一的符号来表示多个不同的类型</p>
+
+<p>C++ 多态分类及实现：</p>
+
+<ul>
+<li>重载多态（Ad-hoc Polymorphism，编译期）：函数重载、运算符重载</li>
+<li>子类型多态（Subtype Polymorphism，运行期）：虚函数</li>
+<li>参数多态性（Parametric Polymorphism，编译期）：类模板、函数模板</li>
+<li>强制多态（Coercion Polymorphism，编译期/运行期）：基本类型转换、自定义类型转换</li>
+</ul>
+
+<p>具体分类的描述可以参考一下这篇文章：<br />
+<a href="https://catonmat.net/cpp-polymorphism">https://catonmat.net/cpp-polymorphism</a></p>
+
+<h3 id="重载多态">重载多态</h3>
+
+<p><strong>函数重载</strong> 的实现原理： <code>name mangling</code>(命名倾轧)</p>
+
+<p><a href="https://blog.csdn.net/apollon_krj/article/details/60760586">https://blog.csdn.net/apollon_krj/article/details/60760586</a></p>
+
+<p><strong>运算符重载</strong> 的实质也还是函数重载或函数多态。要重载运算符，需要使用被称为运算符函数的特殊函数形式，运算符函数形式：</p>
+
+<pre><code class="language-C++">&lt;返回类型说明符&gt; operator &lt;运算符符号&gt;(&lt;参数表&gt;)
+{
+    &lt;函数体&gt;
+}
+</code></pre>
+
+<h3 id="子类型多态">子类型多态</h3>
+
+<p>用 <code>virtual</code> 修饰成员函数，使其成为虚函数，主要用于实现多态，动态绑定。</p>
+
+<ol>
+<li>普通函数（非类成员函数）不能是虚函数</li>
+<li><code>static</code> 函数不能是虚函数 （<code>static</code> 函数不与任何 <strong>实例</strong> 相关，自然无法实现多态了。）</li>
+<li>构造函数不能是虚函数 （因为在调用构造函数时，虚表指针并没有在对象的内存空间中，必须要构造函数调用完成后才会形成虚表指针）</li>
+<li>内联函数不能是变现多态时的虚函数 （内联是在编译器建议编译器内联，而虚函数的多态性在运行期，编译器无法知道运行期调用哪个代码，因此虚函数表现为多态性时（运行期）不可以内联。）</li>
+<li>模板类中可以使用虚函数</li>
+<li>类（无论普通类或模板类）的成员模板（本身是模板的成员函数）不能是虚函数 (成员模板函数实例化出很多不同的版本，也就是可以实例化出很多不同版本的虚函数，编译器需要确定类的虚函数表的大小，这对于多文件的项目来说，代价是非常高的)</li>
+</ol>
+
+<p>提到虚函数，绕不开的就是虚函数表，这一块的知识建议详细阅读下面这位大佬的文章，一定会茅塞顿开<br />
+<a href="https://blog.twofei.com/496/">https://blog.twofei.com/496/</a></p>
+
+<h3 id="参数多态化">参数多态化</h3>
+
+<p>参数多态性为任何类型提供了执行相同代码的手段。在C++参数多态性通过 <strong>模板</strong> 实现。</p>
+
+<pre><code class="language-C++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+template &lt;class T&gt;
+T max(T a, T b) {
+    return a &gt; b ? a : b;
+}
+
+int main() {
+    std::cout &lt;&lt; ::max(9, 5) &lt;&lt; std::endl;     // 9
+
+    std::string foo(&quot;foo&quot;), bar(&quot;bar&quot;);
+    std::cout &lt;&lt; ::max(foo, bar) &lt;&lt; std::endl; // &quot;foo&quot;
+}
+</code></pre>
+
+<h3 id="强制多态">强制多态</h3>
+
+<p>通过语义操作，把操作对象的类型 <strong>强行</strong> 加以变换，以符合函数或操作符的要求。<br />
+程序设计语言中基本类型的大多数操作符，在发生不同类型的数据进行混合运算时。编译程序一般都会进行强制多态。程序员也可以显示地进行强制多态的操作(Casting)。</p>
+
+<p>编译期：使用 <code>dynamic_cast</code> 等显式强制类型转换，或者一些默认类型转换 <code>float</code> 转 <code>int</code> 等等
+运行期：子类泛型化。使用基类的指针指向派生类对象也算是强制多态的一种</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/c&#43;&#43;" role="button">C&#43;&#43; </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E5%9B%BE%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95-%E7%BB%AD/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>查缺补漏-图搜索算法-续</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b0%81%e8%a3%85">
+												 封装
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bb%a7%e6%89%bf">
+												 继承
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bb%a7%e6%89%bf%e6%96%b9%e5%bc%8f">
+												 继承方式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a4%9a%e7%bb%a7%e6%89%bf">
+												 多继承
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a4%9a%e6%80%81">
+												 多态
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%87%8d%e8%bd%bd%e5%a4%9a%e6%80%81">
+												 重载多态
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ad%90%e7%b1%bb%e5%9e%8b%e5%a4%9a%e6%80%81">
+												 子类型多态
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8f%82%e6%95%b0%e5%a4%9a%e6%80%81%e5%8c%96">
+												 参数多态化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%bc%ba%e5%88%b6%e5%a4%9a%e6%80%81">
+												 强制多态
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

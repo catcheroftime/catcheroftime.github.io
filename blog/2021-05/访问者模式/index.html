@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="U1S1， 挺复杂的一个设计模式~">
+  
+  <meta property="og:title" content="访问者模式" />
+<meta property="og:description" content="U1S1， 挺复杂的一个设计模式~" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-05/%E8%AE%BF%E9%97%AE%E8%80%85%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2021-05-04T20:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-05-04T20:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       访问者模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-05/%E8%AE%BF%E9%97%AE%E8%80%85%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">访问者模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>May 4, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>U1S1， 挺复杂的一个设计模式~</p>
+
+<h2 id="意图">意图</h2>
+
+<blockquote>
+<p>表示一个作用于某对象结构中的各元素的操作。它使你可以在不改变各元素的类的前提下定义作用于这些元素的新操作。</p>
+</blockquote>
+
+<h2 id="动机">动机</h2>
+
+<p>先 <strong>假设</strong> 一个场景，某公司的研发岗位的 <strong>所有员工</strong> 大致可以按照开发语言使用的不同分为 <strong>3</strong> 类工程师 <code>C++开发工程师</code>， <code>Go开发工程师</code>， <code>Python开发工程师</code><br />
+<code>A</code> 项目来了，可能让你们的 <code>C++开发工程师</code> 去编写算法， <code>Go开发工程师</code> 去实现后端， <code>Python开发工程师</code> 去开发前端<br />
+<code>B</code> 项目来了，这个项目让 <code>Go开发工程师</code> 开发前端， <code>Python开发工程师</code> 写算法等等安排<br />
+之后可能还有 <code>C</code> 项目，<code>D</code> 项目 等等</p>
+
+<p>很显然，<code>工程师</code> 可以先抽象基类，然后分别实现 <strong>3</strong> 个子类，当然他们也有一些自己独有的接口，比如 <code>C++开发工程师</code> 可以开发 <code>音视频</code>，<code>Python开发工程师</code> 可以编写自动化测试等等<br />
+<code>A</code> 项目， <code>B</code> 项目等等这些项目肯定先抽象成一个 <code>项目</code> 的基类<br />
+那么剩下的就是如何让 <code>工程师</code> 和 <code>项目</code> 关联起来呢？</p>
+
+<p>而这就是 <code>访问者模式</code> 的核心，首先先看 <code>UML</code> 图</p>
+
+<h2 id="uml-图">UML 图</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/visitor/uml.png" alt="uml" /></p>
+
+<ul>
+<li><code>Visitor</code> (访问者， 如前面提到的 <code>项目</code> 基类)<br />
+为该对象结构中的 <code>ConcreteElement</code> 的每一种子类声明一个 <code>visit</code> 操作，该操作的名字和特征标识了发送 <code>visit</code> 请求给该访问者的那个类，这使得访问者可以确定正被访问元素的具体的类，这样访问者者就可以通过该元素的特定接口直接访问它</li>
+<li><code>ConcreteVisitor</code> (具体访问者，如 <code>项目A</code>， <code>项目B</code> 等等)<br />
+实现每个由 <code>Visitor</code> 声明的操作</li>
+<li><code>Element</code> (元素，如抽象的 <code>工程师</code> 基类)<br />
+定义一个 <code>Accept</code> 操作，它以一个访问者为参数</li>
+<li><code>ConcreteElement</code> (具体元素，如  <code>C++开发工程师</code>， <code>Go开发工程师</code> 等)<br />
+实现 <code>Accept</code> 操作，它以一个访问者为参数</li>
+<li><code>ObjectStructure</code> (对象结构，比如用一个 <code>list</code> 来管理所有的研发岗位的员工)<br />
+是一个包含元素角色的容器，提供让访问者对象遍历容器中的所有元素的方法</li>
+</ul>
+
+<p>从 <code>UML</code> 中可以看出，访问者中提供的接口是针对具体的 <code>ConcreteElement</code> 来确定的，并且传入了具体的 <code>ConcreteElement</code> 作为参数，所以缺点很明显</p>
+
+<ul>
+<li>访问者模式依赖了具体类，而没有依赖抽象类，违反了 <strong>依赖倒置原则</strong> (程序要依赖于抽象接口，不要依赖于具体实现)</li>
+<li>此外增加新的 <code>ConcreteElement</code> 类的工作量会很大，每增加一种新的 <code>ConcreteElement</code> 类都要在每一个具体访问者类中增加相应的具体操作，也不符合 <strong>开闭原则</strong> (软件实体应当对扩展开放，对修改关闭)</li>
+</ul>
+
+<p>但是优点也很明显：</p>
+
+<ul>
+<li>将操作 <code>ConcreteElement</code> 的行为 <strong>封装</strong> 进 <code>Visitor</code> 中，使类的功能比较单一，或者可以看成将数据结构与作用于结构上的操作解耦，更加灵活</li>
+<li>在不修改 <code>ConcreteElement</code> 的基础上，单方面在 <code>Visitor</code> 这一方向有很好的扩展性
+<br /></li>
+</ul>
+
+<h2 id="应用场景">应用场景</h2>
+
+<p>在下列情况下使用 <code>Visitor</code> 模式：</p>
+
+<ul>
+<li>一个对象结构包含很多类对象，它们有不同的接口，而你想对这些对象实施一些依赖于其具体类的操作。</li>
+<li>需要对一个对象结构中的对象进行很多不同的并且不相关的操作，而你想避免让这些操作“污染”这些对象的类。 <code>Visitor</code> 使得你可以将相关的操作集中起来定义在一个类中。当该对象结构被很多应用共享时，用 <code>Visitor</code> 模式让每个应用仅包含需要用到的操作。</li>
+<li>定义对象结构的类很少改变，但经常需要在此结构上定义新的操作。改变对象结构类需要重定义对所有访问者的接口，这可能需要很大的代价。如果对象结构类经常改变，那么可能还是在这些类中定义这些操作较好。</li>
+</ul>
+
+<h2 id="举个例子">举个例子</h2>
+
+<p>直接使用动机里的例子，首先分别定义 <code>员工</code> 的基类</p>
+
+<pre><code class="language-C++">#ifndef ELEMENT_H
+#define ELEMENT_H
+
+#include &lt;string&gt;
+using namespace std;
+
+class Visitor;
+
+class Element
+{
+public:
+    Element(const string name) : m_name(name) {}
+    virtual ~Element() {}
+
+    string getName() { return m_name; }
+    virtual void accept(Visitor *) = 0;
+
+private:
+    string m_name;
+};
+
+#endif // ELEMENT_H
+</code></pre>
+
+<p>然后是按照使用语言不同的具体员工子类</p>
+
+<pre><code class="language-C++">#ifndef CONCRETEELEMENT_H
+#define CONCRETEELEMENT_H
+
+#include &quot;element.h&quot;
+#include &quot;visitor.h&quot;
+
+#include &lt;iostream&gt;
+using namespace std;
+
+class CppDevEngineer : public Element{
+public:
+    CppDevEngineer(string name): Element(name) {}
+
+    virtual void accept(Visitor *visitor) {
+        cout &lt;&lt; &quot;我是 C++ 软件开发师&quot; &lt;&lt; endl;
+        visitor-&gt;AssignedTasks(this);
+    }
+};
+
+class GoDevEngineer : public Element{
+public:
+    GoDevEngineer(string name): Element(name) {}
+    virtual void accept(Visitor *visitor) {
+        cout &lt;&lt; &quot;我是 Go 软件开发师&quot; &lt;&lt; endl;
+        visitor-&gt;AssignedTasks(this);
+    }
+};
+
+class PythonDevEngineer : public Element{
+public:
+    PythonDevEngineer(string name): Element(name) {}
+    virtual void accept(Visitor *visitor) {
+        cout &lt;&lt; &quot;我是 Python 软件开发师&quot; &lt;&lt; endl;
+        visitor-&gt;AssignedTasks(this);
+    }
+};
+
+#endif // CONCRETEELEMENT_H
+</code></pre>
+
+<p>接着我们定义项目这个访问者的基类 <code>Visitor</code>， 它是依赖于具体的员工子类的</p>
+
+<pre><code class="language-C++">#ifndef VISITOR_H
+#define VISITOR_H
+
+#include &quot;concreteelement.h&quot;
+
+class CppDevEngineer;
+class GoDevEngineer;
+class PythonDevEngineer;
+
+class Visitor
+{
+public:
+    virtual ~Visitor() {}
+    virtual void AssignedTasks(CppDevEngineer *) = 0;
+    virtual void AssignedTasks(GoDevEngineer *) = 0;
+    virtual void AssignedTasks(PythonDevEngineer *) = 0;
+};
+
+#endif // VISITOR_H
+</code></pre>
+
+<p>然后我们需要实现具体的项目对象</p>
+
+<pre><code class="language-C++">#ifndef CONCRETEVISITOR_H
+#define CONCRETEVISITOR_H
+
+#include &quot;visitor.h&quot;
+#include &quot;concreteelement.h&quot;
+#include &lt;iostream&gt;
+
+using namespace std;
+
+class ProjectA : public Visitor {
+public:
+    virtual void AssignedTasks(CppDevEngineer *element) {
+        cout &lt;&lt; element-&gt;getName() &lt;&lt; &quot;, ProjectA 需要你做后端开发&quot; &lt;&lt; endl;
+    }
+
+    virtual void AssignedTasks(GoDevEngineer *element) {
+        cout &lt;&lt; element-&gt;getName() &lt;&lt; &quot;, ProjectA 需要你做算法开发&quot; &lt;&lt; endl;
+    }
+
+    virtual void AssignedTasks(PythonDevEngineer *element) {
+        cout &lt;&lt; element-&gt;getName() &lt;&lt; &quot;, ProjectA 需要你自动化测试&quot; &lt;&lt; endl;
+    }
+};
+
+
+class ProjectB : public Visitor {
+public:
+    virtual void AssignedTasks(CppDevEngineer *element) {
+        cout &lt;&lt; element-&gt;getName() &lt;&lt; &quot;, ProjectB 暂时不需要C++开发工程师开发&quot; &lt;&lt; endl;
+    }
+
+    virtual void AssignedTasks(GoDevEngineer *element) {
+        cout &lt;&lt; element-&gt;getName() &lt;&lt; &quot;, ProjectB 需要你做后端开发&quot; &lt;&lt; endl;
+    }
+
+    virtual void AssignedTasks(PythonDevEngineer *element) {
+        cout &lt;&lt; element-&gt;getName() &lt;&lt; &quot;, ProjectB 需要你做前端开发&quot; &lt;&lt; endl;
+    }
+};
+
+#endif // CONCRETEVISITOR_H
+</code></pre>
+
+<p>最后就是看一下 <code>main()</code> 函数的调用，并且简单实用 <code>list</code> 来管理所有的员工，也很方便遍历</p>
+
+<pre><code class="language-C++">#include &quot;concreteelement.h&quot;
+#include &quot;concretevisitor.h&quot;
+
+#include &lt;list&gt;
+#include &lt;iostream&gt;
+using namespace std;
+
+template &lt;typename Container&gt;
+inline void DeleteAll(const Container &amp;c)
+{
+    auto begin = c.begin();
+    auto end = c.end();
+    while (begin != end) {
+        delete *begin;
+        ++begin;
+    }
+}
+
+int main()
+{
+    list&lt;Element *&gt; staffs;
+    staffs.push_back(new CppDevEngineer(&quot;xiaoA&quot;));
+    staffs.push_back(new GoDevEngineer(&quot;xiaoB&quot;));
+    staffs.push_back(new PythonDevEngineer(&quot;xiaoC&quot;));
+
+    ProjectA a;
+    cout &lt;&lt; &quot;项目 A 安排 : &quot; &lt;&lt; endl;
+    for (auto i : staffs) {
+        i-&gt;accept(&amp;a);
+    }
+
+    cout &lt;&lt; &quot;-------------------------------&quot; &lt;&lt; endl;
+
+    ProjectB b;
+    cout &lt;&lt; &quot;项目 B 安排 : &quot; &lt;&lt; endl;
+    for (auto i : staffs) {
+        i-&gt;accept(&amp;b);
+    }
+
+    DeleteAll(staffs);
+    return 0;
+}
+</code></pre>
+
+<p>运行结果：</p>
+
+<pre><code class="language-shell">项目 A 安排 : 
+我是 C++ 软件开发师
+xiaoA, ProjectA 需要你做后端开发
+我是 Go 软件开发师
+xiaoB, ProjectA 需要你做算法开发
+我是 Python 软件开发师
+xiaoC, ProjectA 需要你自动化测试
+-------------------------------
+项目 B 安排 : 
+我是 C++ 软件开发师
+xiaoA, ProjectB 暂时不需要C++开发工程师开发
+我是 Go 软件开发师
+xiaoB, ProjectB 需要你做后端开发
+我是 Python 软件开发师
+xiaoC, ProjectB 需要你做前端开发
+</code></pre>
+
+<p>注意点：</p>
+
+<p><code>Visitor</code> 基类使用的是函数重载， 所有 <code>Visitor</code> 中分配函数的名称都是 <code>AssignedTasks</code>，区分只有传入对象，这样在具体员工中的调用起来更简单了，但是如果不需要传参的话，重载就没有意义了，就需要通过不同的函数名称来区分</p>
+
+<h2 id="思考">思考</h2>
+
+<p>其实这个给我的感觉有点神似 <code>建造者模式(Builder)</code>，建造者是将复杂的 <strong>创建行为</strong> 封装进 <code>指挥者(Director)</code> 中，因为 <code>Director</code> 是依赖于抽象，所以可以直接通过给 <code>Director</code> 传入元素，就能对该元素进行定义的行为</p>
+
+<p>而 <code>Visitor</code> 是针对不同子类的行为封装，子类实现的时候是清楚 <code>Visitor</code> 对应的行为接口，所以我们是通过调用 <code>Element</code> 的 <code>accept(Visitor *)</code> 函数</p>
+
+<p>那为什么不直接像 <code>建造者模式</code> 一样直接操作封装好行为的 <code>Director</code> 和 <code>Visitor</code> 呢？</p>
+
+<p>我觉得可以做到，但是得不偿失</p>
+
+<p>原因一： <code>Vistor</code> 常常都会配合组合模式与迭代器模式，以例子为例遍历 <code>list&lt;Element *&gt;</code> 及使用 <code>for</code> 这种方式遍历对象结构，如果使用 <code>Visitor</code> ，代码可能是这样的</p>
+
+<pre><code class="language-C++">for (auto i : staffs) {
+    if (auto p = dynamic_cast&lt;CppDevEngineer *&gt;(i)) {
+        a.AssignedTasks(p);
+        continue;
+    }
+
+    if (auto p = dynamic_cast&lt;GoDevEngineer *&gt;(i)) {
+        a.AssignedTasks(p);
+        continue;
+    }
+
+    if (auto p = dynamic_cast&lt;PythonDevEngineer *&gt;(i)) {
+        a.AssignedTasks(p);
+        continue;
+    }
+}
+</code></pre>
+
+<p>从迭代器中重新取出的对象并不是具体的子类，需要做显式类型转化</p>
+
+<p>原因二： 本来客户端使用的时候是可以不关心 <code>Visitor</code> 任何接口的，也就是破坏了 <code>Visitor</code> 的封装性</p>
+
+<h2 id="总结">总结</h2>
+
+<p><code>Element</code> 在具有稳定子类的前提下，针对将每一种子类的不同处理行为封装进 <code>Visitor</code> 中，本来每次添加一种新的处理行为，应该是 <code>Element</code> 上实现一个对应的接口，现在将这一系列的接口抽象成一个 <code>accept(Visitor *)</code> 的接口，真正的行为交给 <code>Visitor</code> 实现，很厉害的抽象思维~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-05/python-apscheduler%E5%AF%BC%E8%AF%BB/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Python-APScheduler导读</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-05/%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>迭代器模式</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%9c%ba">
+												 动机
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#uml-%e5%9b%be">
+												 UML 图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">
+												 应用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%be%e4%b8%aa%e4%be%8b%e5%ad%90">
+												 举个例子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%9d%e8%80%83">
+												 思考
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

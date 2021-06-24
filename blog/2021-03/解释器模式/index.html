@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="我们开发时使用频率还挺低，但广泛运用于编译器的一种设计模式~">
+  
+  <meta property="og:title" content="解释器模式" />
+<meta property="og:description" content="我们开发时使用频率还挺低，但广泛运用于编译器的一种设计模式~" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-03/%E8%A7%A3%E9%87%8A%E5%99%A8%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2021-03-11T20:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-03-11T20:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       解释器模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-03/%E8%A7%A3%E9%87%8A%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">解释器模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Mar 11, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>我们开发时使用频率还挺低，但广泛运用于编译器的一种设计模式~</p>
+
+<h2 id="意图">意图</h2>
+
+<blockquote>
+<p>给定一个语言，定义它的文法的一种表示，并定义一个解释器，这个解释器使用该表示来解释语言中的句子</p>
+</blockquote>
+
+<p>什么 <code>文法</code>，建议看一下这篇 <code>blog</code>, <a href="https://blog.csdn.net/qq_40147863/article/details/88770715">https://blog.csdn.net/qq_40147863/article/details/88770715</a></p>
+
+<p><code>文法</code> 引出2个新的概念：<code>终结符</code> 和 <code>非终结符</code></p>
+
+<ul>
+<li><code>终结符</code> 是一个形式语言的基本符号。就是说，它们能在一个形式语法的推导规则的输入或输出字符串存在，而且它们不能被分解成更小的单位。确切地说，一个语法的规则不能改变 <code>终结符</code>。</li>
+<li>不是 <code>终结符</code> 的都是 <code>非终结符</code>。<code>非终结符</code> 可理解为一个可拆分元素，而 <code>终结符</code> 是不可拆分的最小元素。</li>
+</ul>
+
+<h2 id="动机">动机</h2>
+
+<p>如果一种特定类型的问题发生的频率足够高，那么可能就值得将该问题的各个实例表述为一个简单语言中的句子。这样就可以构建一个解释器，该解释器通过解释这些句子来解决该问题。</p>
+
+<p>举个简单例子，正则表达式，一种描述字符串模式的标准语言，它就是使用一种通用的搜索算法来解释执行一个正则表达式，该正则表达式定义了待匹配字符串的集合。</p>
+
+<h2 id="uml-图">UML 图</h2>
+
+<p>光看 <code>UML</code> 其实很懵，建议配合后文中的例子享用</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/interpreter/uml.png" alt="UML" /></p>
+
+<ul>
+<li><code>AbstractExpression</code> ： 抽象解释器<br />
+声明一个抽象的解释操作，这个接口为抽象语法树中的所有节点所共享</li>
+<li><code>TerminalExpression</code> ： 终结符解释器<br />
+实现与文法中的终结符相关联的解释操作<br />
+一个句子中的每个终结符需要该类的一个实例</li>
+<li><code>NonterminalExpression</code> ： 非终结符解释器<br />
+为文法中的非终结符实现解释操作
+对文法中的每条规则都需要一个 <code>NonterminalExpression</code> 类</li>
+<li><code>Context</code><br />
+包含解释之外的一些全局信息</li>
+<li><code>Client</code><br />
+调用解释操作，并构建或被给定表示该文法定义的语言中一个特定的句子的抽象语法树，该抽象语法树由 <code>TerminalExpression</code> 和 <code>NonterminalExpression</code> 的实例装配而成<br />
+<br /></li>
+</ul>
+
+<h2 id="优缺点">优缺点</h2>
+
+<h3 id="优点">优点</h3>
+
+<ul>
+<li>易于改变和扩展文法</li>
+<li>也易于实现文法</li>
+</ul>
+
+<h3 id="缺点">缺点</h3>
+
+<ul>
+<li>执行效率低，因为通常使用大量的循环和递归调用，当句子比较复杂的时候，不管是调试还是运行效果可能都不太好</li>
+<li>复杂的文法难以维护，文法中每一条规则至少定义一个类，包含许多规则的文法可能难以管理和维护</li>
+</ul>
+
+<h2 id="应用场景">应用场景</h2>
+
+<p>当有一个语言需要解释执行，并且你可将该语言中的句子表示为一个抽象语法树时，可使用解释器模式，但是文法要相对简单，对于复杂的文法，文法的类层次变得庞大而无法管理</p>
+
+<h2 id="举个例子">举个例子</h2>
+
+<p>结合 《大话设计模式》 中关于数字简谱解释器的例子，我稍微改动一下，以便更好理解</p>
+
+<p>定义一个文法规则</p>
+
+<pre><code class="language-shell">&lt;expression&gt; ::= &lt;音阶&gt; &lt;音符&gt;      //表达式，二者使用空格隔开
+composite ::= expression | expression  //复合表达式
+&lt;音阶&gt; ::= 1 | 2 | 3 | 4 | 5 | 6 | 7
+&lt;音符&gt; ::= 一个 double 类型
+</code></pre>
+
+<p>简单解释一下，我们使用 <code>1 1 | 3 1/8 | 4 1/2</code> 这种形式表示乐谱,其中 <code>1 2 3 4 5 6 7</code> 分别对应 <code>Do Re Mi Fa Sol La Xi</code>, 音阶后面跟着用来记录不同长短的音的进行符号&ndash;音符， <code>1 1/2 1/4 1/8</code> 分别对应 <code>全音符 二分音符 四分音符 八分音符</code></p>
+
+<p>接下来我们的目标就是把数字简谱 <code>1 1 | 3 1/8 | 4 1/2</code> 转换成 <code>Do 全音符 Mi 八分音符 Fa 二分音符</code></p>
+
+<p>代码我可能更简单一点，首先定义一个 <code>AbstractExpression</code>，其实没啥东西，就是定义了一个解析的接口</p>
+
+<pre><code class="language-C++">class AbstractExpression
+{
+public:
+    virtual ~AbstractExpression() {}
+    virtual string Interpret(string context) = 0;
+};
+</code></pre>
+
+<p>接着定义音阶的解释器，主要负责把 <code>1 2 3 4 5 6 7</code> 解释为 <code>Do Re Mi Fa Sol La Xi</code></p>
+
+<pre><code class="language-C++">class Scale_NonTerminalExpression : public AbstractExpression
+{
+public:
+    virtual string Interpret(string context) {
+        if ( context == &quot;1&quot;)
+            return &quot;Do&quot;;
+        else if ( context == &quot;2&quot;)
+            return &quot;Re&quot;;
+        else if ( context == &quot;3&quot;)
+            return &quot;Mi&quot;;
+        else if ( context == &quot;4&quot;)
+            return &quot;Fa&quot;;
+        else if ( context == &quot;5&quot;)
+            return &quot;Sol&quot;;
+        else if ( context == &quot;6&quot;)
+            return &quot;La&quot;;
+        else
+            return &quot;Xi&quot;;
+    }
+};
+</code></pre>
+
+<p>然后定义音符解释器，负责把 <code>1 1/2 1/4 1/8</code> 解释为 <code>全音符 二分音符 四分音符 八分音符</code></p>
+
+<pre><code class="language-C++">class Note_NonTerminalExpression : public AbstractExpression
+{
+public:
+    virtual string Interpret(string context) {
+        if ( context == &quot;1&quot;)
+            return &quot;全音符&quot;;
+        else if ( context == &quot;1/2&quot;)
+            return &quot;二分音符&quot;;
+        else if ( context == &quot;1/4&quot;)
+            return &quot;四分音符&quot;;
+        else
+            return &quot;八分音符&quot;;
+    }
+};
+</code></pre>
+
+<p>我们这里其实有两个 <code>非终结符</code> 的表达式, 分别为形为 <code>&lt;expression&gt; ::= &lt;音阶&gt; &lt;音符&gt;</code> 以及一个复合表达式</p>
+
+<p>第一种主要是有 <code>音阶终结符</code> 和 <code>音符终结符</code> 二者通过空格连接起来了，是我们定义的规则，先实现这种方式</p>
+
+<pre><code class="language-C++">class TerminalExpression : public AbstractExpression {
+public:
+    TerminalExpression() : m_scale(new Scale_NonTerminalExpression), m_note(new Note_NonTerminalExpression) {}
+    ~TerminalExpression() { SAFE_DELETE(m_scale); SAFE_DELETE(m_note); }
+
+    virtual string Interpret(string context) {
+        list&lt;string&gt; split_result = split(context,&quot; &quot;);
+        if (split_result.size() != 2) return &quot;&quot;;
+
+        string scale = m_scale-&gt;Interpret(split_result.front());
+        string note = m_note-&gt;Interpret(split_result.back()) ;
+        return scale + &quot; &quot; + note;
+    }
+
+private:
+    Scale_NonTerminalExpression * m_scale;
+    Note_NonTerminalExpression * m_note;
+};
+</code></pre>
+
+<p>通过 <code>split()</code> 函数切割表达式，然后分别用 <code>m_scale</code> 和 <code>m_note</code> 解释， 因为纯粹的 <code>C++</code> 并没有直接的 <code>split()</code> 函数, 直接从网上找了一个简单的实现</p>
+
+<pre><code class="language-C++">list&lt;string&gt; split(const string&amp; str, const string&amp; pattern)
+{
+    list&lt;string&gt; ret;
+    if (pattern.empty()) return ret;
+    size_t start=0,index=str.find_first_of(pattern,0);
+    while(index!=str.npos)
+    {
+        if(start!=index)
+            ret.push_back(str.substr(start,index-start));
+        start=index+1;
+        index=str.find_first_of(pattern,start);
+    }
+    if(!str.substr(start).empty())
+        ret.push_back(str.substr(start));
+    return ret;
+}
+</code></pre>
+
+<p>复合表达式，实际上就是在表达式的基础上，额外做了一次 <code>|</code> 的切割，我就不单独实现一个类了，而是直接放在 <code>main()</code> 函数中了</p>
+
+<pre><code class="language-C++">#include &quot;abstractexpression.h&quot;
+
+int main()
+{
+    TerminalExpression a;
+    string context = &quot;1 1 | 3 1/8 | 4 1/2&quot;;
+
+    list&lt;string&gt; split_result = split(context, &quot;|&quot;);
+    for ( auto text : split_result)
+        cout &lt;&lt; a.Interpret(text) &lt;&lt; &quot; &quot;;
+
+    return 0;
+}
+</code></pre>
+
+<p>输出结果：</p>
+
+<pre><code class="language-shell">Do 全音符 Mi 八分音符 Fa 二分音符 
+</code></pre>
+
+<p>每一条文法规则都可以表示为一个类，如果要添加新的规则，只需要添加一个新的类就可以了</p>
+
+<h2 id="总结">总结</h2>
+
+<p>解释器模式描述了如何为简单的语言定义一个文法，如何在该语言中表示一个句子，以及如何解释这些句子</p>
+
+<p>日常使用频率很低很低，感觉理解了就好~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B8%89-jobstores/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>APScheduler 源码阅读(三) jobstores</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-03/%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>命令模式</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%9c%ba">
+												 动机
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#uml-%e5%9b%be">
+												 UML 图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bc%98%e7%bc%ba%e7%82%b9">
+												 优缺点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bc%98%e7%82%b9">
+												 优点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bc%ba%e7%82%b9">
+												 缺点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">
+												 应用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%be%e4%b8%aa%e4%be%8b%e5%ad%90">
+												 举个例子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

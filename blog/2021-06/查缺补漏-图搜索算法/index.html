@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="图搜素算法,可以分为 2 种 BFS 广度优先搜索 又译作 宽度优先搜索，或 横向优先搜索，是一种图形搜索算法。简单的说，BFS 是从根节点开始，沿着树的宽度遍历树的节点。如果所有节点均被访问，则算法中止。广度优先搜索的实现一般采用 open-closed 表。 从算法的观点，所有因为展开节点而得到的子节点都会被加进一个 先进先出 的队列中。一般的实现里，其邻居节点尚未被检验过的节点会被放置在一个被称为 open 的容器中（例如队列或是链表），而被检验过的">
+  
+  <meta property="og:title" content="查缺补漏-图搜索算法" />
+<meta property="og:description" content="图搜素算法,可以分为 2 种 BFS 广度优先搜索 又译作 宽度优先搜索，或 横向优先搜索，是一种图形搜索算法。简单的说，BFS 是从根节点开始，沿着树的宽度遍历树的节点。如果所有节点均被访问，则算法中止。广度优先搜索的实现一般采用 open-closed 表。 从算法的观点，所有因为展开节点而得到的子节点都会被加进一个 先进先出 的队列中。一般的实现里，其邻居节点尚未被检验过的节点会被放置在一个被称为 open 的容器中（例如队列或是链表），而被检验过的" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E5%9B%BE%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95/" />
+<meta property="article:published_time" content="2021-06-06T00:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-06-06T00:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       查缺补漏-图搜索算法 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E5%9B%BE%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/algorithm"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Algorithm </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">查缺补漏-图搜索算法</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Jun 6, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            
+
+<!--more--->
+
+<p>图搜素算法,可以分为 <code>2</code> 种</p>
+
+<ul>
+<li>BFS 广度优先搜索<br />
+又译作 <code>宽度优先搜索</code>，或 <code>横向优先搜索</code>，是一种图形搜索算法。简单的说，<code>BFS</code> 是从根节点开始，沿着树的宽度遍历树的节点。如果所有节点均被访问，则算法中止。广度优先搜索的实现一般采用 <code>open-closed</code> 表。</li>
+</ul>
+
+<p>从算法的观点，所有因为展开节点而得到的子节点都会被加进一个 <strong>先进先出</strong> 的队列中。一般的实现里，其邻居节点尚未被检验过的节点会被放置在一个被称为 <code>open</code> 的容器中（例如队列或是链表），而被检验过的节点则被放置在被称为 <code>closed</code> 的容器中。（open-closed表），所以简单看一下代码的实现</p>
+
+<pre><code class="language-C++">struct node {
+    int self;     //数据
+    node *left;   //左节点
+    node *right;  //右节点
+};
+
+std::queue&lt;node *&gt; visited, unvisited;
+node nodes[9];
+node *current;
+
+unvisited.push(&amp;nodes[0]); // 先把root放入unvisited queue
+
+while (!unvisited.empty()) { // 只有unvisited不空
+    current = (unvisited.front()); // 目前应该检验的
+    if (current-&gt;left != NULL)
+        unvisited.push(current-&gt;left); // 把左边放入queue中
+    if (current-&gt;right != NULL) // 右边压入。因为QUEUE是一个先进先出的结构，所以即使后面再压其他东西，依然会先访问这个。
+        unvisited.push(current-&gt;right);
+    visited.push(current);
+    cout &lt;&lt; current-&gt;self &lt;&lt; endl;
+    unvisited.pop();
+}
+</code></pre>
+
+<ul>
+<li>DFS 深度优先搜索<br />
+这个算法是一种用于遍历或搜索树或图的算法, 它会尽可能深的搜索树的分支。当节点 <code>v</code> 的所在边都己被探寻过，搜索将回溯到发现节点 <code>v</code> 的那条边的起始节点。这一过程一直进行到已发现从源节点可达的所有节点为止。如果还存在未被发现的节点，则选择其中一个作为源节点并重复以上过程，整个进程反复进行直到所有节点都被访问为止。</li>
+</ul>
+
+<p><code>深度优先搜索</code> 这里用的是堆栈的结构，因为堆栈是一个 <code>后进先出</code> 的顺序。简单看一下代码的实现：</p>
+
+<pre><code class="language-C++">struct Node {
+    int self;     // 数据
+    Node *left;   // 左节点
+    Node *right;  // 右节点
+};
+
+const int TREE_SIZE = 9;
+std::stack&lt;Node *&gt; unvisited;
+Node nodes[TREE_SIZE];
+Node *current;
+
+//初始化树
+for (int i = 0; i &lt; TREE_SIZE; i++) {
+    nodes[i].self = i;
+    int child = i * 2 + 1;
+    if (child &lt; TREE_SIZE) // Left child
+        nodes[i].left = &amp;nodes[child];
+    else
+        nodes[i].left = NULL;
+    child++;
+    if (child &lt; TREE_SIZE) // Right child
+        nodes[i].right = &amp;nodes[child];
+    else
+        nodes[i].right = NULL;
+}
+
+unvisited.push(&amp;nodes[0]); //先把0放入 unvisited stack
+
+// 树的深度优先搜索在二叉树的特例下，就是二叉树的先序遍历操作（这里是使用循环实现)
+// 只有 unvisited 不空
+while (!unvisited.empty()) {
+    current = (unvisited.top()); //当前应该访问的
+    unvisited.pop();
+    if (current-&gt;right != NULL)
+        unvisited.push(current-&gt;right );
+    if (current-&gt;left != NULL)
+        unvisited.push(current-&gt;left);
+    cout &lt;&lt; current-&gt;self &lt;&lt; endl;
+}
+</code></pre>
+
+<p>还是做做题，感受感受</p>
+
+<h2 id="dfs-深度优先搜索">DFS 深度优先搜索</h2>
+
+<h3 id="695-岛屿的最大面积">695.岛屿的最大面积</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/search/695.png" alt="695" /></p>
+
+<p>深度优先遍历</p>
+
+<pre><code class="language-C++">int getArea(vector&lt;vector&lt;int&gt;&gt;&amp;  grid, int i, int j)
+{
+    // 判断边界
+    if (i == grid.size() || i &lt; 0 || j == grid[0].size() || j &lt; 0)
+        return 0;
+
+    if (grid[i][j] == 1)
+    {
+        grid[i][j] = 0;
+        // 该位置是岛屿，递归其上下左右
+        return 1 + getArea(grid, i + 1, j) + getArea(grid, i - 1, j ) + getArea(grid, i, j + 1) + getArea(grid, i, j - 1);
+    }
+    return 0;
+}
+
+int maxAreaOfIsland(vector&lt;vector&lt;int&gt;&gt;&amp; grid) {
+    int area = 0;
+    for (int i = 0; i &lt; grid.size(); i++)
+        for (int j = 0; j &lt; grid[0].size(); j++)
+            if (grid[i][j] == 1)
+                area = max(area, getArea(grid, i, j) );
+
+    return area;
+}
+</code></pre>
+
+<h3 id="547-省份数量">547.省份数量</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/search/547.png" alt="547" /></p>
+
+<p>和上一题差不多的逻辑，一行作为一个节点，将所有与该节点相连的节点置为已访问的属性（深度优先遍历），并归为一个省份</p>
+
+<pre><code class="language-C++">int findCircleNum(vector&lt;vector&lt;int&gt;&gt;&amp; friends) {
+    int n = friends.size(), count = 0;
+    vector&lt;bool&gt; visited(n, false);
+    for (int i = 0; i &lt; n; ++i) {
+        if (!visited[i]) {
+            dfs(friends, i, visited);
+            ++count;
+        }
+    }
+    return count;
+}
+// 辅函数
+void dfs(vector&lt;vector&lt;int&gt;&gt;&amp; friends, int i, vector&lt;bool&gt;&amp; visited) {
+    visited[i] = true;
+    for (int k = 0; k &lt; friends.size(); ++k) {
+        if (friends[i][k] == 1 &amp;&amp; !visited[k]) {
+            dfs(friends, k, visited);
+        }
+    }
+}
+</code></pre>
+
+<h3 id="417-水流问题">417.水流问题</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/search/417.png" alt="417" /></p>
+
+<p>满足向下流能到达两个大洋的位置，如果我们对所有的位置进行搜索，那么在不剪枝的情况下复杂度会很高。<br />
+因此我们可以反过来想，从两个大洋开始向上流，这样我们只需要对矩形四条边进行搜索。<br />
+搜索完成后，只需遍历一遍矩阵，满足条件的位置即为两个大洋向上流都能到达的位置。</p>
+
+<pre><code class="language-C++">vector&lt;int&gt; direction{-1, 0, 1, 0, -1};
+// 主函数
+vector&lt;vector&lt;int&gt;&gt; pacificAtlantic(vector&lt;vector&lt;int&gt;&gt;&amp; matrix) {
+    if (matrix.empty() || matrix[0].empty()) {
+        return {};
+    }
+    vector&lt;vector&lt;int&gt;&gt; ans;
+    int m = matrix.size(), n = matrix[0].size();
+    vector&lt;vector&lt;bool&gt;&gt; can_reach_p(m, vector&lt;bool&gt;(n, false));
+    vector&lt;vector&lt;bool&gt;&gt; can_reach_a(m, vector&lt;bool&gt;(n, false));
+
+    for (int i = 0; i &lt; m; ++i) {
+        dfs(matrix, can_reach_p, i, 0);
+        dfs(matrix, can_reach_a, i, n - 1);
+    }
+    for (int i = 0; i &lt; n; ++i) {
+        dfs(matrix, can_reach_p, 0, i);
+        dfs(matrix, can_reach_a, m - 1, i);
+    }
+    for (int i = 0; i &lt; m; i++) {
+        for (int j = 0; j &lt; n; ++j) {
+            if (can_reach_p[i][j] &amp;&amp; can_reach_a[i][j]) {
+                ans.push_back(vector&lt;int&gt;{i, j});
+            }
+        }
+    }
+    return ans;
+}
+// 辅函数
+void dfs(const vector&lt;vector&lt;int&gt;&gt;&amp; matrix, vector&lt;vector&lt;bool&gt;&gt;&amp; can_reach, int r, int c) {
+    if (can_reach[r][c]) {
+        return;
+    }
+    can_reach[r][c] = true;
+    int x, y;
+    for (int i = 0; i &lt; 4; ++i) {
+        x = r + direction[i], y = c + direction[i+1];
+        if (x &gt;= 0 &amp;&amp; x &lt; matrix.size() &amp;&amp; y &gt;= 0 &amp;&amp; y &lt; matrix[0].size() &amp;&amp;
+            matrix[r][c] &lt;= matrix[x][y] ) {
+            dfs(matrix, can_reach, x, y);
+        }
+    }
+}
+</code></pre>
+
+<h2 id="回溯法">回溯法</h2>
+
+<h3 id="46-全排列">46.全排列</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/search/46.png" alt="46" /></p>
+
+<p>回溯法最典型的例子，第一次接触对我而言难度有点大，可以仔细看一下官方给的题解</p>
+
+<p><a href="https://leetcode-cn.com/problems/permutations/solution/quan-pai-lie-by-leetcode-solution-2/">https://leetcode-cn.com/problems/permutations/solution/quan-pai-lie-by-leetcode-solution-2/</a></p>
+
+<pre><code class="language-C++">// 主函数
+vector&lt;vector&lt;int&gt;&gt; permute(vector&lt;int&gt;&amp; nums) {
+    vector&lt;vector&lt;int&gt;&gt; ans;
+    backtracking(nums, 0, ans);
+    return ans;
+}
+// 辅函数
+void backtracking(vector&lt;int&gt; &amp;nums, int level, vector&lt;vector&lt;int&gt;&gt; &amp;ans) {
+    if (level == nums.size() - 1) {
+        ans.push_back(nums);
+        return;
+    }
+    for (int i = level; i &lt; nums.size(); i++) {
+        swap(nums[i], nums[level]); // 修改当前节点状态
+        backtracking(nums, level+1, ans); // 递归子节点
+        swap(nums[i], nums[level]); // 回改当前节点状态
+    }
+}
+</code></pre>
+
+<h3 id="77-组合">77.组合</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/search/77.png" alt="77" /></p>
+
+<p>上一题差不多的思路，通过回溯试错的形式，决定是否把当前的数字加入结果中。</p>
+
+<pre><code class="language-C++">vector&lt;vector&lt;int&gt;&gt; combine(int n, int k) {    
+    vector&lt;vector&lt;int&gt;&gt; ans;
+    vector&lt;int&gt; output(k,0);
+    // count 统计当前的 output 已经填入了几个值
+    int count = 0;
+    backtracking(ans, output, count, 1, n, k);
+    return ans;
+
+}
+
+void backtracking(vector&lt;vector&lt;int&gt;&gt; &amp;ans, vector&lt;int&gt; &amp;output,int&amp; count, int pos, int n, int k) {
+    // 已经填了 k 个值就直接将 output 放入结果中
+    if (count == k) {
+        ans.push_back(output);
+        return;
+    }
+    for (int i = pos; i &lt;= n; ++i) {
+        output[count++] = i; // 修改当前节点状态
+        backtracking(ans, output, count, i + 1, n, k); // 递归子节点
+        --count; // 回改当前节点状态
+    }
+}
+</code></pre>
+
+<h3 id="79-单词搜索">79.单词搜索</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/search/79.png" alt="79" /></p>
+
+<p>一个位置一个位置深度优先搜索，但是为了防止重复，引入一个和 <code>board</code> 同等大小的 <code>visited</code> 标识该位置是否被访问过</p>
+
+<pre><code class="language-C++">// 主函数
+bool exist(vector&lt;vector&lt;char&gt;&gt;&amp; board, string word) {
+    if (board.empty()) return false;
+    int m = board.size(), n = board[0].size();
+    vector&lt;vector&lt;bool&gt;&gt; visited(m, vector&lt;bool&gt;(n, false));
+    bool find = false;
+    for (int i = 0; i &lt; m; ++i) {
+        for (int j = 0; j &lt; n; ++j) {
+            backtracking(i, j, board, word, find, visited, 0);
+            if (find)
+                return true;
+        }
+    }
+    return false;
+}
+// 辅函数
+void backtracking(int i, int j, vector&lt;vector&lt;char&gt;&gt;&amp; board, string&amp; word, bool&amp; find, vector&lt;vector&lt;bool&gt;&gt;&amp; visited, int pos) {
+    // 边界检测
+    if (i &lt; 0 || i &gt;= board.size() || j &lt; 0 || j &gt;= board[0].size()) {
+        return;
+    }
+    // 当该位置访问过，或者已经找到 word, 或者目标位置值不相等
+    if (visited[i][j] || find || board[i][j] != word[pos]) {
+        return;
+    }
+    // 当能找到同样的 word 时候 find 设置为 true
+    if (pos == word.size() - 1) {
+        find = true;
+        return;
+    }
+    visited[i][j] = true; // 修改当前节点状态
+    // 递归子节点
+    backtracking(i + 1, j, board, word, find, visited, pos + 1);
+    backtracking(i - 1, j, board, word, find, visited, pos + 1);
+    backtracking(i, j + 1, board, word, find, visited, pos + 1);
+    backtracking(i, j - 1, board, word, find, visited, pos + 1);
+    visited[i][j] = false; // 回改当前节点状态
+}
+</code></pre>
+
+<h3 id="51-n-皇后">51.N 皇后</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/search/51.png" alt="51" /></p>
+
+<p>还是一个一个试错的过程，只是这次需要对每一行、列、左斜、右斜建立访问数组，来记录它们是否存在皇后。</p>
+
+<pre><code class="language-C++">// 主函数
+vector&lt;vector&lt;string&gt;&gt; solveNQueens(int n) {
+    vector&lt;vector&lt;string&gt;&gt; ans;
+    if (n == 0)  return ans;
+    vector&lt;string&gt; board(n, string(n, '.'));
+    vector&lt;bool&gt; column(n, false), ldiag(2*n-1, false), rdiag(2*n-1, false);
+    backtracking(ans, board, column, ldiag, rdiag, 0, n);
+    return ans;
+}
+// 辅函数
+void backtracking(vector&lt;vector&lt;string&gt;&gt; &amp;ans, vector&lt;string&gt; &amp;board, vector&lt;bool&gt; &amp;column, vector&lt;bool&gt; &amp;ldiag, vector&lt;bool&gt; &amp;rdiag, int row, int n) {
+    if (row == n) {
+        ans.push_back(board);
+        return;
+    }
+    for (int i = 0; i &lt; n; ++i) {
+        if (column[i] || ldiag[n-row+i-1] || rdiag[row+i+1]) {
+            continue;
+        }
+        // 修改当前节点状态
+        board[row][i] = 'Q';
+        column[i] = ldiag[n-row+i-1] = rdiag[row+i+1] = true;
+        // 递归子节点
+        backtracking(ans, board, column, ldiag, rdiag, row+1, n);
+        // 回改当前节点状态
+        board[row][i] = '.';
+        column[i] = ldiag[n-row+i-1] = rdiag[row+i+1] = false;
+    }
+}
+</code></pre>
+
+<h2 id="广度优先搜索">广度优先搜索</h2>
+
+<h3 id="934-最短的桥">934.最短的桥</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/search/934.png" alt="934" /></p>
+
+<p>在寻找这两座岛时，我们使用深度优先搜索。在向外延伸时，我们使用广度优先搜索。</p>
+
+<pre><code class="language-C++">vector&lt;int&gt; direction{-1, 0, 1, 0, -1};
+// 主函数
+int shortestBridge(vector&lt;vector&lt;int&gt;&gt;&amp; grid) {
+    int m = grid.size(), n = grid[0].size();
+    queue&lt;pair&lt;int, int&gt;&gt; points;
+    // dfs寻找第一个岛屿，并把1全部赋值为2
+    bool flipped = false;
+    for (int i = 0; i &lt; m; ++i) {
+        // 找到第一个岛屿后就可以不用找了
+        if (flipped) break;
+        for (int j = 0; j &lt; n; ++j) {
+            if (grid[i][j] == 1) {
+                dfs(points, grid, m, n, i, j);
+                flipped = true;
+                break;
+            }
+        }
+    }
+    // bfs寻找第二个岛屿，并把过程中经过的0赋值为2，一层一层向外延伸，直到碰到第二个岛屿
+    int x, y;
+    int level = 0;
+    while (!points.empty()){
+        ++level;
+        int n_points = points.size();
+        while (n_points--) {
+            auto [r, c] = points.front();
+            points.pop();
+            for (int k = 0; k &lt; 4; ++k) {
+                x = r + direction[k], y = c + direction[k+1];
+                if (x &gt;= 0 &amp;&amp; y &gt;= 0 &amp;&amp; x &lt; m &amp;&amp; y &lt; n) {
+                    if (grid[x][y] == 2) {
+                        continue;
+                    }
+                    if (grid[x][y] == 1) {
+                        return level;
+                    }
+                    points.push({x, y});
+                    grid[x][y] = 2;
+                }
+            }
+        }
+    }
+    return 0;
+}
+// 辅函数
+void dfs(queue&lt;pair&lt;int, int&gt;&gt;&amp; points, vector&lt;vector&lt;int&gt;&gt;&amp; grid, int m, int n, int i, int j) {
+    if (i &lt; 0 || j &lt; 0 || i == m || j == n || grid[i][j] == 2) {
+        return;
+    }
+    if (grid[i][j] == 0) {
+        points.push({i, j});
+        return;
+    }
+    grid[i][j] = 2;
+    dfs(points, grid, m, n, i - 1, j);
+    dfs(points, grid, m, n, i + 1, j);
+    dfs(points, grid, m, n, i, j - 1);
+    dfs(points, grid, m, n, i, j + 1);
+}
+</code></pre>
+
+<h3 id="126-单词接龙-ii">126.单词接龙 II</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/search/126.png" alt="126" /></p>
+
+<p>难度有点大,看看大佬的代码实现逻辑</p>
+
+<p>我们可以把起始字符串、终止字符串、以及单词表里所有的字符串想象成节点。若两个字符串只有一个字符不同，那么它们相连。因为题目需要输出修改次数最少的所有修改方式，因此我们可以使用广度优先搜索，求得起始节点到终止节点的最短距离。<br />
+我们同时还使用了一个小技巧：我们并不是直接从起始节点进行广度优先搜索，直到找到终止节点为止；而是从起始节点和终止节点分别进行广度优先搜索，每次只延展当前层节点数最少的那一端，这样我们可以减少搜索的总结点数。举例来说，假设最短距离为 4，如果我们只从一端搜索 4 层，总遍历节点数最多是 1 + 2 + 4 + 8 + 16 = 31；而如果我们从两端各搜索两层，总遍历节点数最多只有 2 × (1 + 2 + 4) = 14。<br />
+在搜索结束后，我们还需要通过回溯法来重建所有可能的路径。</p>
+
+<pre><code class="language-C++">vector&lt;vector&lt;string&gt;&gt; findLadders(string beginWord, string endWord, vector&lt;string&gt;&amp; wordList) {
+    vector&lt;vector&lt;string&gt;&gt; ans;
+    unordered_set&lt;string&gt; dict;
+    for (const auto &amp;w : wordList)
+        dict.insert(w);
+
+    if (!dict.count(endWord))
+        return ans;
+
+    dict.erase(beginWord);
+    dict.erase(endWord);
+
+    unordered_set&lt;string&gt; q1{beginWord}, q2{endWord};
+    unordered_map&lt;string, vector&lt;string&gt;&gt; next;
+    bool reversed = false, found = false;
+    while ( !q1.empty()) {
+        unordered_set&lt;string&gt; q;
+        for (const auto &amp;w : q1) {
+            string s = w;
+            for (size_t i=0; i&lt;s.size(); i++) {
+                char ch = s[i];
+                for (int j=0; j&lt;26; j++) {
+                    s[i] = j + 'a';
+                    if (q2.count(s)) {
+                        reversed? next[s].push_back(w):next[w].push_back(s);
+                        found = true;
+                    }
+
+                    if (dict.count(s)) {
+                        reversed? next[s].push_back(w): next[w].push_back(s);
+                        q.insert(s);
+                    }
+                }
+                s[i] = ch;
+            }
+        }
+        if (found)
+            break;
+
+        for (const auto &amp;w:q)
+            dict.erase(w);
+
+        if (q.size() &lt;= q2.size()) {
+            q1 = q;
+        } else {
+            reversed = !reversed;
+            q1 = q2;
+            q2 = q;
+        }
+    }
+    if (found) {
+        vector&lt;string&gt; path = {beginWord};
+        backtracking(beginWord, endWord, next, path, ans);
+    }
+    return ans;
+}
+
+void backtracking(const string &amp;src, const string &amp;dst, unordered_map&lt;string, vector&lt;string&gt;&gt; &amp;next, vector&lt;string&gt; &amp;path, vector&lt;vector&lt;string&gt;&gt; &amp;ans) {
+    if (src == dst) {
+        ans.push_back(path);
+        return;
+    }
+    for (const auto &amp;s: next[src]) {
+        path.push_back(s);
+        backtracking(s, dst, next, path, ans);
+        path.pop_back();
+    }
+}
+</code></pre>
+
+<h2 id="总结">总结</h2>
+
+<p>图和树的搜索这种类型的题难度挺大，主要就是涉及 <code>BFS 广度优先搜索</code>、<code>DFS 深度优先搜索</code> 以及 <code>回溯法</code></p>
+
+<p>在刷题过程中有 2 个点比较值得注意：</p>
+
+<ul>
+<li>是通过直接在原数据上修改来记录访问状态，还是说需要额外创建一个 <code>visited</code> 对象来保存访问过的状态</li>
+<li>状态的维护格外需要注意</li>
+</ul>
+
+<p>只能说这些题还需要反复体会体会~</p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/algorithm" role="button">Algorithm </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E6%8E%92%E5%BA%8F%E9%A2%98%E7%AF%87/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>查缺补漏-排序题篇</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E5%9B%BE%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95-%E7%BB%AD/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>查缺补漏-图搜索算法-续</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#dfs-%e6%b7%b1%e5%ba%a6%e4%bc%98%e5%85%88%e6%90%9c%e7%b4%a2">
+												 DFS 深度优先搜索
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#695-%e5%b2%9b%e5%b1%bf%e7%9a%84%e6%9c%80%e5%a4%a7%e9%9d%a2%e7%a7%af">
+												 695.岛屿的最大面积
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#547-%e7%9c%81%e4%bb%bd%e6%95%b0%e9%87%8f">
+												 547.省份数量
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#417-%e6%b0%b4%e6%b5%81%e9%97%ae%e9%a2%98">
+												 417.水流问题
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%9b%9e%e6%ba%af%e6%b3%95">
+												 回溯法
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#46-%e5%85%a8%e6%8e%92%e5%88%97">
+												 46.全排列
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#77-%e7%bb%84%e5%90%88">
+												 77.组合
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#79-%e5%8d%95%e8%af%8d%e6%90%9c%e7%b4%a2">
+												 79.单词搜索
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#51-n-%e7%9a%87%e5%90%8e">
+												 51.N 皇后
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b9%bf%e5%ba%a6%e4%bc%98%e5%85%88%e6%90%9c%e7%b4%a2">
+												 广度优先搜索
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#934-%e6%9c%80%e7%9f%ad%e7%9a%84%e6%a1%a5">
+												 934.最短的桥
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#126-%e5%8d%95%e8%af%8d%e6%8e%a5%e9%be%99-ii">
+												 126.单词接龙 II
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

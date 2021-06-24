@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="之前总结了常见的十种排序算法,但是不做题怎么可能巩固呢?">
+  
+  <meta property="og:title" content="查缺补漏-排序题篇" />
+<meta property="og:description" content="之前总结了常见的十种排序算法,但是不做题怎么可能巩固呢?" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E6%8E%92%E5%BA%8F%E9%A2%98%E7%AF%87/" />
+<meta property="article:published_time" content="2021-06-03T00:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-06-03T00:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       查缺补漏-排序题篇 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E6%8E%92%E5%BA%8F%E9%A2%98%E7%AF%87/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/algorithm"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Algorithm </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">查缺补漏-排序题篇</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Jun 3, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>之前总结了常见的十种排序算法,但是不做题怎么可能巩固呢?</p>
+
+<h2 id="215-第k个最大元素">215.第K个最大元素</h2>
+
+<blockquote>
+<p>这道题很关键，建议熟练掌握</p>
+</blockquote>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/sort/215.png" alt="215" /></p>
+
+<p>思路一： 快速选择, 类似于快速排序, 不过只需要找到第 <code>K</code> 大的值即可, 不需要对其左右全都进行排序</p>
+
+<pre><code class="language-C++">int findKthLargest(vector&lt;int&gt;&amp; nums, int k) {
+    int len = nums.size();
+    return quick_sort_recursive(nums, 0, len-1, len-k);
+}
+
+void quick_sort_recursive(vector&lt;int&gt;&amp; nums, int start, int end, int k)  
+{
+    int mid = nums[end];
+    int left = start, right = end - 1;
+    while (left &lt; right) {
+        while (nums[left] &lt; mid &amp;&amp; left &lt; right)
+            left++;
+        while (nums[right] &gt;= mid &amp;&amp; left &lt; right)
+            right--;
+        std::swap(nums[left], nums[right]);
+    }
+    if (nums[left] &gt;= nums[end])
+        std::swap(nums[left], nums[end]);
+    else
+        left++;
+
+    if (left == k)
+        return nums[k];
+    else if( left &gt; k)
+        quick_sort_recursive(nums, start, left - 1, k);
+    else
+        quick_sort_recursive(nums, left + 1, end, k);
+}
+</code></pre>
+
+<p>思路二：最大堆，每次从对顶取一个，<code>K-1</code> 次之后, 堆顶就是我们的结果</p>
+
+<pre><code class="language-C++">void maxHeapify(vector&lt;int&gt;&amp; a, int i, int heapSize) {
+    int l = i * 2 + 1, r = i * 2 + 2, largest = i;
+    if (l &lt; heapSize &amp;&amp; a[l] &gt; a[largest]) {
+        largest = l;
+    } 
+    if (r &lt; heapSize &amp;&amp; a[r] &gt; a[largest]) {
+        largest = r;
+    }
+    if (largest != i) {
+        swap(a[i], a[largest]);
+        maxHeapify(a, largest, heapSize);
+    }
+}
+
+void buildMaxHeap(vector&lt;int&gt;&amp; a, int heapSize) {
+    for (int i = heapSize / 2; i &gt;= 0; --i) {
+        maxHeapify(a, i, heapSize);
+    } 
+}
+
+int findKthLargest(vector&lt;int&gt;&amp; nums, int k) {
+    int heapSize = nums.size();
+    buildMaxHeap(nums, heapSize);
+    for (int i = nums.size() - 1; i &gt;= nums.size() - k + 1; --i) {
+        swap(nums[0], nums[i]);
+        --heapSize;
+        maxHeapify(nums, 0, heapSize);
+    }
+    return nums[0];
+}
+</code></pre>
+
+<h2 id="347-前k个高频元素">347.前K个高频元素</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/sort/347.png" alt="347" /></p>
+
+<p>策略: 先统计出现频率, 根据频率设置若干个记录对应频率的桶, 向桶中放入数据, 然后从 <code>大桶</code> 逐个取出元素, 直到第 <code>k</code> 个</p>
+
+<pre><code class="language-C++">vector&lt;int&gt; topKFrequent(vector&lt;int&gt;&amp; nums, int k) {
+    unordered_map&lt;int, int&gt; counts;
+    int max_count = 0;
+    for (const int &amp; num : nums) {
+        max_count = max(max_count, ++counts[num]);
+    }
+    vector&lt;vector&lt;int&gt;&gt; buckets(max_count + 1);
+    for (const auto &amp;[key, value] : counts) {
+        buckets[value].push_back(key);
+    }
+    vector&lt;int&gt; ans;
+    for (int i = max_count; i &gt;= 0 &amp;&amp; ans.size() &lt; k; --i) {
+        for (const int &amp; num : buckets[i]) {
+            ans.push_back(num);
+            if (ans.size() == k) {
+                break;
+            }
+        }
+    }
+    return ans;
+}
+</code></pre>
+
+<h2 id="451-根据字符出现频率排序">451.根据字符出现频率排序</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/sort/451.png" alt="451" /></p>
+
+<p>第一种: 直接创建一个可以容纳所有 <code>char</code> 的数组, 对应 <code>char</code> 位置上保存出现的频率, 根据统计的频率作为快排排序的规则, 这个有点讨巧</p>
+
+<pre><code class="language-C++">string frequencySort(string s) {
+    int counts[CHAR_MAX + 1] = {0};
+    for (char c : s) ++counts[c];
+    sort(s.begin(), s.end(), [&amp;](char a, char b) {
+        return counts[a] &gt; counts[b] || (counts[a] == counts[b] &amp;&amp; a &lt; b);
+    });
+    return s;
+}
+</code></pre>
+
+<p>第二种: 利用桶排序的思路, 先统计出现的数量, 根据出现频率建立桶, 然后结合桶的顺序关系,将值重新排序, 也就是上一题的思路</p>
+
+<pre><code class="language-C++">string frequencySort(string s) {
+    unordered_map&lt;char, int&gt; counts;
+    int max_count = 0;
+    for (const char &amp;i: s) {
+        max_count = max(max_count, ++counts[i] );
+    }
+
+    vector&lt;vector&lt;char&gt;&gt; buckets(max_count+1);
+    for (auto &amp;[key, value] : counts) {
+        buckets[value].push_back(key);
+    }
+
+    string result;
+    for(int i=max_count;i&gt;=0;--i) {
+        for (auto target : buckets[i])
+            result += string(i, target);
+    }
+    return result;
+}
+</code></pre>
+
+<h2 id="75-颜色分类">75.颜色分类</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/sort/75.png" alt="75" /></p>
+
+<p>如果不考虑原地这个概念，可以统计每种出现的频率后，重新给输入赋值即可</p>
+
+<pre><code class="language-C++">void sortColors(vector&lt;int&gt;&amp; nums) {
+    int length = nums.size();
+    vector&lt;int&gt; vecCount(3, 0);
+    for (int i=0; i&lt;length ;i++) {
+        vecCount[nums[i]] ++;
+    }
+
+    int cnt = 0;
+    for (int i=0; i&lt;3; i++) {
+        while(vecCount[i] != 0) {
+            vecCount[i] --;
+            nums[cnt++] = i;
+        }
+    }
+}
+</code></pre>
+
+<p>单指针，对数组进行两次遍历。在第一次遍历中，我们将数组中所有的 <code>0</code> 交换到数组的头部。在第二次遍历中，我们将数组中所有的 <code>1</code> 交换到头部的 <code>0</code> 之后。此时所有的 <code>2</code> 都出现在数组的尾部</p>
+
+<pre><code class="language-C++">void sortColors(vector&lt;int&gt;&amp; nums) {
+    int n = nums.size();
+    int ptr = 0;
+    for (int i = 0; i &lt; n; ++i) {
+        if (nums[i] == 0) {
+            swap(nums[i], nums[ptr]);
+            ++ptr;
+        }
+    }
+    for (int i = ptr; i &lt; n; ++i) {
+        if (nums[i] == 1) {
+            swap(nums[i], nums[ptr]);
+            ++ptr;
+        }
+    }
+}
+</code></pre>
+
+<p>双指针，对数组进行一次遍历，分别记录 <code>0</code> 和 <code>2</code> 的位置<br />
+注意：不能轻易 <code>swap(nums[i], nums[p2])</code>， 换过去之后，新的 <code>nums[i]</code> 可能还要交换</p>
+
+<pre><code class="language-C++">void sortColors(vector&lt;int&gt;&amp; nums) {
+    int n = nums.size();
+    int p0 = 0, p2 = n - 1;
+    for (int i = 0; i &lt;= p2; ++i) {
+        if (nums[i] == 0) {
+            swap(nums[i], nums[p0]);
+            ++p0;
+        } else if (nums[i] == 2) {
+            swap(nums[i], nums[p2]);
+            --p2;
+            --i;
+        }
+    }
+}
+</code></pre>
+
+<h2 id="总结">总结</h2>
+
+<p>查找第K个最大元素这种题感觉特别多, 需要熟练掌握<br />
+计数和桶排序也需要熟练掌握</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/algorithm" role="button">Algorithm </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-05/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>查缺补漏-二分查找</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E5%9B%BE%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>查缺补漏-图搜索算法</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#215-%e7%ac%ack%e4%b8%aa%e6%9c%80%e5%a4%a7%e5%85%83%e7%b4%a0">
+												 215.第K个最大元素
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#347-%e5%89%8dk%e4%b8%aa%e9%ab%98%e9%a2%91%e5%85%83%e7%b4%a0">
+												 347.前K个高频元素
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#451-%e6%a0%b9%e6%8d%ae%e5%ad%97%e7%ac%a6%e5%87%ba%e7%8e%b0%e9%a2%91%e7%8e%87%e6%8e%92%e5%ba%8f">
+												 451.根据字符出现频率排序
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#75-%e9%a2%9c%e8%89%b2%e5%88%86%e7%b1%bb">
+												 75.颜色分类
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

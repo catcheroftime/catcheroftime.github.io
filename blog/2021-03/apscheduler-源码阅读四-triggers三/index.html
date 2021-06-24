@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="趁热打铁，学习一下 APScheduler 的 python 的源码，很好奇任务调度控制的实现。">
+  
+  <meta property="og:title" content="APScheduler 源码阅读(四) triggers(三)" />
+<meta property="og:description" content="趁热打铁，学习一下 APScheduler 的 python 的源码，很好奇任务调度控制的实现。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E4%B8%89/" />
+<meta property="article:published_time" content="2021-03-25T19:35:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-03-25T19:35:00&#43;08:00"/>
+
+
+  <title>
+  
+       APScheduler 源码阅读(四) triggers(三) | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E4%B8%89/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/python"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> python </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">APScheduler 源码阅读(四) triggers(三)</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Mar 25, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>趁热打铁，学习一下 <code>APScheduler</code> 的 <code>python</code> 的源码，很好奇任务调度控制的实现。</p>
+
+<p>分析源码主要还是针对 <code>APScheduler</code> 下的几个关键的模块</p>
+
+<ul>
+<li><code>events</code> 事件</li>
+<li><code>executors</code> 执行器</li>
+<li><code>job</code> 任务</li>
+<li><code>jobstores</code> 任务存储</li>
+<li><code>triggers</code> 触发器</li>
+<li><code>schedulers</code> 调度程序</li>
+</ul>
+
+<p>这一篇主要瞅瞅 <code>triggers</code> 触发器</p>
+
+<p>简单回顾一下 <code>CronTrigger</code> 的正则表达式解析提供一些类</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">类</th>
+<th align="left">正则表达式</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">AllExpression</td>
+<td align="left"><code>*/step</code></br><code>*</code></td>
+</tr>
+
+<tr>
+<td align="left">RangeExpression</td>
+<td align="left"><code>first</code></br><code>first-last</code></br><code>first/step</code></br><code>first-last/step</code></td>
+</tr>
+
+<tr>
+<td align="left">MonthRangeExpression</td>
+<td align="left"><code>first</code></br><code>first-last</code></td>
+</tr>
+
+<tr>
+<td align="left">WeekdayRangeExpression</td>
+<td align="left"><code>first</code></br><code>first-last</code></td>
+</tr>
+
+<tr>
+<td align="left">WeekdayPositionExpression</td>
+<td align="left"><code>option_name weekday_name</code></td>
+</tr>
+
+<tr>
+<td align="left">LastDayOfMonthExpression</td>
+<td align="left"><code>last</code></td>
+</tr>
+</tbody>
+</table>
+
+<p>这里有需要补充的一些内容</p>
+
+<ul>
+<li><strong><code>MonthRangeExpression</code></strong> 的 <code>first</code> 和 <code>last</code> 必须匹配这些字段 <code>['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']</code>, 但是不限制大小写</li>
+<li><strong><code>WeekdayRangeExpression</code></strong> 的 <code>first</code> 和 <code>last</code> 必须匹配这些字段 <code>['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']</code>, 也不限制大小写</li>
+<li><strong><code>WeekdayPositionExpression</code></strong> 的 <code>option_name</code> 只匹配 <code>['1st', '2nd', '3rd', '4th', '5th', 'last']</code>, <code>weekday_name</code> 匹配的字段和 <code>WeekdayRangeExpression</code> 一样</li>
+</ul>
+
+<p>上一篇文章回顾完了，但是这里又引入了一个新的问题，我怎么决定不同的时间字段对应哪种表达式，以及例如 <code>'jan','feb'</code>  这样的复合表达式如何解析等问题。</p>
+
+<p>接下来介绍的 <code>BaseField</code> 及其子类将完成对上述问题的解释及实现</p>
+
+<h2 id="basefield-及其子类">BaseField 及其子类</h2>
+
+<p>首先我需要在说明一下，<code>CronTrigger</code> 中可配置的字段最大值最小值，以及默认值如下</p>
+
+<pre><code class="language-python">MIN_VALUES = {'year': 1970, 'month': 1, 'day': 1, 'week': 1, 'day_of_week': 0, 'hour': 0, 'minute': 0, 'second': 0}
+MAX_VALUES = {'year': 9999, 'month': 12, 'day': 31, 'week': 53, 'day_of_week': 6, 'hour': 23, 'minute': 59, 'second': 59}
+DEFAULT_VALUES = {'year': '*', 'month': 1, 'day': 1, 'week': '*', 'day_of_week': '*', 'hour': 0, 'minute': 0, 'second': 0}
+</code></pre>
+
+<p><img src="https://catcheroftime.github.io/images/blog/python/apscheduler/triggers/basefield.png" alt="expression" /></p>
+
+<p><code>BaseField</code> 提供了对这些 <code>year</code> 等字段最大值最小值获取的接口，在之前 <code>AllExpression</code> 的介绍中已经有看到过</p>
+
+<pre><code class="language-python">def get_min(self, dateval):
+    return MIN_VALUES[self.name]
+
+def get_max(self, dateval):
+    return MAX_VALUES[self.name]
+
+def get_value(self, dateval):
+    return getattr(dateval, self.name)
+</code></pre>
+
+<p>所以这个类我觉得最核心的部分就是，当上层将这个字段和这个字段对应的表达式传入的时候，如何正确解析，以及利用 <code>AllExpression</code> 提供的<code>get_next_value()</code> 实现自己的 <code>get_next_value()</code> 供上级调用</p>
+
+<p>这里还有一个注意的点</p>
+
+<pre><code class="language-python">COMPILERS = [AllExpression, RangeExpression]
+</code></pre>
+
+<p><code>COMPILERS</code> 它定义了这个 <code>BaseField</code> 用到的正则表达式解析的类只有 <code>AllExpression</code> 和 <code>RangeExpression</code>， 不同的子类定义的信息是有不同的</p>
+
+<h3 id="初始化">初始化</h3>
+
+<pre><code class="language-python">def __init__(self, name, exprs, is_default=False):
+    self.name = name
+    self.is_default = is_default
+    self.compile_expressions(exprs)
+</code></pre>
+
+<p>很简单，表示时间字段的 <code>name</code>，以及对应的表达式 <code>exprs</code>，根据配置的时候有没有配置这个字段决定是否需要配置默认值的 <code>is_default</code>， 但是这个字段实际上并没有被用到，上层已经根据是否为 <code>None</code> 的时候决定了使用什么样的 <code>exprs</code>, 没太懂这一块设计？<br />
+初始化部分主要是 <code>compile_expressions()</code> 这个批量处理正则表达式的函数</p>
+
+<h3 id="批量处理正则表达式">批量处理正则表达式</h3>
+
+<pre><code class="language-python">SEPARATOR = re.compile(' *, *')
+def compile_expressions(self, exprs):
+    self.expressions = []
+
+    for expr in SEPARATOR.split(str(exprs).strip()):
+        self.compile_expression(expr)
+</code></pre>
+
+<p>这里需要注意，正则匹配是 <code>若干个空格+逗号+若干个空格</code>，所以对于传入的 <code>exprs</code>，先通过 <code>strip()</code> 将首尾的空格去除后在进行匹配</p>
+
+<p>这里的核心还是如何处理单个正则表达式 <code>compile_expression()</code></p>
+
+<h3 id="处理单个正则表达式">处理单个正则表达式</h3>
+
+<pre><code class="language-python">def compile_expression(self, expr):
+    for compiler in self.COMPILERS:
+        match = compiler.value_re.match(expr)
+        if match:
+            compiled_expr = compiler(**match.groupdict())
+
+            try:
+                compiled_expr.validate_range(self.name)
+            except ValueError as e:
+                exc = ValueError('Error validating expression {!r}: {}'.format(expr, e))
+                six.raise_from(exc, None)
+
+            self.expressions.append(compiled_expr)
+            return
+
+    raise ValueError('Unrecognized expression &quot;%s&quot; for field &quot;%s&quot;' % (expr, self.name))
+</code></pre>
+
+<p>从这里可以看出从 <code>COMPILERS = [AllExpression, RangeExpression]</code> 依次取出对象，使用其中定义的 <code>value_re</code> 来解析表达式<br />
+如果，匹配 <code>match</code> 成功，则根据匹配的结果，初始化 <code>Expression</code> 对象，而这个对象提供了 <code>get_next_value()</code> 接口，最后在保存到 <code>self.expressions</code> 对象中</p>
+
+<h3 id="get-next-value">get_next_value()</h3>
+
+<pre><code class="language-python">def get_next_value(self, dateval):
+    smallest = None
+    for expr in self.expressions:
+        value = expr.get_next_value(dateval, self)
+        if smallest is None or (value is not None and value &lt; smallest):
+            smallest = value
+
+    return smallest
+</code></pre>
+
+<p>前面提到 <code>self.expressions</code> 中保存了匹配成功后生成的对象，这里要做的，就是从这些对象中通过 <code>get_next_value()</code> 函数取出最小的值返回即可，也是没有什么难度的</p>
+
+<h3 id="其他子类">其他子类</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">子类名称</th>
+<th align="left">COMPILERS</th>
+<th align="left">额外重载的函数</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">BaseField</td>
+<td align="left">AllExpression, RangeExpression</td>
+<td align="left">get_value()</td>
+</tr>
+
+<tr>
+<td align="left">WeekField</td>
+<td align="left">AllExpression, RangeExpression</td>
+<td align="left">get_value()</td>
+</tr>
+
+<tr>
+<td align="left">DayOfWeekField</td>
+<td align="left">AllExpression, RangeExpression, WeekdayRangeExpression</td>
+<td align="left">get_value()</td>
+</tr>
+
+<tr>
+<td align="left">MonthField</td>
+<td align="left">AllExpression, RangeExpression, MonthRangeExpression</td>
+<td align="left">无</td>
+</tr>
+
+<tr>
+<td align="left">DayOfMonthField</td>
+<td align="left">AllExpression, RangeExpression, WeekdayPositionExpression, LastDayOfMonthExpression</td>
+<td align="left">get_max()</td>
+</tr>
+</tbody>
+</table>
+
+<p>简单总结了一下，可以看出子类主要是为了补充需要自己解释的正则表达式格式，现在只需要简单看一下这些额外重载的函数实现</p>
+
+<pre><code class="language-python"># WeekField 的重载函数 get_value
+def get_value(self, dateval):
+    return dateval.isocalendar()[1]
+</code></pre>
+
+<p>传入的参数是一个类型为 <code>date</code> 的时间， <code>isocalendar()</code> 函数是 <code>datetime</code> 下提供的函数，主要是返回这个 <code>dateval</code> 的年，第几周，周几这3个值</p>
+
+<pre><code class="language-python"># DayOfMonthField 的重载函数 get_max()
+def get_max(self, dateval):
+    return monthrange(dateval.year, dateval.month)[1]
+</code></pre>
+
+<p>上一篇文章介绍过 <code>monthrange()</code> 函数就是返回一个月第一天是周几(0-6), 以及这个月总的天数，而总的天数其实就是这个月天数的最大值</p>
+
+<pre><code class="language-python"># DayOfWeekField 的重载函数 get_value()
+def get_value(self, dateval):
+    return dateval.weekday()
+</code></pre>
+
+<p><code>weekday()</code> 返回 <code>dateval</code> 是周几(0-6)</p>
+
+<p>除此之外，还有一个需要特别注意的地方， <code>BaseField</code> 中默认定义的 <code>REAL=True</code>，但是在 <code>WeekField</code> 和 <code>DayOfWeekField</code> 被设置为 <code>False</code>
+简单说一下我对这个字段的理解，在上层通过 <code>BaseField</code> 及其子类的 <code>get_next_value()</code> 获取到一个数值的时候，我们需要根据这个时间换算从一个新的时间，而 <code>WeekField</code> 多少周， <code>DayOfWeekField</code> 一周里的第几天这2个字段，并没有办法直接变成具体的日期，需要额外标识出这个字段是否能直接用，而这些字段具体如何用，在后文中会有介绍，先有个印象</p>
+
+<h2 id="crontrigger">CronTrigger</h2>
+
+<p>终于看到 <code>CronTrigger</code> 这个类了，这一部分的实现还是挺有意思的，首先类定义了支持处理的字段，以及这些字段对应用来封装的 <code>BaseField</code> 类或者子类的信息</p>
+
+<pre><code class="language-python">FIELD_NAMES = ('year', 'month', 'day', 'week', 'day_of_week', 'hour', 'minute', 'second')
+FIELDS_MAP = {
+    'year': BaseField,
+    'month': MonthField,
+    'week': WeekField,
+    'day': DayOfMonthField,
+    'day_of_week': DayOfWeekField,
+    'hour': BaseField,
+    'minute': BaseField,
+    'second': BaseField
+}
+</code></pre>
+
+<p>结合前面的，列一个总的表格，详细看一下</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">封装的类</th>
+<th>COMPILERS</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">year</td>
+<td align="left">BaseField</td>
+<td>AllExpression  (<code>*/step</code>,<code>*</code>)</br>RangeExpression (<code>first</code>,<code>first-last</code>,<code>first/step</code>,<code>first-last/step</code>)</td>
+</tr>
+
+<tr>
+<td align="left">hour</td>
+<td align="left">BaseField</td>
+<td>同上</td>
+</tr>
+
+<tr>
+<td align="left">minute</td>
+<td align="left">BaseField</td>
+<td>同上</td>
+</tr>
+
+<tr>
+<td align="left">second</td>
+<td align="left">BaseField</td>
+<td>同上</td>
+</tr>
+
+<tr>
+<td align="left">week</td>
+<td align="left">WeekField</td>
+<td>同上</td>
+</tr>
+
+<tr>
+<td align="left">month</td>
+<td align="left">MonthField</td>
+<td>AllExpression  (<code>*/step</code>,<code>*</code>)</br>RangeExpression (<code>first</code>,<code>first-last</code>,<code>first/step</code>,<code>first-last/step</code>)</br>MonthRangeExpression (<code>first</code>,<code>first-last</code>)<code>['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']</code></td>
+</tr>
+
+<tr>
+<td align="left">day</td>
+<td align="left">DayOfMonthField</td>
+<td>AllExpression  (<code>*/step</code>,<code>*</code>)</br>RangeExpression (<code>first</code>,<code>first-last</code>,<code>first/step</code>,<code>first-last/step</code>)</br>WeekdayPositionExpression (<code>option_name weekday_name</code>) </br>LastDayOfMonthExpression (<code>last</code>)</td>
+</tr>
+
+<tr>
+<td align="left">day_of_week</td>
+<td align="left">DayOfWeekField</td>
+<td>AllExpression  (<code>*/step</code>,<code>*</code>)</br>RangeExpression (<code>first</code>,<code>first-last</code>,<code>first/step</code>,<code>first-last/step</code>)</br>WeekdayRangeExpression (<code>first</code>,<code>first-last</code>) <code>['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']</code></td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="初始化-1">初始化</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/python/apscheduler/triggers/crontrigger_init.png" alt="crontrigger_init" /></p>
+
+<ul>
+<li>首先判断 <strong>时区</strong>，如果有设置，直接就用，否则根据 <strong>开始时间</strong> 或者 <strong>结束时间</strong> 中的时区来决定，都没有则使用 <strong>系统本地时区</strong></li>
+<li>使用 <code>convert_to_datetime()</code> 函数格式化传入开始时间和结束时间，因为传入的可以不是 <code>datetime</code> 对象，可以只是字符串类型，需要转换成 <code>datetime</code> 类型</li>
+<li>设置 <code>jitter</code>, 之前介绍的提前或延迟 <code>job</code> 执行的误差时间</li>
+<li>整理所有值不为 <code>None</code> 的字段且属于 <code>FIELD_NAMES</code> 中的字段, 并以 <code>(field, value)</code> 的形式存储到一个 <code>dict</code> 的 <code>values</code> 中</li>
+<li>对所有需要设置的字段进行遍历，生成对应的类似于 <code>BaseField</code> 的对象</li>
+<li>最后将这些字段生成对象保存到 <code>self.fields</code> 中</li>
+</ul>
+
+<p>这里设置默认值的时候的设计其实还挺复杂, 第一种是 <code>DEFAULT_VALUES</code> 中默认值，第二种是 <code>*</code></p>
+
+<pre><code class="language-python">DEFAULT_VALUES = {'year': '*', 'month': 1, 'day': 1, 'week': '*', 'day_of_week': '*', 'hour': 0, 'minute': 0, 'second': 0}
+</code></pre>
+
+<p>首先需要对传入的默认值做一个区别的介绍</p>
+
+<ul>
+<li>当 <code>exprs</code> 是 <code>*</code> 的时候，基本是对应字段是什么值， <code>get_next_value()</code> 的时候就会返回什么值</li>
+<li>当 <code>exprs</code> 是数值也就是 <code>DEFAULT_VALUES</code> 中的 0 或者 1 的时候，使用 <code>RangeExpression</code> 中的匹配规则，这里就是 <code>first</code> 类型，等于在这个字段整个范围内只会在 0 或者 1 的时候触发,如果所有字段都是 <code>first</code> 格式，那么就相当于是 <code>dateTrigger</code>， 一个一次性执行的任务</li>
+</ul>
+
+<p><code>FIELD_NAMES</code> 是按照 <code>year</code> 到 <code>second</code> 的顺序一个一个在 <code>values</code> 中查找</p>
+
+<ul>
+<li>如果 <code>values</code> 中没有，但是 <code>values</code> 不为空 (每次匹配到，会从 <code>values</code> 中 <code>pop</code> 出来)，则使用默认 <code>*</code></li>
+<li>如果 <code>values</code> 中没有，并且 <code>values</code> 为空，则使用 <code>DEFAULT_VALUES</code> 的默认值</li>
+</ul>
+
+<p>举个例子，解释一下这样设计的目的</p>
+
+<pre><code class="language-python">trigger1 = CronTrigger(second='*/5')
+trigger2 = CronTrigger(year='*', month='4', day='1')
+</code></pre>
+
+<p><code>trigger1</code> 根据上面的初始化设计思路，其余字段都是 <code>*</code>, 因为 <code>second</code> 是 <code>FIELD_NAMES</code> 中最后一个字段，等于每隔 <strong>5</strong> 秒执行一次，因为你在这样定义的时候，更倾向于 <code>second</code> 的使用，而它前面时间字段是什么值是不关心，那么使用 <code>*</code> 是很合理的</p>
+
+<p><code>trigger2</code> 的意图是每年 4 月 1 号执行，根据初始化思路，从 <code>day</code> 之后的字段，也就是从 <code>week</code> 开始的字段的默认值都是 <code>DEFAULT_VALUES</code> 对应的字段，那么实际上 <code>trigger2</code> 实际上就是每年 4 月 1 号的 0 点 0 分 0 秒执行，既然你不设置，那就按照我的默认值设置，因为 <code>CronTrigger</code> 最后还是需要返回一个具体的时间</p>
+
+<p>所以简单总结一下就是：</p>
+
+<blockquote>
+<p>大于用户最小设置字段的未定义字段使用 <code>*</code> 初始化，小于的则使用 <code>DEFAULT_VALUES</code> 中对应的值初始化，默认的 <code>DEFAULT_VALUES</code> 更倾向于具体的时间点</p>
+</blockquote>
+
+<h3 id="get-next-fire-time">get_next_fire_time()</h3>
+
+<p><img src="https://catcheroftime.github.io/images/blog/python/apscheduler/triggers/crongetnexttime.png" alt="crontrigger_init" /></p>
+
+<p><code>while</code> 循环之前就是获取一个 <code>start_date</code>, 并根据 <code>start_date</code> 向上取整得到一个 <code>next_date</code>, 这个 <code>next_date</code> 是一个还没有到的时间，在这个时间基础上计算出下一次执行时间，这个还算合理，假设我设置 <code>second='*'</code> 其它字段默认，因为一个向上取整，这个向上取整只是在秒的位置上加 1，然后去掉秒后面的数字，等于 1 秒执行一次，这种设计是可以接受的，但是记住，这个取整在之后会有一个大坑~</p>
+
+<p>之后的 <code>while</code> 循环中需要注意一点，<strong><code>CronTrigger</code> 本质上还是需要获取下次执行时间，只是它是通过获取每个时间字段的下次执行的时间</strong>，但是涉及到正则表达式解析的 <code>AllExpression</code> 等类的 <code>get_next_value()</code> 函数是会返回 <code>None</code> 的，这里我们就需要对返回 <code>None</code> 进行判断，而这里就是 <code>CronTrigger</code> 最复杂的地方了</p>
+
+<pre><code class="language-python">if next_value is None:
+    next_date, fieldnum = self._increment_field_value(next_date, fieldnum - 1)
+</code></pre>
+
+<p>这里还是需要先研究一下 <code>_increment_field_value()</code> 这个函数</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/python/apscheduler/triggers/increment_field_value.png" alt="increment_field_value" /></p>
+
+<p>这个函数有一段英文解释，大致意思就是：递增指定字段，并将所有不重要的字段重置为其最小值(谷歌翻译)。</p>
+
+<p>首先需要知道一点，这个函数是干啥的？ 这个函数的目的就是，当我某一个字段获取到的值为 <code>None</code> 的时候，这意味着这个时间是无效的，我需要重新算出一个新的 <code>next_date</code>，新的 <code>next_date</code> 的实现就全靠这个函数，先举个例子，再来解释具体实现逻辑</p>
+
+<pre><code class="language-python">trigger = CronTrigger(year='*', month='4', day='1')
+</code></pre>
+
+<p>定义的 <code>CronTrigger</code> 目标是每年的 4 月 1 号执行一次, 现在演示一下 <code>while</code> 中的部分逻辑，不明白 <code>next_value</code> 的值为什么是这个的，建议看一下我上一篇总结</p>
+
+<ul>
+<li>假设现在的时间是 <code>2021-04-10 22:35:10</code>， <code>year</code> 的 <code>next_value</code> 的值为 <code>2021</code>, <code>month</code> 的<code>next_value</code> 的值为 <code>4</code>, 但是 <code>day</code> 因为目标是 <code>1</code>, 但是当前时间是 <code>10</code>, 所以 <code>next_value</code> 返回的是 <code>None</code>, 这时候就会调用 <code>_increment_field_value()</code> 函数， 得到一个新的时间 <code>2021-05-01 00:00:00</code> 的时间</li>
+<li>现在的时间是 <code>2021-05-01 00:00:00</code>， <code>year</code> 的 <code>next_value</code> 的值为 <code>2021</code>, <code>month</code> 的<code>next_value</code> 的值为 <code>None</code>, 继续调用 <code>_increment_field_value()</code> 函数，得到一个新的时间 <code>2022-01-01 00:00:00</code></li>
+<li>现在的时间是 <code>2022-01-01 00:00:00</code>，经过一轮判断最后可以得到一个新的执行时间 <code>2022-04-01 00:00:00</code></li>
+</ul>
+
+<p>返回 <code>None</code> 的意思就是在当前自己的最大值最小值范围内并没有合适值，那么就需要将它前一位字段加一，然后重新找是否有合适的值，等于是扩大一个范围。所以从例子中可以看出 <code>2021-04-10</code> 中寻找 4 月 1 号，没有找到，然后从向前一位到 <code>2021-05</code> 中找，先验证月份，发现 <code>2021-05</code> 中找不到 4 月，那就在向前一位到 <code>2022</code> 年中找先验证 <code>year</code>，接着是 <code>month</code>、<code>day</code> 等等，最后找到 <code>2022-04-01 00:00:00</code></p>
+
+<p>和它的英文解释一样，将 <code>fieldnum</code> 位置的字段递增加一 (加一的时候确保没有超出这个字段的最大值)，这个字段之后的字段 (<code>i &gt; fieldnum</code>) 直接设置成最小值，小于前一个字段的 (<code>i &lt; fieldnum</code>) 值不变<br />
+所以结合 <code>next_value</code> 为 <code>None</code>, 那么就需要将为 <code>None</code> 字段的前一个字段位置传入 <code>_increment_field_value()</code> 即可，重新计算一个新的 <code>next_date</code>，直到找到一个合适的 <code>next_date</code></p>
+
+<p>为 <code>None</code> 的判断算是结束了，现在接着看后面 <code>next_value &gt; curr_value</code></p>
+
+<pre><code class="language-python">elif next_value &gt; curr_value:
+    if field.REAL:
+        next_date = self._set_field_value(next_date, fieldnum, next_value)
+        fieldnum += 1
+    else:
+        next_date, fieldnum = self._increment_field_value(next_date, fieldnum)
+</code></pre>
+
+<p>前面其实介绍了 <code>field.REAL</code> 这个字段的意义，除了 <code>WeekField</code> 和 <code>DayOfWeekField</code> 分别对应 <code>week</code> (第多少周) 和 <code>day_of_week</code> (一周内的周几) 这2个字段(<code>field.REAL=False</code>)，其他字段都是 <code>datetime</code> 对象中成员变量，直接设置，就能更新 <code>next_date</code>, 所以还会需要先看一下 <code>_set_field_value()</code> 函数</p>
+
+<pre><code class="language-python">def _set_field_value(self, dateval, fieldnum, new_value):
+    values = {}
+    for i, field in enumerate(self.fields):
+        if field.REAL:
+            if i &lt; fieldnum:
+                values[field.name] = field.get_value(dateval)
+            elif i &gt; fieldnum:
+                values[field.name] = field.get_min(dateval)
+            else:
+                values[field.name] = new_value
+
+    return self.timezone.localize(datetime(**values))
+</code></pre>
+
+<blockquote>
+<p><code>fieldnum</code> 位置的字段设置成新的值 <code>new_value</code>， <code>fieldnum</code> 位置之前的字段不变，之后的字段取最小值</p>
+</blockquote>
+
+<p>那现在就有一个问题了 <code>week</code> 和 <code>day_of_week</code> 这 2 个 <code>field.REAL=False</code> 的判断怎么办？</p>
+
+<p>源码中的做法是通过 <code>_increment_field_value()</code> 重新计算 <code>next_date</code>, 直到出现 <code>next_value</code> 等于 <code>curr_value</code> 这种情况，给我的感觉就是一种拿当前的时间一直递增去试错的感觉，不匹配， 在 <code>day</code> 递增 1 天，继续判断，直到值相等</p>
+
+<p>那什么时候停止呢？当 <code>0 &lt;= fieldnum &lt; len(self.fields)</code>, 这里存在 <strong>2</strong> 种可能</p>
+
+<ul>
+<li>第一种大于 <code>len(self.fields)</code>, 这时候等于对每个字段都做了设定，得到一个合适的 <code>next_date</code></li>
+<li>第二种小于 <code>0</code>, 这时候是没有找到合适 <code>next_date</code></li>
+</ul>
+
+<p>当然最后还需要将 <code>fieldnum</code> 的值与 <code>self.end_date</code> 做一次大小的判断，正确返回 <code>next_date</code> 即可</p>
+
+<h3 id="序列化和反序列化">序列化和反序列化</h3>
+
+<p>这一部分很简单，就不额外解释了~</p>
+
+<h3 id="from-crontab">from_crontab()</h3>
+
+<p>一个 <code>classmethod</code> 的函数，虽然不太清楚这个函数具体的用法，但是看实现，就是通过 <code>expr</code> 来初始化一个 <code>CronTrigger</code></p>
+
+<p><code>expr</code> 中有5个字段，按照空格隔开，依次分别是 <code>minute</code>, <code>hour</code>, <code>day</code>, <code>month</code>, <code>day_of_week</code></p>
+
+<pre><code class="language-python">@classmethod
+def from_crontab(cls, expr, timezone=None):
+    values = expr.split()
+    if len(values) != 5:
+        raise ValueError('Wrong number of fields; got {}, expected 5'.format(len(values)))
+
+    return cls(minute=values[0], hour=values[1], day=values[2], month=values[3],
+               day_of_week=values[4], timezone=timezone)
+</code></pre>
+
+<h2 id="总结">总结</h2>
+
+<p>整个 <code>CronTrigger</code> 对源码的解析就这样结束了，分析完之后，对 <code>CronTrigger</code> 有了一个新的理解，和 <code>DateTrigger</code> 和 <code>IntervalTrigger</code> 一样本质都是返回一个下一次执行的时间</p>
+
+<p>但是 <code>CronTrigger</code> 是针对时间的每一字段做了定制化的设置，当某一个字段通过 <code>get_next_value()</code> 获取值为 <code>None</code> 的时候，让这个字段的前一个字段 <code>x</code> 自增, <code>x</code> 前的字段值不变，<code>x</code> 后的字段全部置为最小值，从而得到获取一个新的 <code>next_date</code> ，然后重复 <code>get_next_value()</code> 这样的操作，直到遍历完所有的字段，或者连第一个 <code>year</code> 字段都返回 <code>None</code> 时停止</p>
+
+<p>这样的思路还是挺有意思的~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/python" role="button">python </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E5%9B%9B/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>APScheduler 源码阅读(四) triggers(四)</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-04/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>职责链模式</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#basefield-%e5%8f%8a%e5%85%b6%e5%ad%90%e7%b1%bb">
+												 BaseField 及其子类
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%9d%e5%a7%8b%e5%8c%96">
+												 初始化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%89%b9%e9%87%8f%e5%a4%84%e7%90%86%e6%ad%a3%e5%88%99%e8%a1%a8%e8%be%be%e5%bc%8f">
+												 批量处理正则表达式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a4%84%e7%90%86%e5%8d%95%e4%b8%aa%e6%ad%a3%e5%88%99%e8%a1%a8%e8%be%be%e5%bc%8f">
+												 处理单个正则表达式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#get-next-value">
+												 get_next_value()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%b6%e4%bb%96%e5%ad%90%e7%b1%bb">
+												 其他子类
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#crontrigger">
+												 CronTrigger
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%9d%e5%a7%8b%e5%8c%96-1">
+												 初始化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#get-next-fire-time">
+												 get_next_fire_time()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%8f%e5%88%97%e5%8c%96%e5%92%8c%e5%8f%8d%e5%ba%8f%e5%88%97%e5%8c%96">
+												 序列化和反序列化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#from-crontab">
+												 from_crontab()
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

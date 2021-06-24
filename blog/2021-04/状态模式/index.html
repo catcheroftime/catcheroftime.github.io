@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="又是一种优化过于臃肿 if...else... 语句的方法~">
+  
+  <meta property="og:title" content="状态模式" />
+<meta property="og:description" content="又是一种优化过于臃肿 if...else... 语句的方法~" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-04/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2021-04-10T20:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-04-10T20:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       状态模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-04/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">状态模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Apr 10, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>又是一种优化过于臃肿 <code>if...else...</code> 语句的方法~</p>
+
+<h2 id="意图">意图</h2>
+
+<blockquote>
+<p>允许一个对象在其内部状态改变时改变它的行为。对象看起来似乎修改了它的类。</p>
+</blockquote>
+
+<h2 id="动机">动机</h2>
+
+<p>想象一个场景， 以马路边行人过马路红绿灯为例子， 红灯亮 30 秒后亮 3 秒黄灯，然后变成亮 20 秒绿灯， 亮完绿灯又是 3 秒黄灯接着红灯这样的循环</p>
+
+<p>如果按照 <code>if...else...</code> 的逻辑， 先判断当前状态是红灯还是绿灯然后决定下一步亮哪一种， 甚至当前是黄灯的时候， 还需要判断前一次是哪种，才能决定， 当然为了方便可以将黄灯分为 红转绿的黄灯， 绿转红的黄灯 2种， 简单用伪代码展示一下逻辑</p>
+
+<pre><code class="language-C++">void switchLight() {
+    if (当前状态 == 绿灯) {
+        当前状态 = 绿转红的黄灯;
+        // 亮黄灯 3 秒;
+        return 3;
+    } else if ( 当前状态 == 红灯) {
+        当前状态 = 红转绿的黄灯;
+        // 亮黄灯 3 秒;C++
+        return 3;
+    } else if ( 当前状态 == 绿转红的黄灯 ){
+        当前状态 == 红灯;
+        // 亮红灯 30 秒;
+        return 30;
+    } else {
+        当前状态 == 绿灯;
+        // 亮绿灯 20 秒;
+        return 20;
+    }
+}
+</code></pre>
+
+<p>调用部分的伪代码大概</p>
+
+<pre><code class="language-C++">while (true) {
+    int wait = switchLight();
+    sleep(wait);
+}
+</code></pre>
+
+<p>假设现在有个场景， 凌晨基本没有行人通过这个红绿灯， 最大程度的保证机动车通行， 那么红绿灯希望可以一直都是红灯， 或者由原来 30 秒的红灯， 变成 180 秒， 同时绿灯的时间也从 20 秒变成 10 秒， 此时我们就需要改 <code>switchLight()</code>，  随着实际开发需求的不停改变， 最后可能会出现巨大的条件语句， 导致代码不够清晰， 并且难以修改和扩展</p>
+
+<p>而状态模式的意图就是将 <strong>决定状态转移</strong> 的逻辑从 <code>if</code> 或者 <code>switch</code> 中剥离出来， 将它们分布到 <code>State</code> 的各个子类中， 将每一个 <strong>状态转换</strong> 和动作封装到一个类中</p>
+
+<h2 id="uml-图">UML 图</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/state/uml.png" alt="uml" /></p>
+
+<ul>
+<li><code>Context</code> (环境)
+
+<ul>
+<li>定义客户端感兴趣的接口</li>
+<li>维护一个 <code>ConcreteState</code> 子类的实例，这个实例定义当前状态</li>
+</ul></li>
+<li><code>State</code> (状态)
+
+<ul>
+<li>定义一个接口以封装与 <code>Context</code> 的一个特定状态相关的行为</li>
+</ul></li>
+<li><code>ConcreteState subclasses</code> (具体状态子类)
+
+<ul>
+<li>每一个子类实现一个与 <code>Context</code> 的一个状态相关的行为</li>
+</ul></li>
+</ul>
+
+<p>简单说一下这些类协作流程</p>
+
+<ul>
+<li><code>Context</code> 是客户端使用的主要接口， 客户可用状态对象来配置一个 <code>Context</code>， 一旦一个 <code>Context</code> 配置完毕， 它的客户不再需要直接与状态对象打交道</li>
+<li><code>Context</code> 将与状态相关的请求委托给当前的 <code>ConcreteState</code> 对象处理。</li>
+<li><code>Context</code> 和 <code>ConcreteState</code> 都可以决定状态改变的规则， 以及在何种条件下进行状态转换</li>
+</ul>
+
+<p>状态模式的意义就是让客户端在整个过程中， 只操作 <code>Context</code>， 状态的改变交给 <code>State</code> 类及其子类， 那么 <code>Context</code> 就需要增加一个接口， 让 <code>State</code> 对象显式地设定 <code>Context</code> 的当前状态， 但是这样意味 <code>State</code> 子类至少拥有一个其他子类的信息， 这将在各个子类之间产生了实现的依赖</p>
+
+<h2 id="应用场景">应用场景</h2>
+
+<ul>
+<li>一个对象的行为取决于它的状态， 并且它必须在运行时刻根据状态改变它的行为。</li>
+<li>一个操作中含有庞大的多分支的条件语句，且这些分支依赖于该对象的状态。这个状态通常用一个或多个枚举常量表示。通常 ， 有多个操作包含这一相同的条件结构。状态模式将每一个条件分支放入一个独立的类中。这使得你可以根据对象自身的情况将对象的状态作为一个对象，这一对象可以不依赖于其他对象而独立变化。</li>
+</ul>
+
+<h2 id="举个例子">举个例子</h2>
+
+<p>这里就使用红绿灯这个例子， 接下来主要看一下各个部分的实现细节， 首先是 <code>State</code> 这个基类</p>
+
+<pre><code class="language-C++">// state.h 
+class Context;
+
+class State
+{
+public:
+    State();
+    virtual ~State();
+
+    int Handle(Context *context);
+    void setNextState(State *state);
+
+private:
+    virtual int doSomething() =0;
+
+private:
+    State *m_nextState;
+};
+
+
+// state.cpp
+#include &quot;state.h&quot;
+#include &quot;context.h&quot;
+
+State::State() {}
+State::~State() {}
+
+int State::Handle(Context *context)
+{
+    int duration = doSomething();
+    context-&gt;setState(m_nextState);
+    return duration;
+}
+
+void State::setNextState(State *state)
+{
+    m_nextState = state;
+}
+</code></pre>
+
+<p>接着是红绿灯各个状态的子类实现</p>
+
+<pre><code class="language-C++">#include &quot;state.h&quot;
+#include &lt;iostream&gt;
+using namespace std;
+
+class RedState : public State
+{
+private:
+    int doSomething() {
+        cout &lt;&lt; &quot;RedLight &quot;;
+        return 30;
+    }
+};
+
+class GreenState : public State
+{
+private:
+    int doSomething() {
+        cout &lt;&lt; &quot;GreenLight &quot;;
+        return 20;
+    }
+};
+
+class YellowState : public State
+{
+private:
+    int doSomething() {
+        cout &lt;&lt; &quot;YellowLight &quot;;
+        return 3;
+    }
+};
+</code></pre>
+
+<p>然后是供客户端的调用的 <code>Context</code></p>
+
+<pre><code class="language-C++">// context.h
+#include &lt;list&gt;
+
+class State;
+
+class Context
+{
+public:
+    Context();
+    ~Context();
+
+    int Handle();
+
+private:
+    friend class State;
+    void setState(State *state);
+
+private:
+    std::list&lt;State *&gt; m_allStates;
+    State *m_currentState;
+};
+
+// context.cpp
+#include &quot;context.h&quot;
+#include &quot;state.h&quot;
+
+#include &quot;concretestate.h&quot;
+
+template &lt;typename Iterator&gt;
+void DeleteElement(Iterator begin, Iterator end)
+{
+    while (begin != end) {
+        delete *begin;
+        ++begin;
+    }
+}
+
+template &lt;typename Container&gt;
+inline void DeleteAll(const Container &amp;c)
+{
+    DeleteElement(c.begin(), c.end());
+}
+
+Context::Context()
+{
+    RedState *red_state = new RedState;
+    GreenState *green_state = new GreenState;
+    YellowState *rtog_state = new YellowState;
+    YellowState *gtor_state = new YellowState;
+
+    red_state-&gt;setNextState(rtog_state);
+    green_state-&gt;setNextState(gtor_state);
+    rtog_state-&gt;setNextState(green_state);
+    gtor_state-&gt;setNextState(red_state);
+
+    m_allStates.push_back(red_state);
+    m_allStates.push_back(green_state);
+    m_allStates.push_back(rtog_state);
+    m_allStates.push_back(gtor_state);
+
+    m_currentState = red_state;
+}
+
+Context::~Context()
+{
+    DeleteAll(m_allStates);
+}
+
+void Context::setState(State *state)
+{
+    m_currentState = state;
+}
+
+int Context::Handle()
+{
+    return m_currentState-&gt;Handle(this);
+}
+</code></pre>
+
+<p>最后是真正的调用环节 <code>main</code> 部分</p>
+
+<pre><code class="language-C++">#include &quot;context.h&quot;
+#include &quot;windows.h&quot;
+
+#include &lt;iostream&gt;
+using namespace std;
+
+int main()
+{
+    Context trafficLights;
+
+    while (true) {
+        int wait = trafficLights.Handle();
+        cout &lt;&lt; &quot;Lighting : &quot; &lt;&lt; wait  &lt;&lt; &quot; second&quot; &lt;&lt; endl;
+        // Sleep(wait*1000);
+        Sleep(1000);
+    }
+
+    return 0;
+}
+</code></pre>
+
+<p>最后的运行结果:</p>
+
+<pre><code class="language-C++">RedLight Lighting : 30 second
+YellowLight Lighting : 3 second
+GreenLight Lighting : 20 second
+YellowLight Lighting : 3 second
+RedLight Lighting : 30 second
+YellowLight Lighting : 3 second
+GreenLight Lighting : 20 second
+YellowLight Lighting : 3 second
+...
+</code></pre>
+
+<p>这个例子的实现在一些实现细节上是有一定取舍的，我着重介绍一下实现细节</p>
+
+<h3 id="谁定义状态转换">谁定义状态转换</h3>
+
+<p>例子代码中， 状态转换的规则是在 <code>Context</code> 在创建 <code>ConcreteState</code> 后通过 <code>State</code> 的 <code>setNextState()</code> 函数将状态转换的流程定义了下来， 最后 <code>State</code> 这个基类通过 <code>Context</code> 的 <code>setState()</code> 函数来显式的转换</p>
+
+<p>简单点说：<code>Context</code> 拥有所有子类的信息， 并且定义了状态转换的逻辑，统筹了 <code>ConcreteState</code>， 虽然实际上还是由 <code>ConcreteState</code> 来切换，但是避免了一个 <code>Sate</code> 子类至少拥有一个其他子类的信息，从而子类间不存在实现依赖的情况</p>
+
+<p>例子中的状态转换 <code>A-&gt;B-&gt;C</code> 很简单，实际情况中可能并不是 <code>A-&gt;B</code> 这种情况，可能 <code>A</code> 在一些情况下可以变成 <code>B</code>， 在另一些情况下变成 <code>C</code>， 或者 <code>State</code> 存在多种行为，比如 <code>HandleA()</code>， <code>HandleB()</code>， <code>HandleC</code>， 在 <code>A</code> 状态下</p>
+
+<ul>
+<li>执行 <code>HandleA()</code> 报错</li>
+<li>执行 <code>HandleB()</code> ， 切换成 <code>B</code> 状态</li>
+<li>执行 <code>HandleA()</code> ， 切换成 <code>C</code> 状态</li>
+</ul>
+
+<p>那么就不能简单的通过 <code>setNextState()</code> 这种方式(当然这是我的实现思路)，所以举的例子的实现方式可以进一步改进， 比如 <code>Context</code> 提供返回它创建的 <code>ConcreteState</code> 的接口，代码大致是</p>
+
+<pre><code class="language-C++">void State::Handle(Context *context)
+{
+    if (condition) {
+        dosomethingA();
+        context-&gt;setState(context-&gt;getConcreteStateA());
+    } else {
+        doSomethingB();
+        context-&gt;setState(context-&gt;getConcreteStateB());
+    }
+}
+</code></pre>
+
+<p>而且状态设置的实例对象可以交给 <code>State</code> 子类去创建， 也就是类似于下面这样 <code>ConcreteStateA</code> 切换到 <code>ConcreteStateB</code>，这样 <code>Context</code> 只需要知道初始状态，其它的都可以不必关心， 但是 <code>ConcreteStateA</code> 就需要知道 <code>ConcreteStateB</code> 对象，也就存在了实现依赖</p>
+
+<pre><code class="language-C++">// class ConcreteStateA 
+void ConcreteStateA::Handle(Context *context)
+{
+    doSomething();
+    context-&gt;setState(new ConcreteStateB());
+}
+</code></pre>
+
+<h3 id="管理-state-对象">管理 <code>State</code> 对象</h3>
+
+<p>例子中 <code>State</code> 对象们被管理在 <code>Context</code> 的 <code>std::list&lt;State *&gt; m_allStates;</code> 对象中， 并不会随着切换一个新的 <code>State</code> 对象而销毁，这样的好处是，<code>Context</code> 预先一次付清创建各个状态对象的开销，如果状态切换改变很频繁，这种方式挺好的</p>
+
+<p>当将要进入的状态在运行时是不可知的， 并且上下文不经常改变状态时， 可仅当需要 <code>State</code> 对象时才创建它们并随后销毁它们， 有点类似于 <code>setState(new ConcreteStateB())</code> 的形式，不过一定要防止内存泄漏的问题</p>
+
+<p>当然管理 <code>State</code> 对象方法还是很多的，比如使用 <strong>享元模式(Flyweight)</strong> 或者 <strong>单例模式(Singleton)</strong></p>
+
+<h2 id="总结">总结</h2>
+
+<p>封装 <strong>基于状态</strong> 的行为，并将行为委托到当前状态，这个思路还是很有意思的~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-04/%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>中介者模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-04/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%BA%94-schedulers/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>APScheduler 源码阅读(五) schedulers</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%9c%ba">
+												 动机
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#uml-%e5%9b%be">
+												 UML 图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">
+												 应用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%be%e4%b8%aa%e4%be%8b%e5%ad%90">
+												 举个例子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%b0%81%e5%ae%9a%e4%b9%89%e7%8a%b6%e6%80%81%e8%bd%ac%e6%8d%a2">
+												 谁定义状态转换
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%ae%a1%e7%90%86-state-%e5%af%b9%e8%b1%a1">
+												 管理 State 对象
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

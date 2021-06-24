@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="">
+  
+  <meta property="og:title" content="查缺补漏-贪心算法" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-05/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/" />
+<meta property="article:published_time" content="2021-05-25T00:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-05-25T00:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       查缺补漏-贪心算法 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-05/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/algorithm"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Algorithm </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">查缺补漏-贪心算法</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>May 25, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>贪心算法 (<code>greedy algorithm</code>), 是一种在每一步选择中都采取在当前状态下最好或最优（即最有利）的选择，从而希望导致结果是最好或最优的算法。<br />
+简单点说就是 <strong>保证每次操作都是局部最优的，从而使最后得到的结果是全局最优的</strong>。</p>
+
+<p>做题是测试是否掌握的最好方式</p>
+
+<h2 id="455-分发饼干">455.分发饼干</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/greedy/455.png" alt="455" /></p>
+
+<p>贪心策略：给剩余孩子里最小饥饿度的孩子分配最小的能饱腹的饼干。</p>
+
+<pre><code class="language-C++">int findContentChildren(vector&lt;int&gt;&amp; children, vector&lt;int&gt;&amp; cookies) {
+    sort(children.begin(), children.end());
+    sort(cookies.begin(), cookies.end());
+    int child = 0, cookie = 0;
+    while (child &lt; children.size() &amp;&amp; cookie &lt; cookies.size()) {
+        if (children[child] &lt;= cookies[cookie]) ++child;
+        ++cookie;
+    }
+    return child;
+}
+</code></pre>
+
+<h2 id="135-分发糖果">135.分发糖果</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/greedy/135.png" alt="135" /></p>
+
+<p>贪心策略：至少每人一个，一次循环仅考虑一侧大小关系</p>
+
+<ul>
+<li>先从左往右遍历一遍，如果右边孩子的评分比左边的高，则右边孩子的糖果数更新为左边孩子的
+糖果数加 1；</li>
+<li>再从右往左遍历一遍，如果左边孩子的评分比右边的高，且左边孩子当前的糖果数不大于右边孩子的糖果数，则左边孩子的糖果数更新为右边孩子的糖果数加 1</li>
+</ul>
+
+<pre><code class="language-C++">int candy(vector&lt;int&gt;&amp; ratings) {
+    int size = ratings.size();
+    if (size &lt; 2) return size;
+    
+    vector&lt;int&gt; num(size, 1);
+    for (int i = 1; i &lt; size; ++i) {
+        if (ratings[i] &gt; ratings[i-1]) 
+            num[i] = num[i-1] + 1;
+    }
+    for (int i = size - 1; i &gt; 0; --i) {
+        if (ratings[i] &lt; ratings[i-1]) 
+            num[i-1] = max(num[i-1], num[i] + 1);
+    }
+    return accumulate(num.begin(), num.end(), 0); 
+}
+</code></pre>
+
+<h2 id="435-无重叠区间">435.无重叠区间</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/greedy/435.png" alt="435" /></p>
+
+<p>贪心策略：优先保留结尾小且不相交的区间。</p>
+
+<p>先把区间按照结尾的大小进行增序排序，每次选择结尾最小且和前一个选择的区间不重叠的区间。</p>
+
+<pre><code class="language-C++">int eraseOverlapIntervals(vector&lt;vector&lt;int&gt;&gt;&amp; intervals) {
+    if (intervals.empty()) {
+        return 0;
+    }
+    int n = intervals.size();
+    sort(intervals.begin(), intervals.end(), [](vector&lt;int&gt; a, vector&lt;int&gt; b) {
+        return a[1] &lt; b[1];
+    });
+    int total = 0, prev = intervals[0][1];
+    for (int i = 1; i &lt; n; ++i) {
+        if (intervals[i][0] &lt; prev) {
+            ++total;
+        } else {
+            prev = intervals[i][1];
+        }
+    }
+    return total;
+}
+</code></pre>
+
+<h2 id="605-种花问题">605.种花问题</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/greedy/605.png" alt="605" /></p>
+
+<p>贪心策略：在不打破种植规则的情况下种入尽可能多的花，然后判断可以种入的花的最多数量是否大于或等于 n。</p>
+
+<pre><code class="language-C++">bool canPlaceFlowers(vector&lt;int&gt;&amp; flowerbed, int n) {
+    int length = flowerbed.size();  
+    int count = 0;
+    for (int i=0;i&lt;length;i++) {
+        if (flowerbed[i] == 0 
+            &amp;&amp;  (i == length - 1 || flowerbed[i + 1] == 0)
+            &amp;&amp; (i == 0 || flowerbed[i - 1] == 0)) {
+            flowerbed[i] = 1;
+            count++;
+        }
+    }
+    return count &gt;= n;
+}
+</code></pre>
+
+<h2 id="452-用最少数量的箭引爆气球">452.用最少数量的箭引爆气球</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/greedy/452.png" alt="452" /></p>
+
+<p>贪心策略：最优保证所有气球中右边界位置最靠左的那一个被引爆</p>
+
+<pre><code class="language-C++">int findMinArrowShots(vector&lt;vector&lt;int&gt;&gt;&amp; points) {
+    if (points.empty()) {
+        return 0;
+    }
+    sort(points.begin(), points.end(), [](const vector&lt;int&gt;&amp; u, const vector&lt;int&gt;&amp; v) {
+        return u[1] &lt; v[1];
+    });
+    int pos = points[0][1];
+    int ans = 1;
+    for (const vector&lt;int&gt;&amp; balloon: points) {
+        if (balloon[0] &gt; pos) {
+            pos = balloon[1];
+            ++ans;
+        }
+    }
+    return ans;
+}
+</code></pre>
+
+<h2 id="763-划分字母区间">763.划分字母区间</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/greedy/763.png" alt="763" /></p>
+
+<p>贪心策略：在得到每个字母最后一次出现的下标位置之后，可以使用贪心的方法将字符串划分为尽可能多的片段</p>
+
+<pre><code class="language-c++">vector&lt;int&gt; partitionLabels(string s) {
+    int last[26];
+    int length = s.size();
+    for (int i = 0; i &lt; length; i++) {
+        last[s[i] - 'a'] = i;
+    }
+    vector&lt;int&gt; partition;
+    int start = 0, end = 0;
+    for (int i = 0; i &lt; length; i++) {
+        end = max(end, last[s[i] - 'a']);
+        if (i == end) {
+            partition.push_back(end - start + 1);
+            start = end + 1;
+        }
+    }
+    return partition;
+}
+</code></pre>
+
+<h2 id="122-买卖股票的最佳时间-ii">122.买卖股票的最佳时间 II</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/greedy/122.png" alt="122" /></p>
+
+<p>贪心策略：只要今天比昨天的价格高，就卖，计算利润</p>
+
+<pre><code class="language-C++">int maxProfit(vector&lt;int&gt;&amp; prices) {
+    int len = prices.size();
+    if (len &lt; 2) {
+        return 0;
+    }
+    int res = 0;
+    for (int i = 1; i &lt; len; i++) {
+        int diff = prices[i] - prices[i - 1];
+        if (diff &gt; 0) {
+            res += diff;
+        }
+    }
+    return res;
+}
+</code></pre>
+
+<h2 id="406-根据身高重建队列">406.根据身高重建队列</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/greedy/406.png" alt="406" /></p>
+
+<p>贪心策略：身高从高到底排序，在配合身高大于等于人身高的个数插入到合适的位置</p>
+
+<pre><code class="language-C++">vector&lt;vector&lt;int&gt;&gt; reconstructQueue(vector&lt;vector&lt;int&gt;&gt;&amp; people) {
+    sort(people.begin(), people.end(), [](const vector&lt;int&gt;&amp; u, const vector&lt;int&gt;&amp; v) {
+        return u[0] &gt; v[0] || (u[0] == v[0] &amp;&amp; u[1] &lt; v[1]);
+    });
+    vector&lt;vector&lt;int&gt;&gt; ans;
+    for (const vector&lt;int&gt;&amp; person: people) {
+        ans.insert(ans.begin() + person[1], person);
+    }
+    return ans;
+}
+</code></pre>
+
+<h2 id="665-非递减数列">665.非递减数列</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/algorithm/greedy/665.png" alt="665" /></p>
+
+<p>贪心策略：在改变前后值大小的时候让数组 <strong>仍然维持非递减数列</strong></p>
+
+<p>简单点说，当 <code>nums[i] &gt; nums[i + 1]</code>，要么</p>
+
+<ul>
+<li><code>nums[i] = nums[i + 1]</code>  前面的元素变小</li>
+<li><code>nums[i + 1] = nums[i]</code>  后面的元素变大</li>
+</ul>
+
+<pre><code class="language-C++">bool checkPossibility(vector&lt;int&gt; &amp;nums) {
+    int n = nums.size();
+    for (int i = 0; i &lt; n - 1; ++i) {
+        int x = nums[i], y = nums[i + 1];
+        if (x &gt; y) {
+            // 尝试前面元素变小
+            nums[i] = y;
+            // 通过排序判断是否是递增
+            if (is_sorted(nums.begin(), nums.end())) {
+                return true;
+            } 
+            // 如果前面元素变小不行，尝试换成后面元素变大
+            nums[i] = x; 
+            nums[i + 1] = x;
+            return is_sorted(nums.begin(), nums.end());
+        }
+    }
+    return true;
+}
+</code></pre>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/algorithm" role="button">Algorithm </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%AF%BC%E8%AF%BB%E5%8A%A9%E8%AE%B0/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>设计模式-导读&amp;助记</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-05/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E5%8F%8C%E6%8C%87%E9%92%88/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>查缺补漏-双指针</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#455-%e5%88%86%e5%8f%91%e9%a5%bc%e5%b9%b2">
+												 455.分发饼干
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#135-%e5%88%86%e5%8f%91%e7%b3%96%e6%9e%9c">
+												 135.分发糖果
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#435-%e6%97%a0%e9%87%8d%e5%8f%a0%e5%8c%ba%e9%97%b4">
+												 435.无重叠区间
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#605-%e7%a7%8d%e8%8a%b1%e9%97%ae%e9%a2%98">
+												 605.种花问题
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#452-%e7%94%a8%e6%9c%80%e5%b0%91%e6%95%b0%e9%87%8f%e7%9a%84%e7%ae%ad%e5%bc%95%e7%88%86%e6%b0%94%e7%90%83">
+												 452.用最少数量的箭引爆气球
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#763-%e5%88%92%e5%88%86%e5%ad%97%e6%af%8d%e5%8c%ba%e9%97%b4">
+												 763.划分字母区间
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#122-%e4%b9%b0%e5%8d%96%e8%82%a1%e7%a5%a8%e7%9a%84%e6%9c%80%e4%bd%b3%e6%97%b6%e9%97%b4-ii">
+												 122.买卖股票的最佳时间 II
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#406-%e6%a0%b9%e6%8d%ae%e8%ba%ab%e9%ab%98%e9%87%8d%e5%bb%ba%e9%98%9f%e5%88%97">
+												 406.根据身高重建队列
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#665-%e9%9d%9e%e9%80%92%e5%87%8f%e6%95%b0%e5%88%97">
+												 665.非递减数列
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

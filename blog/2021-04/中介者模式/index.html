@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="房东：到处找租客可太麻烦, 直接交给中介, 交给他们管理吧~">
+  
+  <meta property="og:title" content="中介者模式" />
+<meta property="og:description" content="房东：到处找租客可太麻烦, 直接交给中介, 交给他们管理吧~" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-04/%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2021-04-08T20:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-04-08T20:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       中介者模式 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-04/%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 设计模式 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">中介者模式</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Apr 8, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>房东：到处找租客可太麻烦, 直接交给中介, 交给他们管理吧~</p>
+
+<h2 id="意图">意图</h2>
+
+<blockquote>
+<p>用一个中介对象来封装一系列的对象交互.中介者使各对象不需要显式地相互引用, 从而使其耦合松散, 而且可以独立地改变它们之间的交互.</p>
+</blockquote>
+
+<h2 id="动机">动机</h2>
+
+<p>GoF 中提到的一点, 我觉得很有道理, <strong>面向对象设计鼓励将行为分布到各个对象中.这种分布可能会导致对象间有许多连接.在最坏的情况下, 每一个对象都知道其他所有对象.</strong></p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/mediator/example.png" alt="example" /></p>
+
+<p>我点击数字按键 <code>Button</code>, <code>LineEdit</code> 上增加对应的数字, 点击删除按键, <code>LineEdit</code> 就会删除最后一位, <code>LineEdit</code> 中为空的时候, 某个按钮不能使用等等</p>
+
+<p>我们不可能让 <code>LineEdit</code> 这个类去监听所有按键的点击事件, 统筹所有的交互行为, 一方面这只是计算器界面中组件间依赖关系, 是一种特定的依赖关系, 另一方面 <code>LineEidt</code> 这个类其实不关心组件中这么复杂的依赖关系, 如果需要交由 <code>LineEdit</code> 统筹, 那就需要在各种各样的场景中定制 <code>LineEidt</code> 控件, 但是并不仅仅只有 <code>LineEidt</code> 会和其他组件会有依赖关系, 这样的设计只会让代码显得越来越乱</p>
+
+<p>所以就需要引入一个单独的中介者 (<code>mediator</code>) 对象以避免这个问题, 中介者负责控制和协调一组对象间的交互, 中介者充当一个中介以使组中的对象不再相互显式引用. 这些对象仅知道中介者, 从而减少了相互连接的数目.</p>
+
+<h2 id="uml-图">UML 图</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/designpatterns/mediator/uml.png" alt="uml" /></p>
+
+<ul>
+<li><strong><code>Mediator</code></strong> (中介者)<br />
+
+<ul>
+<li>中介者定义一个接口用于与各个同事 (<code>Colleague</code>) 对象通信</li>
+</ul></li>
+<li><strong><code>ConcreteMediator</code></strong> (具体中介者)
+
+<ul>
+<li>具体中介者通过协调各个同事对象实现协作行为</li>
+<li>了解并维护它的各个同事</li>
+</ul></li>
+<li><strong><code>Colleague</code></strong> (同事类)
+
+<ul>
+<li>每一个同事类都知道它的中介者对象</li>
+<li>每一个同事对象在需要与其他的同事通信的时候, 以它的中介者通信</li>
+</ul></li>
+</ul>
+
+<p>从 UML 图中可以看出以下几点</p>
+
+<ul>
+<li><code>ConcreteMediator</code> 等于是持有所有需要交互的对象, 由它来负责所有交互, 很明显的优点是 <code>Colleague</code> 对象变得简洁了, <code>Colleague</code> 间的耦合松散了, 但是中介者就变得特别复杂了, 等于是将原本 <code>Colleague</code> 间交互的复杂性转嫁给了中介者, 这可能导致最后中介者本身变成一个难以维护的庞然大物</li>
+<li>抽象的 <code>Mediator</code> 和抽象的 <code>Colleague</code>,  在这里我觉得更多是定义一种通信的接口, <code>Mediator</code> 中定义一个特殊的通知接口, 各 <code>Colleague</code> 在通信时调用该接口, 这是一种很简单的思路<br />
+此外也可以使用观察者模式去实现这种通信, <code>Mediator</code> 是一个观察者, <code>Colleague</code> 是一个 <code>Subject</code>,  一旦其状态改变的就发送通知给 <code>Mediator</code>,  通知可以直接将需要传递的信息也携带 (推模式), 也可以仅仅是通知然后让 <code>Mediator</code> 自己来取 (拉模式), 所以这种结构一开始让我感觉特别相似 <code>观察者模式</code>, 连 UML 图都很像</li>
+</ul>
+
+<h2 id="应用场景">应用场景</h2>
+
+<ul>
+<li>一组对象以定义良好但是复杂的方式进行通信. 产生的相互依赖关系结构混乱且难以理解.</li>
+<li>一个对象引用其他很多对象并且直接与这些对象通信, 导致难以复用该对象.</li>
+<li>想定制一个分布在多个类中的行为, 而又不想生成太多的子类.</li>
+</ul>
+
+<h2 id="举个例子">举个例子</h2>
+
+<p>直接使用前面动机中的例子, 但是我们简化一下</p>
+
+<blockquote>
+<p>我们只有2个数字按键 (<code>Button</code>), 分别是 <strong>1</strong> 和 <strong>2</strong>, 以及一个显示点击数字结果的 <code>LineEdit</code>, 每次点击按钮之后将按钮的值加到显示控件最后一位</p>
+</blockquote>
+
+<p>首先定义中介者的基类 <code>Mediator</code>, 它需要定义一个收到按键触发的函数 <code>buttonChanged()</code></p>
+
+<pre><code class="language-C++">class Widget;
+class Mediator {
+public:
+    Mediator() {}
+    virtual ~Mediator() {}
+
+    virtual void buttonChanged(Widget *) = 0;
+};
+</code></pre>
+
+<p>然后定义 <code>Button</code> 和 <code>LineEdit</code> 的共同基类 <code>Widget</code>, 它需要知道谁来协调它 <code>Mediator</code>, 并且在点击的时候, 通知 <code>Mediator</code>, 本来这里应该是一个类似 <code>MouseEvent</code> 事件的函数, 在这个函数中调用 <code>m_mediator-&gt;buttonChanged(this);</code>, 但是这只是一个例子, 我们就简单一点</p>
+
+<pre><code class="language-C++">#include &quot;mediator.h&quot;
+
+class Widget {
+public:
+    Widget(Mediator *mediator) : m_mediator(mediator) {}
+    virtual ~Widget(){}
+
+    virtual void Click() {
+        m_mediator-&gt;buttonChanged(this);
+    }
+
+private:
+    Mediator *m_mediator;
+};
+</code></pre>
+
+<p>接下来, 我么先将具体的 <code>Button</code> 和 <code>LineEdit</code> 实现出来</p>
+
+<pre><code class="language-C++">#include &quot;widget.h&quot;
+#include &lt;string&gt;
+using namespace std;
+
+class Button : public Widget {
+public:
+    Button(Mediator *mediator, string showinfo) : Widget(mediator), m_showinfo(showinfo) {}
+
+    void setShowInfo(string info) { m_showinfo = info;}
+    string getShowInfo() { return m_showinfo;}
+
+private:
+    string m_showinfo;
+};
+
+class LineEdit : public Widget {
+public:
+    LineEdit(Mediator *mediator) : Widget(mediator), m_showinfo(&quot;&quot;){}
+
+    void setShowInfo(string info) { m_showinfo = info;}
+    string getShowInfo() { return m_showinfo;}
+
+private:
+    string m_showinfo;
+};
+</code></pre>
+
+<p>接下来就是具体的中介者, 因为它需要统筹, 我就让它直接初始化 2 个按键和 <code>LineEdit</code>, 顺便添加了2个模拟点击的接口和一个显示 <code>LineEdit</code> 值的接口</p>
+
+<pre><code class="language-C++">#define SAFE_DELETE(p) if(p) {delete p; p=nullptr;}
+#include &quot;concretecolleague.h&quot;
+#include &lt;iostream&gt;
+using namespace std;
+
+class ConcreteMediator : public Mediator {
+public:
+    ConcreteMediator() :
+        m_number1(new Button(this, string(&quot;1&quot;)))
+      , m_number2(new Button(this, string(&quot;2&quot;)))
+      , m_lineedit(new LineEdit(this))
+    {}
+
+    ~ConcreteMediator() {
+        SAFE_DELETE(m_number1);
+        SAFE_DELETE(m_number2);
+        SAFE_DELETE(m_lineedit);
+    }
+
+    void clickButton1() {
+        m_number1-&gt;Click();
+    }
+
+    void clickButton2() {
+        m_number2-&gt;Click();
+    }
+
+    void showLineEditInfo() {
+        cout &lt;&lt; m_lineedit-&gt;getShowInfo() &lt;&lt; endl;
+    }
+
+    virtual void buttonChanged(Widget *widget) {
+        string new_info = m_lineedit-&gt;getShowInfo();
+
+        if (widget == m_number1) {
+            string info = m_number1-&gt;getShowInfo();
+            new_info += info;
+        } else if (widget == m_number2) {
+            string info = m_number2-&gt;getShowInfo();
+            new_info += info;
+        }
+
+        m_lineedit-&gt;setShowInfo(new_info);
+    }
+
+private:
+    Button *m_number1;
+    Button *m_number2;
+    LineEdit *m_lineedit;
+};
+</code></pre>
+
+<p>ps: 这里 <code>buttonChanged(Widget *widget)</code> 函数中在这个例子是可以不用 <code>if...else...</code> 这种形式, 因为使用的接口都是一样</p>
+
+<p>最后就是 <code>main</code> 函数的调用</p>
+
+<pre><code class="language-C++">#include &quot;concretemediator.h&quot;
+
+int main()
+{
+    ConcreteMediator mediator;
+
+    mediator.clickButton1();
+    mediator.clickButton1();
+    mediator.clickButton1();
+    mediator.showLineEditInfo();
+
+    mediator.clickButton2();
+    mediator.clickButton2();
+    mediator.clickButton2();
+    mediator.clickButton2();
+    mediator.showLineEditInfo();
+
+    return 0;
+}
+</code></pre>
+
+<p>运行结果</p>
+
+<pre><code class="language-shell">111
+1112222
+</code></pre>
+
+<h2 id="总结">总结</h2>
+
+<p>将复杂的交互部分整理成一个中介对象, 由中介对象来承担复杂的变化, 但是让它统筹的对象达到松耦合的目标, 整体结构也更加灵活~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" role="button">设计模式 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-04/%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>备忘录模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-04/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>状态模式</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%84%8f%e5%9b%be">
+												 意图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%9c%ba">
+												 动机
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#uml-%e5%9b%be">
+												 UML 图
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">
+												 应用场景
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%be%e4%b8%aa%e4%be%8b%e5%ad%90">
+												 举个例子
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

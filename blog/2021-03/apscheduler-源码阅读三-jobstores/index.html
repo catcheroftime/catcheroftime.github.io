@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="趁热打铁，学习一下 APScheduler 的 python 的源码，很好奇任务调度控制的实现。">
+  
+  <meta property="og:title" content="APScheduler 源码阅读(三) jobstores" />
+<meta property="og:description" content="趁热打铁，学习一下 APScheduler 的 python 的源码，很好奇任务调度控制的实现。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B8%89-jobstores/" />
+<meta property="article:published_time" content="2021-03-10T19:35:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-03-10T19:35:00&#43;08:00"/>
+
+
+  <title>
+  
+       APScheduler 源码阅读(三) jobstores | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B8%89-jobstores/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/python"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> python </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">APScheduler 源码阅读(三) jobstores</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Mar 10, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>趁热打铁，学习一下 <code>APScheduler</code> 的 <code>python</code> 的源码，很好奇任务调度控制的实现。</p>
+
+<p>分析源码主要还是针对 <code>APScheduler</code> 下的几个关键的模块</p>
+
+<ul>
+<li><code>events</code> 事件</li>
+<li><code>executors</code> 执行器</li>
+<li><code>job</code> 任务</li>
+<li><code>jobstores</code> 任务存储</li>
+<li><code>triggers</code> 触发器</li>
+<li><code>schedulers</code> 调度程序</li>
+</ul>
+
+<p>这一篇主要瞅瞅 <code>jobstores</code> 事件</p>
+
+<h2 id="总览">总览</h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/python/apscheduler/jobstore/code_struct.png" alt="code_struct" /></p>
+
+<p>定义一个基类 <code>base.py</code>, 基类中可能包含对添加任务，删除任务等等接口，不同的 <strong>任务存储</strong> (<code>memory</code>, <code>mongodb</code>, <code>redis</code> 等等) 在实现基类定义的虚函数</p>
+
+<p>首先 <code>base.py</code> 定义了一些自己的一些异常类</p>
+
+<ul>
+<li><code>JobLookupError</code> : 当更新或者删除一个任务时，<strong>不能在任务存储中找到时</strong> 触发</li>
+<li><code>ConflictingIdError</code> ：在 <strong>违反任务 ID 的唯一性</strong> 时触发。</li>
+<li><code>TransientJobError</code> ：检测到试图向 <strong>持久化的任务存储</strong> 添加的临时任务 <strong>不带 func_ref</strong> 时触发。如果看过前面关于 <code>job</code> 的介绍， <code>job</code> 会对 <code>func</code> 做一个序列化的过程，而这个过程对一些例如 <code>partial</code> 等的函数是存在序列化失败的问题</li>
+</ul>
+
+<p>而最后一个 <code>BaseJobStore</code> 定义了所有任务存储公共的函数，接下来主要就是看一下这个类</p>
+
+<h2 id="basejobstore"><code>BaseJobStore</code></h2>
+
+<p><img src="https://catcheroftime.github.io/images/blog/python/apscheduler/jobstore/basejobstore.png" alt="basejobstore" /></p>
+
+<p>其实仔细看， <code>BaseJobStore</code> 除了</p>
+
+<ul>
+<li><code>start()</code> : 启动调度程序或任务存储时由调度程序 (<code>scheduler</code>) 调用，添加到已经运行的调度程序中</li>
+<li><code>shutdown()</code> : 释放仍绑定到此作业存储库的所有资源</li>
+<li><code>_fix_pause_jobs_sorting()</code> : 对获取的任务列表进行排序，暂停的任务会被排到最后</li>
+</ul>
+
+<p>其它函数全是虚函数，交给子类自由实现</p>
+
+<ul>
+<li><code>lookup_job</code> ： 根据 任务ID 返回任务，如果没有找到，则返回 <code>None</code></li>
+<li><code>get_due_jobs</code> : 返回将要执行的任务列表，也就是任务下次执行时间(<code>next_run_time</code>) 比当前时间早或相等</li>
+<li><code>get_next_run_time</code> ：返回任务存储中所有任务的最早执行时间，如果返回 <code>None</code>, 代表任务存储中没有活跃任务</li>
+<li><code>get_all_jobs</code> ： 返回任务存储中所有的任务</li>
+<li><code>add_job</code> ： 向任务存储中添加任务</li>
+<li><code>update_job</code> ： 更新任务存储中的指定任务</li>
+<li><code>remove_job</code> ： 根据 任务ID 删除任务存储中的指定任务</li>
+<li><code>remove_all_jobs</code> ：删除任务存储中的所有任务</li>
+</ul>
+
+<p>看到这里，我们知道 <code>BaseJobStore</code> 主要就是定义好提供的接口，交由子类自己实现，接下来我们选择 <strong>2</strong> 个子类，着重看一下它们的具体实现代码 <code>MemoryJobStore</code>, <code>RedisJobStore</code></p>
+
+<h2 id="memoryjobstore"><code>MemoryJobStore</code></h2>
+
+<p><code>MemoryJobStore</code> 是将任务存储在内存中，所以不提供持久化支持。它的实现相对简单, 主要就是如何管理 <code>Job</code></p>
+
+<pre><code class="language-python">def __init__(self):
+    super(MemoryJobStore, self).__init__()
+    self._jobs = []
+    self._jobs_index = {}
+</code></pre>
+
+<ul>
+<li>使用 <code>(list) self._jobs</code> 来保存一个 <code>(job,timestamp)</code> 的列表, 并且按照 <code>timestamp</code> 也就是任务下次运行时间做一个升序的排列</li>
+<li>为了方便检索, <code>(dict) self._jobs_index</code> 创建一个 <code>job.id</code> 和 <code>(job,timestamp)</code> 一一对应的字典</li>
+</ul>
+
+<p>因为维护的是一个排好序的任务队列 <code>self._jobs</code>，所以</p>
+
+<ul>
+<li>获取任务存储中所有任务的接口 <code>get_all_jobs()</code> 很简单</li>
+<li>获取任务存储中所有任务的最早执行时间的接口 <code>get_next_run_time()</code> 很简单</li>
+<li>获取执行时间不为 <code>None</code> 或大于等于当前时间任务的任务队列的接口 <code>get_due_jobs()</code> 也很简单</li>
+</ul>
+
+<p>因为维护了根据任务ID <code>job.id</code> 建立索引的字典 <code>self._jobs_index</code></p>
+
+<ul>
+<li>根据 <code>job.id</code> 查找 <code>job</code> 的接口 <code>lookup_job()</code> 很简单</li>
+<li>根据 <code>job.id</code> 删除 <code>job</code> 的接口 <code>remove_job()</code> 很简单</li>
+</ul>
+
+<p>那么剩下来最麻烦的部分就是如何维护一个升序的 <code>self._jobs</code> 队列, 以及在 <strong>删除</strong>、<strong>修改</strong> <code>job</code> 的时候同步修改 <code>self._jobs</code> 和 <code>self._jobs_index</code> 这2个对象中的 <code>job</code></p>
+
+<p>以 <code>add_job()</code> 函数为例</p>
+
+<pre><code class="language-python">def add_job(self, job):
+    if job.id in self._jobs_index:
+        raise ConflictingIdError(job.id)
+
+    timestamp = datetime_to_utc_timestamp(job.next_run_time)
+    index = self._get_job_index(timestamp, job.id)
+    self._jobs.insert(index, (job, timestamp))
+    self._jobs_index[job.id] = (job, timestamp)
+</code></pre>
+
+<ul>
+<li>首先判断需要被添加的 <code>job</code> 的 <code>id</code> 是否已经存在，存在的话，直接抛出 <code>ConflictingIdError</code> 异常</li>
+<li>将任务下次执行的时间转换成时间戳，方便排列比较</li>
+<li><code>_get_job_index()</code> 函数来定位出这个任务应该在队列中的位置</li>
+<li>最后将需要被添加的 <code>job</code> 保存到 <code>self._jobs</code> 和 <code>self._jobs_index</code> 中</li>
+</ul>
+
+<p>所以接下来主要看一下 <code>_get_job_index</code> 函数</p>
+
+<pre><code class="language-python">def _get_job_index(self, timestamp, job_id):
+    lo, hi = 0, len(self._jobs)
+    timestamp = float('inf') if timestamp is None else timestamp
+    while lo &lt; hi:
+        mid = (lo + hi) // 2
+        mid_job, mid_timestamp = self._jobs[mid]
+        mid_timestamp = float('inf') if mid_timestamp is None else mid_timestamp
+        if mid_timestamp &gt; timestamp:
+            hi = mid
+        elif mid_timestamp &lt; timestamp:
+            lo = mid + 1
+        elif mid_job.id &gt; job_id:
+            hi = mid
+        elif mid_job.id &lt; job_id:
+            lo = mid + 1
+        else:
+            return mid
+
+    return lo
+</code></pre>
+
+<p>仔细一看，就是一个很标准的 <code>二分查找</code>，但是这里有个比较特殊的地方——对 <code>job_id</code> 的比较<br />
+这个主要是因为，可能现在任务的队列中存在暂停的计划，暂停的计划的 <code>timestamp</code> 是 <code>None</code>， 举个更详细的例子</p>
+
+<blockquote>
+<p>当我暂停一个计划的时候，我需要先调用 <code>job</code> 的 <code>_modify()</code> 函数，将 <code>job</code> 的 <code>next_run_time</code> 置为 <code>None</code>，然后调用 <code>jobstore</code> 的 <code>update()</code> 函数</p>
+</blockquote>
+
+<pre><code class="language-python">def update_job(self, job):
+    old_job, old_timestamp = self._jobs_index.get(job.id, (None, None))
+    if old_job is None:
+        raise JobLookupError(job.id)
+
+    old_index = self._get_job_index(old_timestamp, old_job.id)
+    new_timestamp = datetime_to_utc_timestamp(job.next_run_time)
+    if old_timestamp == new_timestamp:
+        self._jobs[old_index] = (job, new_timestamp)
+    else:
+        del self._jobs[old_index]
+        new_index = self._get_job_index(new_timestamp, job.id)
+        self._jobs.insert(new_index, (job, new_timestamp))
+
+    self._jobs_index[old_job.id] = (job, new_timestamp)
+</code></pre>
+
+<ul>
+<li>根据 <code>job.id</code> 找到旧的计划</li>
+<li>因为我们是按照 <code>timestamp</code> 进行排序的，所以查看旧的 <code>job</code> 的执行时间和新的 <code>job</code> 执行时间是否一样
+
+<ul>
+<li>一样，直接更新 <code>self._jobs</code> 中保存的 <code>job</code> 即可</li>
+<li>不一样，删除旧的 <code>job</code>，重新定位位置，更新到 <code>self._jobs</code> 中</li>
+</ul></li>
+<li>最后更新 <code>self._jobs_index</code> 即可</li>
+</ul>
+
+<p>在暂停计划这种情况下，当队列中已经存在暂停的计划时，也就是 <code>timestamp</code> (<code>next_run_time</code>) 为 <code>None</code> 时，就需要再按照 <code>job_id</code> 的字符串大小来进行排序</p>
+
+<p>基于内存的 <code>MemoryJobStore</code> 的整体看出来，需要注意的只有一个 <code>_get_job_index()</code> 二分查找~</p>
+
+<h2 id="redisjobstore"><code>RedisJobStore</code></h2>
+
+<p><code>RedisJobStore</code> 通过将任务存储到 <code>redis</code> 数据库中，从而支持任务的持有化功能，但是它的核心还是和<code>MemoryJobStore</code> 一样，实现基类的提供的虚函数，我们主要就是了解它是如何管理在 <code>redis</code> 中管理任务</p>
+
+<p>重温一下 <code>MemoryJobStore</code></p>
+
+<ul>
+<li>使用 <code>(list) self._jobs</code> 来保存一个 <code>(job,timestamp)</code> 的列表，这个主要维护任务存储中各个任务的执行时间，并且按照执行时间从近到远排序</li>
+<li>使用 <code>(dict) self._jobs_index</code> 创建一个 <code>job.id</code> 和 <code>(job,timestamp)</code> 一一对应的字典，方便检索</li>
+</ul>
+
+<p><code>MemoryJobStore</code> 的思路基本是一样的</p>
+
+<ul>
+<li>使用 <code>zset</code> 来保存一个 <code>job.id</code> 和它下次执行时间的 <code>job.next_run_time</code> 的有序集合</li>
+<li>使用 <code>hash</code> 创建一个 <code>job.id</code> 和 <code>Job</code> 的序列化数据一一对应的哈希表</li>
+</ul>
+
+<p>简单介绍一下 <code>redis</code> 下这两种数据类型</p>
+
+<ul>
+<li><code>zset</code> 有序集合<br />
+<code>zset</code> 是 <code>string</code> 类型元素的集合，且不允许重复的成员。<br />
+不同的是每个元素都会关联一个 <code>double</code> 类型的分数。<code>redis</code> 通过分数来为集合中的成员进行从小到大的排序。<br />
+刚好我们需要按时间顺序给 <code>job</code> 排序，所以 <code>zset</code> 真的特别合适</li>
+<li><code>hash</code> 哈希<br />
+是一个键值对集合，特别适合用于存储对象</li>
+</ul>
+
+<p>保存任务的成员类型确定了，那么接下来就是看主要的函数实现</p>
+
+<h3 id="初始化">初始化</h3>
+
+<pre><code class="language-python">def __init__(self, db=0, jobs_key='apscheduler.jobs', run_times_key='apscheduler.run_times',
+             pickle_protocol=pickle.HIGHEST_PROTOCOL, **connect_args):
+    super(RedisJobStore, self).__init__()
+
+    if db is None:
+        raise ValueError('The &quot;db&quot; parameter must not be empty')
+    if not jobs_key:
+        raise ValueError('The &quot;jobs_key&quot; parameter must not be empty')
+    if not run_times_key:
+        raise ValueError('The &quot;run_times_key&quot; parameter must not be empty')
+
+    self.pickle_protocol = pickle_protocol
+    self.jobs_key = jobs_key
+    self.run_times_key = run_times_key
+    self.redis = Redis(db=int(db), **connect_args)
+</code></pre>
+
+<p>说明一下</p>
+
+<ul>
+<li><code>db</code> : 使用的 <code>redis</code> 的哪一个数据库，这个是与 <code>redis</code> 连接时需要使用的一个变量，默认为 <code>0</code></li>
+<li><code>jobs_key</code> : 是 <code>hash</code> 的键名称</li>
+<li><code>run_times_key</code> : 是 <code>zset</code> 的键名称</li>
+<li><code>pickle_protocol</code> : 这个字段主要是当我们将 <code>Job</code> 序列化时使用的协议</li>
+<li><code>connect_args</code> : 连接 <code>redis</code> 时，需要的配置参数，比如 <code>redis</code> 的 <code>ip</code>, <code>port</code>, <code>password</code> 等等</li>
+</ul>
+
+<p>函数体剩下就是对成员变量赋值，以及连接 <code>redis</code>, 这里使用的是 <code>redis</code> 的 <code>StrictRedis</code> 方式</p>
+
+<h3 id="add-job">add_job</h3>
+
+<pre><code class="language-python">def add_job(self, job):
+    if self.redis.hexists(self.jobs_key, job.id):
+        raise ConflictingIdError(job.id)
+
+    with self.redis.pipeline() as pipe:
+        pipe.multi()
+        pipe.hset(self.jobs_key, job.id, pickle.dumps(job.__getstate__(),
+                                                      self.pickle_protocol))
+        if job.next_run_time:
+            pipe.zadd(self.run_times_key,
+                      {job.id: datetime_to_utc_timestamp(job.next_run_time)})
+
+        pipe.execute()
+</code></pre>
+
+<ul>
+<li>首先查看 <code>hash</code> 中是否已经存在 <code>hexists</code> 重复的 <code>job.id</code>, 如果存在直接抛出 <code>ConflictingIdError</code> 的异常</li>
+<li>使用 <code>redis</code> 管道操作，一方面可以一次发送多条命令，一次收到所有处理结果，很大程度上提高处理的效率，另一方支持事务，事务中的命令要么全部被执行，要么全部都不执行。<code>hash</code> 和 <code>zset</code> 要么都成功执行，要么都回滚
+
+<ul>
+<li>创建一个事务</li>
+<li>向 <code>hash</code> 中存入 <code>job.id</code> 以及 <code>job</code> 的序列化数据</li>
+<li>向 <code>zset</code> 中存入 <code>job.id</code> 和 <code>next_run_time</code> 的集合</li>
+<li>提交事务</li>
+</ul></li>
+</ul>
+
+<p>不过这里有个细节，如果任务存在 <code>job.next_run_time</code> 时，才会被放到 <code>zset</code> 中</p>
+
+<p>此外，如果看过我之前关于 <code>job</code> 介绍的时候，<code>job</code> 中存在 <code>self.func_ref</code>, 通过 <code>obj_to_ref()</code> 函数将任务函数序列化成字符串，所以这里需要保证函数本身支持序列化，至于不支持的有哪些，可以在看一下之前的文章~</p>
+
+<h3 id="update-job">update_job</h3>
+
+<p>在了解了 <code>add_job</code> 之后，更新其实没什么难度了，不过这里有个细节，既然是更新，说明任务在 <code>redis</code> 中一定要存在</p>
+
+<ul>
+<li>先在 <code>hash</code> 中找一下任务，如果不存在，抛出 <code>JobLookupError</code> 找不到任务的异常</li>
+<li>剩下的和添加基本一样，不过多了一个判断，当 <code>job.next_run_time</code> 不存在，也就是 <code>None</code> 的时候，需要删除 <code>zset</code> 中保存的 <code>job.id</code></li>
+</ul>
+
+<pre><code class="language-python">def update_job(self, job):
+    if not self.redis.hexists(self.jobs_key, job.id):
+        raise JobLookupError(job.id)
+
+    with self.redis.pipeline() as pipe:
+        pipe.hset(self.jobs_key, job.id, pickle.dumps(job.__getstate__(),
+                                                      self.pickle_protocol))
+        if job.next_run_time:
+            pipe.zadd(self.run_times_key,
+                      {job.id: datetime_to_utc_timestamp(job.next_run_time)})
+        else:
+            pipe.zrem(self.run_times_key, job.id)
+
+        pipe.execute()
+</code></pre>
+
+<h3 id="remove-job">remove_job</h3>
+
+<ul>
+<li>判断 <code>hash</code> 中是否存在这个任务，如果不存在，抛出 <code>JobLookupError</code> 找不到任务的异常</li>
+<li>使用 <code>hdel</code> 函数删除 <code>hash</code> 中指定的 <code>job.id</code></li>
+<li>使用 <code>zrem</code> 函数删除 <code>zset</code> 中指定的 <code>job.id</code></li>
+</ul>
+
+<h3 id="remove-all-jobs">remove_all_jobs</h3>
+
+<p>整个清空，<code>redis</code> 直接删除 <code>self.jobs_key</code> 和 <code>self.run_times_key</code> 即可</p>
+
+<h3 id="lookup-job">lookup_job</h3>
+
+<p>使用 <code>redis</code> 中的 <code>hget</code> 命令从 <code>hash</code> 中根据 <code>job_id</code> 查找</p>
+
+<pre><code class="language-python">def lookup_job(self, job_id):
+    job_state = self.redis.hget(self.jobs_key, job_id)
+    return self._reconstitute_job(job_state) if job_state else None
+</code></pre>
+
+<p>这里出现了一个新的函数 <code>_reconstitute_job()</code>, 可以简单看一下这个函数</p>
+
+<pre><code class="language-python">def _reconstitute_job(self, job_state):
+    job_state = pickle.loads(job_state)
+    job = Job.__new__(Job)
+    job.__setstate__(job_state)
+    job._scheduler = self._scheduler
+    job._jobstore_alias = self._alias
+    return job
+</code></pre>
+
+<p>它的核心就是将从 <code>redis</code> 中存储的 <code>job</code> 序列化信息反序列化后，传入 <code>Job</code> 中，得到一个 <code>job</code> 对象</p>
+
+<h3 id="get-next-run-time">get_next_run_time</h3>
+
+<p>使用 <code>redis</code> 中的 <code>zrange</code> 命令从 <code>zset</code> 中找到一个最小的执行日期 <code>next_run_time</code></p>
+
+<pre><code class="language-python">def get_next_run_time(self):
+    next_run_time = self.redis.zrange(self.run_times_key, 0, 0, withscores=True)
+    if next_run_time:
+        return utc_timestamp_to_datetime(next_run_time[0][1])
+</code></pre>
+
+<p>函数默认返回 <code>None</code>, 所以没有把 <code>if...else...</code> 写全也行吧</p>
+
+<pre><code class="language-python">return utc_timestamp_to_datetime(next_run_time[0][1]) if next_run_time else None
+</code></pre>
+
+<h3 id="get-due-jobs">get_due_jobs</h3>
+
+<pre><code class="language-python">def get_due_jobs(self, now):
+    timestamp = datetime_to_utc_timestamp(now)
+    job_ids = self.redis.zrangebyscore(self.run_times_key, 0, timestamp)
+    if job_ids:
+        job_states = self.redis.hmget(self.jobs_key, *job_ids)
+        return self._reconstitute_jobs(six.moves.zip(job_ids, job_states))
+    return []
+</code></pre>
+
+<ul>
+<li>从 <code>szet</code> 中找出下次执行时间大于等于当前时间的 <code>job_ids</code></li>
+<li>在根据 <code>job_ids</code> 从 <code>hash</code> 中找到对应的 <code>job</code> 序列化数据，并通过 <code>_reconstitute_jobs()</code> 返回</li>
+</ul>
+
+<p>前面看了 <code>_reconstitute_job()</code> 函数，这里的 <code>_reconstitute_jobs()</code> 就是通过 <code>_reconstitute_job()</code> 函数对一个 <code>list</code> 进行处理</p>
+
+<blockquote>
+<p><code>zip()</code> 函数用于将可迭代的对象作为参数，将对象中对应的元素打包成一个个元组，然后返回由这些元组组成的列表。</p>
+</blockquote>
+
+<h3 id="get-all-jobs">get_all_jobs</h3>
+
+<pre><code class="language-python">def get_all_jobs(self):
+    job_states = self.redis.hgetall(self.jobs_key)
+    jobs = self._reconstitute_jobs(six.iteritems(job_states))
+    paused_sort_key = datetime(9999, 12, 31, tzinfo=utc)
+    return sorted(jobs, key=lambda job: job.next_run_time or paused_sort_key)
+</code></pre>
+
+<ul>
+<li>通过 <code>hgetall</code> 从 <code>hash</code> 中获取所有的任务</li>
+<li>通过 <code>_reconstitute_jobs</code> 将这些任务转换成 <code>job</code> 对象的列表</li>
+<li>然后根据 <code>job</code> 的 <code>next_run_time</code> 将 <code>job</code> 进行排序</li>
+</ul>
+
+<p>关于 <code>MemoryJobStore</code> 中涉及到所有接口基本上都详细的介绍了一遍</p>
+
+<h2 id="总结">总结</h2>
+
+<p>关于 <code>BaseJobStore</code> 下其实还有 <code>MongoDBJobStore</code> ，<code>RethinkDBJobStore</code> 等等其他支持持久化的子类，整体其实都大同小异</p>
+
+<p><code>JobStore</code> 核心就是如何维护好一个以 <code>job.next_run_time</code> 大小为标准排好序的列表以及如何保存所有任务以便于检索~</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/python" role="button">python </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-03/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>享元模式</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-03/%E8%A7%A3%E9%87%8A%E5%99%A8%E6%A8%A1%E5%BC%8F/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>解释器模式</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e8%a7%88">
+												 总览
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#basejobstore">
+												 BaseJobStore
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#memoryjobstore">
+												 MemoryJobStore
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#redisjobstore">
+												 RedisJobStore
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%9d%e5%a7%8b%e5%8c%96">
+												 初始化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#add-job">
+												 add_job
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#update-job">
+												 update_job
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#remove-job">
+												 remove_job
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#remove-all-jobs">
+												 remove_all_jobs
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#lookup-job">
+												 lookup_job
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#get-next-run-time">
+												 get_next_run_time
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#get-due-jobs">
+												 get_due_jobs
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#get-all-jobs">
+												 get_all_jobs
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
