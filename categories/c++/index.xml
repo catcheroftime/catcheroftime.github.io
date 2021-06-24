@@ -6,10 +6,19 @@
     <description>Recent content in C&#43;&#43; on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Fri, 20 Nov 2020 12:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 18 Jun 2021 12:15:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/categories/c++/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>C&#43;&#43; 三大特性</title>
+      <link>https://catcheroftime.github.io/blog/2021-06/c-%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/</link>
+      <pubDate>Fri, 18 Jun 2021 12:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-06/c-%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/</guid>
+      <description>&lt;p&gt;封装，继承，多态可以说是 C++ 老生常谈的三大特性，简单总结一下基本概念，以及附带一些拓展的内容~&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>拷贝控制(下)</title>

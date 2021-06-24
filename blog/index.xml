@@ -12,6 +12,240 @@
     
     
     <item>
+      <title>C&#43;&#43; 三大特性</title>
+      <link>https://catcheroftime.github.io/blog/2021-06/c-%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/</link>
+      <pubDate>Fri, 18 Jun 2021 12:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-06/c-%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7/</guid>
+      <description>&lt;p&gt;封装，继承，多态可以说是 C++ 老生常谈的三大特性，简单总结一下基本概念，以及附带一些拓展的内容~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>查缺补漏-图搜索算法-续</title>
+      <link>https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E5%9B%BE%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95-%E7%BB%AD/</link>
+      <pubDate>Thu, 10 Jun 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E5%9B%BE%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95-%E7%BB%AD/</guid>
+      <description>130.被围绕的区域 题目可以转换成，从4个边界开始向内搜索字母 O，标记所有与它直接或间接相连的字母 O int m,n; void solve(vector&amp;lt;vector&amp;lt;char&amp;gt;&amp;gt;&amp;amp; board) { n = board.size(); if (n == 0) return; m = board[0].size(); for (int i = 0; i &amp;lt; n; i++) { dfs(board, i, 0); dfs(board, i, m - 1); } for (int i = 1; i &amp;lt; m - 1; i++) { dfs(board, 0, i); dfs(board, n - 1, i); } for (int i = 0; i &amp;lt; n; i++) { for (int j = 0; j &amp;lt; m; j++) { if (board[i][j] == &#39;A&#39;) { board[i][j] = &#39;O&#39;; } else if (board[i][j] == &#39;O&#39;) { board[i][j] = &#39;X&#39;; } } } } void dfs(vector&amp;lt;vector&amp;lt;char&amp;gt;&amp;gt;&amp;amp; board, int x, int y) { if (x &amp;lt; 0 || x &amp;gt;= n || y &amp;lt; 0 || y &amp;gt;= m || board[x][y] != &#39;O&#39;) { return; } board[x][y] = &#39;A&#39;; dfs(board, x + 1, y); dfs(board, x - 1, y); dfs(board, x, y + 1); dfs(board, x,</description>
+    </item>
+    
+    <item>
+      <title>查缺补漏-图搜索算法</title>
+      <link>https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E5%9B%BE%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Sun, 06 Jun 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E5%9B%BE%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95/</guid>
+      <description>图搜素算法,可以分为 2 种 BFS 广度优先搜索 又译作 宽度优先搜索，或 横向优先搜索，是一种图形搜索算法。简单的说，BFS 是从根节点开始，沿着树的宽度遍历树的节点。如果所有节点均被访问，则算法中止。广度优先搜索的实现一般采用 open-closed 表。 从算法的观点，所有因为展开节点而得到的子节点都会被加进一个 先进先出 的队列中。一般的实现里，其邻居节点尚未被检验过的节点会被放置在一个被称为 open 的容器中（例如队列或是链表），而被检验过的</description>
+    </item>
+    
+    <item>
+      <title>查缺补漏-排序题篇</title>
+      <link>https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E6%8E%92%E5%BA%8F%E9%A2%98%E7%AF%87/</link>
+      <pubDate>Thu, 03 Jun 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-06/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E6%8E%92%E5%BA%8F%E9%A2%98%E7%AF%87/</guid>
+      <description>&lt;p&gt;之前总结了常见的十种排序算法,但是不做题怎么可能巩固呢?&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>查缺补漏-二分查找</title>
+      <link>https://catcheroftime.github.io/blog/2021-05/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/</link>
+      <pubDate>Sun, 30 May 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-05/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>查缺补漏-双指针</title>
+      <link>https://catcheroftime.github.io/blog/2021-05/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E5%8F%8C%E6%8C%87%E9%92%88/</link>
+      <pubDate>Wed, 26 May 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-05/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E5%8F%8C%E6%8C%87%E9%92%88/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>查缺补漏-贪心算法</title>
+      <link>https://catcheroftime.github.io/blog/2021-05/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Tue, 25 May 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-05/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>设计模式-导读&amp;助记</title>
+      <link>https://catcheroftime.github.io/blog/2021-05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%AF%BC%E8%AF%BB%E5%8A%A9%E8%AE%B0/</link>
+      <pubDate>Mon, 24 May 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%AF%BC%E8%AF%BB%E5%8A%A9%E8%AE%B0/</guid>
+      <description>&lt;p&gt;你确定你真的对记住了所有的设计模式了吗？&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>免费找电子书的网站总结</title>
+      <link>https://catcheroftime.github.io/blog/2021-05/%E5%85%8D%E8%B4%B9%E6%89%BE%E7%94%B5%E5%AD%90%E4%B9%A6%E7%9A%84%E7%BD%91%E7%AB%99%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Sat, 15 May 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-05/%E5%85%8D%E8%B4%B9%E6%89%BE%E7%94%B5%E5%AD%90%E4%B9%A6%E7%9A%84%E7%BD%91%E7%AB%99%E6%80%BB%E7%BB%93/</guid>
+      <description>&lt;p&gt;分享自己收藏夹里的私货~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>查缺补漏-排序</title>
+      <link>https://catcheroftime.github.io/blog/2021-05/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E6%8E%92%E5%BA%8F/</link>
+      <pubDate>Thu, 13 May 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-05/%E6%9F%A5%E7%BC%BA%E8%A1%A5%E6%BC%8F-%E6%8E%92%E5%BA%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>迭代器模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-05/%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 06 May 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-05/%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>访问者模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-05/%E8%AE%BF%E9%97%AE%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 04 May 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-05/%E8%AE%BF%E9%97%AE%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;U1S1， 挺复杂的一个设计模式~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Python-APScheduler导读</title>
+      <link>https://catcheroftime.github.io/blog/2021-05/python-apscheduler%E5%AF%BC%E8%AF%BB/</link>
+      <pubDate>Sat, 01 May 2021 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-05/python-apscheduler%E5%AF%BC%E8%AF%BB/</guid>
+      <description>&lt;p&gt;&lt;code&gt;APScheduler&lt;/code&gt; 的从初识到源码阅读已经完结撒花了，再来一个导读的目录，就算是真正的完整了~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APScheduler 源码阅读(五) schedulers</title>
+      <link>https://catcheroftime.github.io/blog/2021-04/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%BA%94-schedulers/</link>
+      <pubDate>Tue, 20 Apr 2021 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-04/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%BA%94-schedulers/</guid>
+      <description>&lt;p&gt;趁热打铁，学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码，很好奇任务调度控制的实现。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>状态模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-04/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Sat, 10 Apr 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-04/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;又是一种优化过于臃肿 &lt;code&gt;if...else...&lt;/code&gt; 语句的方法~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>中介者模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-04/%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 08 Apr 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-04/%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;房东：到处找租客可太麻烦, 直接交给中介, 交给他们管理吧~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>备忘录模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-04/%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 06 Apr 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-04/%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;沃日，竟然被小怪打死了，先回个档 ~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>职责链模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-04/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 01 Apr 2021 12:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-04/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;&amp;ndash; 组长,我想请5天假? &amp;ndash; 我没权利批准,我去帮你问问老板~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APScheduler 源码阅读(四) triggers(三)</title>
+      <link>https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E4%B8%89/</link>
+      <pubDate>Thu, 25 Mar 2021 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E4%B8%89/</guid>
+      <description>&lt;p&gt;趁热打铁，学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码，很好奇任务调度控制的实现。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APScheduler 源码阅读(四) triggers(四)</title>
+      <link>https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E5%9B%9B/</link>
+      <pubDate>Thu, 25 Mar 2021 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E5%9B%9B/</guid>
+      <description>&lt;p&gt;趁热打铁，学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码，很好奇任务调度控制的实现。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APScheduler 源码阅读(四) triggers(二)</title>
+      <link>https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E4%BA%8C/</link>
+      <pubDate>Wed, 24 Mar 2021 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E4%BA%8C/</guid>
+      <description>&lt;p&gt;趁热打铁, 学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码, 很好奇任务调度控制的实现。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APScheduler 源码阅读(四) triggers(一)</title>
+      <link>https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E4%B8%80/</link>
+      <pubDate>Tue, 23 Mar 2021 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%9B%9B-triggers%E4%B8%80/</guid>
+      <description>&lt;p&gt;趁热打铁，学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码，很好奇任务调度控制的实现。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>命令模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-03/%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Sat, 13 Mar 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-03/%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;小明, 你妈让我喊你回去吃饭啦~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>解释器模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-03/%E8%A7%A3%E9%87%8A%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 11 Mar 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-03/%E8%A7%A3%E9%87%8A%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;我们开发时使用频率还挺低，但广泛运用于编译器的一种设计模式~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APScheduler 源码阅读(三) jobstores</title>
+      <link>https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B8%89-jobstores/</link>
+      <pubDate>Wed, 10 Mar 2021 19:35:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-03/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B8%89-jobstores/</guid>
+      <description>&lt;p&gt;趁热打铁，学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码，很好奇任务调度控制的实现。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>享元模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-03/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Sat, 06 Mar 2021 10:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-03/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;网盘存储同一份文件被不同用户反复保存该怎么办?&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>微信公众号封面一键生成器-续</title>
       <link>https://catcheroftime.github.io/blog/2021-03/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%B0%81%E9%9D%A2%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%99%A8-%E7%BB%AD/</link>
       <pubDate>Tue, 02 Mar 2021 19:35:00 +0800</pubDate>
@@ -98,7 +332,7 @@
       <pubDate>Tue, 22 Dec 2020 19:35:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B8%80-executors/</guid>
-      <description>&lt;p&gt;成热打铁，学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码，很好奇任务调度控制的实现。&lt;/p&gt;</description>
+      <description>&lt;p&gt;趁热打铁，学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码，很好奇任务调度控制的实现。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -107,7 +341,7 @@
       <pubDate>Tue, 22 Dec 2020 19:35:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/blog/2020-12/apscheduler-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%BA%8C-job/</guid>
-      <description>&lt;p&gt;成热打铁，学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码，很好奇任务调度控制的实现。&lt;/p&gt;</description>
+      <description>&lt;p&gt;趁热打铁，学习一下 &lt;code&gt;APScheduler&lt;/code&gt; 的 &lt;code&gt;python&lt;/code&gt; 的源码，很好奇任务调度控制的实现。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -620,33 +854,6 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://catcheroftime.github.io/blog/1-01/</guid>
-      <description> 模板 意图 动机 UML 图 应用场景 举个例子 总结 </description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://catcheroftime.github.io/blog/1-01/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://catcheroftime.github.io/blog/1-01/</guid>
-      <description> 设计模式总结 创建型模式  单例模式 原型模式 简单工厂模式 工厂方法模式 抽象工厂模式 建造者模式  结构型  适配器模式 代理模式 桥接模式 外观模式 装饰模式 组成模式  行为型  策略模式 观察者模式 发布订阅模式 模板方法  未完成  享元模式
- 解释器
- 职责链
- 命令
- 迭代器
- 中介者
- 备忘录
- 状态
- 访问者
-  </description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://catcheroftime.github.io/blog/1-01/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://catcheroftime.github.io/blog/1-01/</guid>
       <description> 常见疑难杂症  常见疑难杂症  port is already allocated 容器内获取系统时间异常 Docker 默认网段(172.17.0.0) 与主机网段冲突   port is already allocated docker 下的容器停止或者删除之后，而 docker-proxy 依然绑定着端口,没有正常释放
 删除所有容器，停止 docker 服务，然后删除 local-kv.db 这个文件，再启动 docker ,最后在重新部署相应容器即可
 docker rm $(docker ps -aq) sudo service docker stop sudo rm /var/lib/docker/network/files/local-kv.db sudo service docker start  容器内获取系统时间异常 容器里的服务获取系统时间出现异常，一般情况下都是差 8 小时，所以我们需要在生成 docker 镜像的时候，提前将时区相关信息设置好
@@ -662,6 +869,69 @@ Docker 默认网段(172.17.0.0) 与主机网段冲突 1、修改 /etc/docker/dae
 2、删除docker0
 ip link delete docker0  3、重新启动docker
 service stop docker service start docker  </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://catcheroftime.github.io/blog/1-01/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/1-01/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://catcheroftime.github.io/blog/1-01/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/1-01/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://catcheroftime.github.io/blog/1-01/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/1-01/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://catcheroftime.github.io/blog/1-01/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/1-01/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://catcheroftime.github.io/blog/1-01/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/1-01/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://catcheroftime.github.io/blog/1-01/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/1-01/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://catcheroftime.github.io/blog/1-01/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/1-01/</guid>
+      <description></description>
     </item>
     
     <item>

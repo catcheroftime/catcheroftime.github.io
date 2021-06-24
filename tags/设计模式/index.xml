@@ -6,10 +6,100 @@
     <description>Recent content in 设计模式 on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Thu, 11 Feb 2021 20:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 24 May 2021 00:15:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>设计模式-导读&amp;助记</title>
+      <link>https://catcheroftime.github.io/blog/2021-05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%AF%BC%E8%AF%BB%E5%8A%A9%E8%AE%B0/</link>
+      <pubDate>Mon, 24 May 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%AF%BC%E8%AF%BB%E5%8A%A9%E8%AE%B0/</guid>
+      <description>&lt;p&gt;你确定你真的对记住了所有的设计模式了吗？&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>迭代器模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-05/%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 06 May 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-05/%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>访问者模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-05/%E8%AE%BF%E9%97%AE%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 04 May 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-05/%E8%AE%BF%E9%97%AE%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;U1S1， 挺复杂的一个设计模式~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>状态模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-04/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Sat, 10 Apr 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-04/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;又是一种优化过于臃肿 &lt;code&gt;if...else...&lt;/code&gt; 语句的方法~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>中介者模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-04/%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 08 Apr 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-04/%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;房东：到处找租客可太麻烦, 直接交给中介, 交给他们管理吧~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>备忘录模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-04/%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 06 Apr 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-04/%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;沃日，竟然被小怪打死了，先回个档 ~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>职责链模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-04/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 01 Apr 2021 12:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-04/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;&amp;ndash; 组长,我想请5天假? &amp;ndash; 我没权利批准,我去帮你问问老板~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>命令模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-03/%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Sat, 13 Mar 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-03/%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;小明, 你妈让我喊你回去吃饭啦~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>解释器模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-03/%E8%A7%A3%E9%87%8A%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 11 Mar 2021 20:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-03/%E8%A7%A3%E9%87%8A%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;我们开发时使用频率还挺低，但广泛运用于编译器的一种设计模式~&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>享元模式</title>
+      <link>https://catcheroftime.github.io/blog/2021-03/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Sat, 06 Mar 2021 10:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-03/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;网盘存储同一份文件被不同用户反复保存该怎么办?&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>模板方法模式</title>
