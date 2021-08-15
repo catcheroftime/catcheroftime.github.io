@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="最重要的事情提前说:
+
+
+为了降低风险，注意备份或者克隆保存虚拟机状态
+">
+  
+  <meta property="og:title" content="Centos 下 GCC 版本更新" />
+<meta property="og:description" content="最重要的事情提前说:
+
+
+为了降低风险，注意备份或者克隆保存虚拟机状态
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2019-12/centos-%E4%B8%8B-gcc-%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0/" />
+<meta property="article:published_time" content="2019-12-11T17:10:00&#43;08:00"/>
+<meta property="article:modified_time" content="2019-12-11T17:10:00&#43;08:00"/>
+
+
+  <title>
+  
+       Centos 下 GCC 版本更新 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2019-12/centos-%E4%B8%8B-gcc-%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E7%BC%96%E8%AF%91"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 编译 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">Centos 下 GCC 版本更新</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Dec 11, 2019</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>最重要的事情提前说:</p>
+
+<blockquote>
+<p>为了降低风险，注意备份或者克隆保存虚拟机状态</p>
+</blockquote>
+
+<p>在 <code>centos</code> 的开发环境下, 有时会遇到 <code>gcc</code> 版本升级或切换的问题，这里介绍2种方式，这里比较推荐第二种</p>
+
+<h2 id="方法一">方法一</h2>
+
+<p>下载对应版本的 gcc 源码，而编译源码首先需要本地拥有编译器</p>
+
+<pre><code class="language-shell"># 安装一些可能用到编译的工具
+# 我的 centos 下默认的 gcc 版本是 4.8, 这也是我需要更新 gcc 的原因
+yum install -y gcc 
+yum install -y gcc-c++ 
+yum install -y wget
+yum install -y cmake 
+...
+</code></pre>
+
+<p>第一步，做一些编译前的准备工作，我这里以 5.4.0 版本为例，</p>
+
+<pre><code class="language-shell"># 我习惯在 root 目录下编译
+cd /root
+
+# 下载 gcc 源码包 
+wget http:#mirrors.ustc.edu.cn/gnu/gcc/gcc-5.4.0/gcc-5.4.0.tar.bz2
+
+# 解压缩
+tar xvf gcc-5.4.0.tar.bz2
+
+# 切换工作目录
+cd /root/gcc-5.4.0
+</code></pre>
+
+<p>第二步，下载编译 gcc 的依赖项, gcc 中编写了下载依赖项的工具</p>
+
+<pre><code class="language-shell">./contrib/download_prerequisites
+</code></pre>
+
+<p>这里如果没有报错最好，如果有报错大概率是登录 <code>ftp</code> 失败导致的下载失败，所以这里我的解决方案是修改一下这个下载工具，将 <code>ftp</code> 下载链接换成 <code>http</code> 的链接即可，只要修改地址的前缀</p>
+
+<pre><code class="language-shell">vi ./contrib/download_prerequisites
+# 文件中含有的的 4 个 ftp 的地址，将 ftp 字段换成 http 保存
+# 然后重新执行这个文件
+</code></pre>
+
+<p>第三步，设置编译输出路径，生成 Makefile 文件</p>
+
+<pre><code class="language-shell">mkdir build
+cd build
+../configure -prefix=/usr/local --enable-checking=release --enable-languages=c,c++ --disable-multilib
+</code></pre>
+
+<p>第四步，编译和编译安装</p>
+
+<pre><code class="language-shell">make
+# make -j4 多线程编译
+make install 
+</code></pre>
+
+<p>最后一步，调整环境变量</p>
+
+<pre><code class="language-shell"># 环境变量path
+# 我设置的 /usr/local/bin 优先级本来就在 /usr/bin 前面，所以不用在额外导入了
+# echo  &quot;export PATH=/usr/local/bin:$PATH&quot; &gt;&gt; /etc/profile.d/gcc.sh
+# source /etc/profile.d/gcc.sh
+
+# 头文件
+ln -sv /usr/local/include/ /usr/include/gcc
+
+# 库文件
+echo &quot;/usr/local/lib64&quot; &gt;&gt; /etc/ld.so.conf.d/gcc.conf
+</code></pre>
+
+<p>还有一种方式修改环境变量</p>
+
+<pre><code class="language-shell">vi /etc/profile， 追加
+export PATH=/usr/local/bin:$PATH
+export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/include/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib64
+</code></pre>
+
+<p>当然这些追加的地址根据实际执行 <code>configure</code> 时配置的路径自己修改</p>
+
+<h2 id="方法二">方法二</h2>
+
+<p>首先需要介绍一下 Centos 下的软件集 <code>Software Collections(SCL)</code>，它是一个Linux软件多版本共存的解决方案。它为用户提供一种以方便、安全地安装和使用应用程序和运行时环境的多个版本的方式，同时避免把系统搞乱。</p>
+
+<p>第一步，安装 SCL 工具和 SCL 软件源</p>
+
+<pre><code class="language-shell">sudo yum install scl-utils
+sudo yum install centos-release-scl
+</code></pre>
+
+<p>第二步，查看 SCL 软件源下提供哪些软件集</p>
+
+<pre><code class="language-shell">yum list all --enablerepo='centos-sclo-rh' | grep &quot;devtoolset&quot;
+</code></pre>
+
+<p>大致结果如下</p>
+
+<pre><code class="language-shell">devtoolset-8-binutils.x86_64               2.30-55.el7.2          @centos-sclo-rh
+devtoolset-8-dwz.x86_64                    0.12-1.1.el7           @centos-sclo-rh
+devtoolset-8-elfutils.x86_64               0.176-1.el7            @centos-sclo-rh
+devtoolset-8-elfutils-libelf.x86_64        0.176-1.el7            @centos-sclo-rh
+devtoolset-8-elfutils-libs.x86_64          0.176-1.el7            @centos-sclo-rh
+devtoolset-8-gcc.x86_64                    8.3.1-3.2.el7          @centos-sclo-rh
+devtoolset-8-gcc-c++.x86_64                8.3.1-3.2.el7          @centos-sclo-rh
+devtoolset-8-gcc-gfortran.x86_64           8.3.1-3.2.el7          @centos-sclo-rh
+devtoolset-8-gdb.x86_64                    8.2-3.el7              @centos-sclo-rh
+devtoolset-8-libquadmath-devel.x86_64      8.3.1-3.2.el7          @centos-sclo-rh
+devtoolset-8-libstdc++-devel.x86_64        8.3.1-3.2.el7          @centos-sclo-rh
+devtoolset-8-ltrace.x86_64                 0.7.91-1.el7           @centos-sclo-rh
+devtoolset-8-make.x86_64                   1:4.2.1-4.el7          @centos-sclo-rh
+devtoolset-8-memstomp.x86_64               0.1.5-5.el7            @centos-sclo-rh
+devtoolset-8-runtime.x86_64                8.1-1.el7              @centos-sclo-rh
+devtoolset-8-strace.x86_64                 4.24-4.el7             @centos-sclo-rh
+devtoolset-8-toolchain.x86_64              8.1-1.el7              @centos-sclo-rh
+...
+</code></pre>
+
+<p>第三步，安装需要的工具链</p>
+
+<pre><code class="language-shell"># 直接下载开发的工具链，它会自动把 gcc, gcc-c++, make, gdb 等依赖也都完整下载下来 
+sudo yum install -y devtoolset-8-toolchain
+</code></pre>
+
+<p>这里简单介绍一下不同工具链对应的 gcc 版本, 目前我只下载过 <code>devtoolset-7-toolchain</code> 和 <code>devtoolset-8-toolchain</code>, 其它工具链版本对应的 gcc 版本是参考其他博主们</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">工具链版本</th>
+<th>gcc 版本</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">devtoolset-3-toolchain</td>
+<td>4.9.2</td>
+</tr>
+
+<tr>
+<td align="left">devtoolset-4-toolchain</td>
+<td>5.3.1</td>
+</tr>
+
+<tr>
+<td align="left">devtoolset-6-toolchain</td>
+<td>6.3.1</td>
+</tr>
+
+<tr>
+<td align="left">devtoolset-7-toolchain</td>
+<td>7.3.1</td>
+</tr>
+
+<tr>
+<td align="left">devtoolset-8-toolchain</td>
+<td>8.3.1</td>
+</tr>
+</tbody>
+</table>
+
+<p>第四步，启用高版本 gcc</p>
+
+<pre><code class="language-shell"># 启用对应版本的工具链
+sudo scl enable devtoolset-8 bash
+
+# 查看版本信息
+gcc –v
+
+# 退出
+exit
+</code></pre>
+
+<p>可以这样理解 SCL，它将新版本的开发工具库与系统旧的库位置隔离开<br />
+新安装的开发工具库，默认保存在路径 <code>/opt/rh/devtoolset-*/root/usr/bin</code> 中  <strong>(*代表版本)</strong><br />
+在执行 <code>sudo scl enable devtoolset-* bash</code> 时，将上述的路径 <code>export</code> 进 <code>PATH</code> 的最前面，这样项目编译时寻找的 <code>gcc</code> 等库也会优先在其中找<br />
+<code>exit</code> 从环境变量中移除即可，丝毫不印象系统原来的环境</p>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/centos" role="button">Centos </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2019-12/centos-%E4%B8%8B-ld-%E9%93%BE%E6%8E%A5%E5%99%A8%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Centos 下 ld 链接器版本更新</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2020-03/c-11%E6%96%B0%E7%89%B9%E6%80%A7%E6%95%B4%E7%90%86/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>C&#43;&#43;11新特性整理</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%96%b9%e6%b3%95%e4%b8%80">
+												 方法一
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%96%b9%e6%b3%95%e4%ba%8c">
+												 方法二
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

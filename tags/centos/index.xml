@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Centos on 一个懒散的程序猿</title>
+    <link>https://catcheroftime.github.io/tags/centos/</link>
+    <description>Recent content in Centos on 一个懒散的程序猿</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Wed, 11 Dec 2019 17:10:00 +0800</lastBuildDate>
+    
+	<atom:link href="https://catcheroftime.github.io/tags/centos/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Centos 下 GCC 版本更新</title>
+      <link>https://catcheroftime.github.io/blog/2019-12/centos-%E4%B8%8B-gcc-%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0/</link>
+      <pubDate>Wed, 11 Dec 2019 17:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-12/centos-%E4%B8%8B-gcc-%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0/</guid>
+      <description>&lt;p&gt;最重要的事情提前说:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;为了降低风险，注意备份或者克隆保存虚拟机状态&lt;/p&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    
+    <item>
+      <title>Centos 下 ld 链接器版本更新</title>
+      <link>https://catcheroftime.github.io/blog/2019-12/centos-%E4%B8%8B-ld-%E9%93%BE%E6%8E%A5%E5%99%A8%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0/</link>
+      <pubDate>Wed, 11 Dec 2019 17:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-12/centos-%E4%B8%8B-ld-%E9%93%BE%E6%8E%A5%E5%99%A8%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0/</guid>
+      <description>&lt;p&gt;最近在编译一个工程的时候, 偶然遇到一个报错&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

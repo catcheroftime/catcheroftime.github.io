@@ -6,10 +6,28 @@
     <description>Recent content in C&#43;&#43; on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Fri, 18 Jun 2021 12:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 14 Aug 2021 21:02:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/c++/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Effective C&#43;&#43; 总览</title>
+      <link>https://catcheroftime.github.io/blog/2021-08/effective-c-%E6%80%BB%E8%A7%88/</link>
+      <pubDate>Sat, 14 Aug 2021 21:02:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-08/effective-c-%E6%80%BB%E8%A7%88/</guid>
+      <description>开个新坑，做一做自己看书的笔记 视 C++ 为一个语言联邦（C、Object-Oriented C++、Template C++、STL） 宁可以编译器替换预处理器（尽量以 const、enum、inline 替换 #define） 尽可能使用 const 确定对象被使用前已先被初始化（构造时赋值（copy 构造函数）比 default 构造后赋值（copy assignment）效率高） 了解 C++ 默默编写并调用哪些函数（编译器暗自为 class 创建 default 构造函数、co</description>
+    </item>
+    
+    <item>
+      <title>More Effective C&#43;&#43; 总览</title>
+      <link>https://catcheroftime.github.io/blog/2021-08/more-effective-c-%E6%80%BB%E8%A7%88/</link>
+      <pubDate>Sat, 14 Aug 2021 21:02:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2021-08/more-effective-c-%E6%80%BB%E8%A7%88/</guid>
+      <description>仔细区别 pointers 和 references（当你知道你需要指向某个东西，而且绝不会改变指向其他东西，或是当你实现一个操作符而其语法需求无法由 pointers 达成，你就应该选择 references；任何其他时候，请采用 pointers） 最好使用 C++ 转型操作符（static_cast、const_cast、dynamic_cast、reinterpret_cast） 绝不要以多态（polymorphically）方式处理数组（多</description>
+    </item>
     
     <item>
       <title>C&#43;&#43; 三大特性</title>

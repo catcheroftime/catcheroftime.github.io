@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="败给时间">
+  <meta name="description" content="简单分析一下 H.264 AnnexB 格式的裸流格式">
+  
+  <meta property="og:title" content="H.264裸流结构分析" />
+<meta property="og:description" content="简单分析一下 H.264 AnnexB 格式的裸流格式" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://catcheroftime.github.io/blog/2021-08/h.264%E8%A3%B8%E6%B5%81%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/" />
+<meta property="article:published_time" content="2021-08-06T00:15:00&#43;08:00"/>
+<meta property="article:modified_time" content="2021-08-06T00:15:00&#43;08:00"/>
+
+
+  <title>
+  
+       H.264裸流结构分析 | 一个懒散的程序猿 
+  
+  </title>
+
+  <link rel="canonical" href="https://catcheroftime.github.io/blog/2021-08/h.264%E8%A3%B8%E6%B5%81%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/">
+
+  
+  
+
+  
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://catcheroftime.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://catcheroftime.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://catcheroftime.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://catcheroftime.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://catcheroftime.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://catcheroftime.github.io/">
+          
+        <strong> 败给时间</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://catcheroftime.github.io/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://catcheroftime.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://catcheroftime.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://catcheroftime.github.io/">
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://catcheroftime.github.io/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>一个懒散的程序猿</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="https://github.com/catcheroftime" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+
+            
+
+            
+
+            
+
+            
+    
+            
+    
+        
+            
+                <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://catcheroftime.github.io/categories/%E9%9F%B3%E8%A7%86%E9%A2%91"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 音视频 </a></li>
+      
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">H.264裸流结构分析</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Aug 6, 2021</li>
+    
+
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>简单分析一下 H.264 AnnexB 格式的裸流格式</p>
+
+<ul>
+<li><a href="#h264简介">H.264简介</a></li>
+<li><a href="#vcl">VCL</a>
+
+<ul>
+<li><a href="#宏块">宏块</a></li>
+<li><a href="#片">片</a></li>
+<li><a href="#片组">片组</a></li>
+<li><a href="#sodb">SODB</a></li>
+</ul></li>
+<li><a href="#nal">NAL</a>
+
+<ul>
+<li><a href="#rbsp">RBSP</a></li>
+<li><a href="#ebsp">EBSP</a></li>
+<li><a href="#nalu-header">NALU Header</a></li>
+</ul></li>
+<li><a href="#裸流解析">裸流解析</a></li>
+</ul>
+
+<h2 id="h-264简介">H.264简介</h2>
+
+<p>国际上制定视频编解码技术的组织有两个</p>
+
+<ul>
+<li>国际电联（ITU-T），它制定的标准有 <code>H.261</code>、<code>H.263</code>、<code>H.263+</code> 等<br /></li>
+<li>国际标准化组织（ISO），它制定的标准有 <code>MPEG-1</code>、<code>MPEG-2</code>、<code>MPEG-4</code> 等。<br /></li>
+</ul>
+
+<p>而 <code>H.264</code> 则是由这两个组织联合组建的 <strong>联合视频组（JVT）</strong> 共同制定的 <strong>新数字视频编码标准</strong>，所以它既是 <code>ITU-T</code> 的 <code>H.264</code>，又是 <code>ISO/IEC</code> 的 <code>MPEG-4</code> 高级视频编码（Advanced Video Coding，AVC），是新一代数字视频压缩格式。</p>
+
+<p><code>H.264</code> 的算法在概念上可以分为两层：</p>
+
+<ul>
+<li><strong>视频编码层</strong>（VCL：Video Coding Layer）负责高效的视频内容表示</li>
+<li><strong>网络提取层</strong>（NAL：Network Abstraction Layer）负责以网络所要求的恰当的方式对数据进行打包和传送</li>
+</ul>
+
+<p>整个 <code>H.264</code> 可以简化成以下这张图</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/audiovideo/h264/h264overview.png" alt="总览" /></p>
+
+<p>这里面涉及到很多要素，<code>VCL</code>、<code>SODB</code>、 <code>RBSP</code>、 <code>EBSP</code> 等等，接下来逐个介绍，尽量说清楚</p>
+
+<h2 id="vcl">VCL</h2>
+
+<p>视频编码层主要就是通过各种编码压缩去除视频中重复部分，也就是冗余，常见的冗余分为以下几种：</p>
+
+<ul>
+<li>帧内压缩，空间上存在大量冗余</li>
+<li>帧间压缩，时间上存在大量冗余</li>
+<li>感知冗余，高频信号敏感度不强，数值量化</li>
+<li>编码冗余，使用可变编码，可压缩编码冗余</li>
+</ul>
+
+<p>而 <code>感知(视觉)冗余</code> 又可以分为以下几种</p>
+
+<ul>
+<li>对亮度的变化敏感，对色度的变化相对不敏感</li>
+<li>对静止图像敏感，对运动图像相对不敏感</li>
+<li>对图像的水平线条和竖直线条敏感，对斜线相对不敏感</li>
+<li>对整体结构敏感，对内部细节相对不敏感</li>
+<li>对低频信号敏感，对高频信号相对不敏感</li>
+</ul>
+
+<p>一般情况下对视频压缩会经过以下几个过程</p>
+
+<ul>
+<li><strong>预测</strong>：去除空间和时间冗余：帧内预测(划分的宏块预测)，帧间预测</li>
+<li><strong>变化</strong>：去除感知冗余：DCT, 小波变换</li>
+<li><strong>量化</strong>：去除视觉冗余，通过降低图像质量提高压缩比</li>
+<li><strong>熵编码</strong>：去除编码冗余：变长编码，算术编码</li>
+</ul>
+
+<p><code>H.264</code> 和以前的标准一样，也是 <code>变换编码</code> 加 <code>预测编码</code> 的 <strong>混合编码模式</strong>。<br />
+在此基础上还增加了如多模式运动估计、帧内预测、多帧预测、基于内容的变长编码、4x4二维整数变换等新的编码方式，提高了编码效率。</p>
+
+<p>接下来对编码的一些基本单位稍微了解一下：</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/audiovideo/h264/mb.png" alt="宏块" /></p>
+
+<h3 id="宏块">宏块</h3>
+
+<p>是 <code>H.264</code> 编码的基本单位，一个编码图像首先要划分成多个块（4x4 像素）才能进行处理，通常宏块大小为 <strong>16x16</strong> 个像素。</p>
+
+<p>宏块也分为 I、P、B 宏块：</p>
+
+<ul>
+<li><code>I宏块</code> 只能利用当前片中已解码的像素作为参考进行帧内预测；</li>
+<li><code>P宏块</code> 可以利用前面已解码的图像作为参考图像进行帧内预测；</li>
+<li><code>B宏块</code> 则是利用前后向的参考图形进行帧内预测</li>
+</ul>
+
+<h3 id="片">片</h3>
+
+<p>一帧视频图像可编码成一个或者多个 <code>片</code>（Slice），每 <code>片</code> 包含整数个 <code>宏块</code>，即每 <code>片</code> 至少一个 <code>宏块</code>，最多时包含整个图像的 <code>宏块</code>。</p>
+
+<p><code>片</code> 的目的：为了限制误码的扩散和传输，使编码片相互间保持独立。</p>
+
+<p>片共有5种类型：</p>
+
+<ul>
+<li><code>I</code> 片 ：只包含 <code>I</code> 宏块</li>
+<li><code>P</code> 片 ：<code>P</code> 和 <code>I</code> 宏块</li>
+<li><code>B</code> 片 ：<code>B</code> 和 <code>I</code> 宏块</li>
+<li><code>SP</code> 片 ：用于不同编码流之间的切换</li>
+<li><code>SI</code> 片 ：特殊类型的编码宏块</li>
+</ul>
+
+<h3 id="片组">片组</h3>
+
+<p>片组，其实就是使用某一规则，将一帧画面中的某些 <code>宏块</code> 划分成一个组<br />
+而 <code>片</code> 就是是在 <code>片组</code> 内，对 <code>宏块</code> 做进一步划分。</p>
+
+<blockquote>
+<p>所以这三者的关系是 一帧画面，是由一个或多个 <code>片组</code> 组成，<code>片组</code> 是由一个或多个 <code>片</code> 组成，<code>片</code> 则由 <code>宏块</code> 组成。</p>
+</blockquote>
+
+<h3 id="sodb">SODB</h3>
+
+<p><code>String of Data Bits</code>, 数据 bit 流，是最原始的编码后的数据</p>
+
+<h2 id="nal">NAL</h2>
+
+<p><code>NAL</code> 负责以网络所要求的恰当的方式对数据进行打包和传送<br />
+在一个 H.264 <strong>AnnexB</strong> 格式的比特流中，<code>NALU</code> 是其中一个基本单元，通过引入起始码(0x000001 or 0x00000001) 来将 <code>NALU</code> 隔开</p>
+
+<blockquote>
+<p>在 <code>SPS</code>、<code>PPS</code> 和 <code>Access Unit</code> 的第一个 <code>NALU</code> 使用 4 字节起始码，其余情况均使用 3 字节起始码。</p>
+</blockquote>
+
+<p>对起始码的格式有个印象 <strong>(0x000001或者0x00000001)</strong> ，之后还有因为它引入其它的设计</p>
+
+<p>我们继续从原始数据 <code>SODB</code> 开始，看最后如何变成一个比特流</p>
+
+<h3 id="rbsp">RBSP</h3>
+
+<p><code>Raw Byte Sequence Payload</code>，原始字节序列载荷<br />
+在 <code>SODB</code> 的后面添加了 <code>trailing bits</code> 结尾比特<br />
+也就是一个bit 1 和若干个bit 0，以便字节对齐</p>
+
+<h3 id="ebsp">EBSP</h3>
+
+<p><code>Encapsulate Byte Sequence Payload</code> 扩展字节序列载荷<br />
+在 <code>RBSP</code> 基础上填加了防竞争字节 <code>0x03</code> ，这样便形成了 <code>EBSP</code>。</p>
+
+<p>为什么需要增加防竞争字节，主要是因为前面提到的起始码格式是 <strong>(0x000001或者0x00000001)</strong>， 同时 <code>H.264</code>规定，当检测到 <code>0x000000</code> 时，也可以表示当前 <code>NALU</code> 的结束。那就会产生一个问题，就是如果在 <code>NALU</code> 的内部，出现了 <code>0x000001</code> 或 <code>0x000000</code> 时该怎么办？</p>
+
+<p>为了使 <code>NALU</code> 主体中不出现与 <code>0x000001</code> 或 <code>0x000000</code> 冲突的情况，在给 <code>NALU</code> 添加起始码之前，先对码流进行一次遍历，查找码流里面的存在的 <code>0x000000</code>，<code>0x000001</code>，<code>0x000002</code>，<code>0x000003</code> 的字节，然后对其进行如下修改</p>
+
+<pre><code class="language-C++">0x000000 =&gt; 0x00000300
+0x000001 =&gt; 0x00000301
+0x000002 =&gt; 0x00000302
+0x000003 =&gt; 0x00000303
+</code></pre>
+
+<p><code>0x000000</code> 和 <code>0x000001</code> 是为了区分起始码和规定的结束，<code>0x000002</code> 是作为保留使用，而 <code>0x000003</code>，则是为了防止 <code>NALU</code> 内部，原本就有序列为 <code>0x000003</code> 这样的数据。</p>
+
+<p>那么解码时先遍历将 <code>0x03</code> 去掉即可。也称为脱壳操作。</p>
+
+<h3 id="nalu-header">NALU Header</h3>
+
+<p>在 <code>EBSP</code> 的基础上加一个 <code>NALU Header</code> 就变成一个 <code>NALU</code></p>
+
+<p><code>NALU Header</code> 在整个 <code>NALU</code> 中，只占据一个字节。分别为：</p>
+
+<ul>
+<li>forbidden_zero_bit</li>
+<li>nal_ref_idc</li>
+<li>nal_unit_type</li>
+</ul>
+
+<p><code>forbidden_zero_bit</code> 值对应 1 个 bit, 这个值应该为 0，当它不为 0 时，表示网络传输过程中，当前 <code>NALU</code> 中可能存在错误，解码器可以考虑不对这个 <code>NALU</code> 进行解码。</p>
+
+<p><code>nal_ref_idc</code> 值对应 2 个 bit, 取值 0~3，代表当前这个 <code>NALU</code> 的重要性，取值越大，代表当前 <code>NALU</code> 越重要，就需要优先被保护。</p>
+
+<p><code>nal_unit_type</code> 值对应 5 个 bit, 代表 <code>NALU Header</code> 后面的 <code>EBSP</code> 的数据结构的类型。</p>
+
+<p><img src="https://catcheroftime.github.io/images/blog/audiovideo/h264/nal_unit_type.png" alt="nal_unit_type" /></p>
+
+<h2 id="裸流解析">裸流解析</h2>
+
+<p>本部分是对一个 <code>H.264</code> 的裸流进行分离并解析 <code>NALU</code>，代码直接使用的是 <code>雷霄骅</code> 大佬博客中提供的例子，并添加了一些简单的注释</p>
+
+<pre><code class="language-C++">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+typedef enum {
+    NALU_TYPE_SLICE    = 1,
+    NALU_TYPE_DPA      = 2,
+    NALU_TYPE_DPB      = 3,
+    NALU_TYPE_DPC      = 4,
+    NALU_TYPE_IDR      = 5,
+    NALU_TYPE_SEI      = 6,
+    NALU_TYPE_SPS      = 7,
+    NALU_TYPE_PPS      = 8,
+    NALU_TYPE_AUD      = 9,
+    NALU_TYPE_EOSEQ    = 10,
+    NALU_TYPE_EOSTREAM = 11,
+    NALU_TYPE_FILL     = 12,
+} NaluType;
+
+typedef enum {
+    NALU_PRIORITY_DISPOSABLE = 0,
+    NALU_PRIRITY_LOW         = 1,
+    NALU_PRIORITY_HIGH       = 2,
+    NALU_PRIORITY_HIGHEST    = 3
+} NaluPriority;
+
+typedef struct
+{
+    int startcodeprefix_len;      // NALU Header 的长度，3个或者4个字节长度
+    unsigned len;                 // NALU 中 EBSP 的长度
+    unsigned max_size;            // 缓存数据时的最大长度
+    int forbidden_bit;            // 默认必须为 0
+    int nal_reference_idc;        // NALU 重要性
+    int nal_unit_type;            // NALU 的类型
+    char *buf;                    // 指向 EBSP 第一个字节的指针
+} NALU_t;
+
+// the bit stream file
+FILE *h264bitstream = NULL;               
+
+int info2=0, info3=0;
+
+static int FindStartCode2 (unsigned char *Buf){
+    if(Buf[0]!=0 || Buf[1]!=0 || Buf[2] !=1) return 0; //0x000001?
+    else return 1;
+}
+
+static int FindStartCode3 (unsigned char *Buf){
+    if(Buf[0]!=0 || Buf[1]!=0 || Buf[2] !=0 || Buf[3] !=1) return 0;//0x00000001?
+    else return 1;
+}
+
+
+int GetAnnexbNALU (NALU_t *nalu){
+    int pos = 0;
+    int StartCodeFound, rewind;
+    unsigned char *Buf;
+
+    if ((Buf = (unsigned char*)calloc (nalu-&gt;max_size , sizeof(char))) == NULL) 
+        printf (&quot;GetAnnexbNALU: Could not allocate Buf memory\n&quot;);
+
+    nalu-&gt;startcodeprefix_len=3;
+
+    // 先尝试读取 1*3 个字节
+    if (3 != fread (Buf, 1, 3, h264bitstream)){
+        free(Buf);
+        return 0;
+    }
+
+    // 判断裸流中 Header 时 0x000001 还是 0x00000001
+    info2 = FindStartCode2 (Buf);
+    if(info2 != 1) {
+        // 不是 0x000001， 则在多读一个字节
+        if(1 != fread(Buf+3, 1, 1, h264bitstream)){
+            free(Buf);
+            return 0;
+        }
+        // 判断是不是 0x00000001
+        info3 = FindStartCode3 (Buf);
+        if (info3 != 1){ 
+            // 既不是 0x000001 也不是 0x00000001，裸流有问题
+            free(Buf);
+            return -1;
+        }
+        else {
+            pos = 4;
+            nalu-&gt;startcodeprefix_len = 4;
+        }
+    }
+    else{
+        nalu-&gt;startcodeprefix_len = 3;
+    }
+
+    // 开始找下一个 NALU 的起始码，定位上一个 NALU 数据的长度
+    StartCodeFound = 0;
+    info2 = 0;
+    info3 = 0;
+
+    while (!StartCodeFound){
+        // 如果到文件尾了，直接结算
+        if (feof (h264bitstream)){
+            nalu-&gt;len = (pos-1)-nalu-&gt;startcodeprefix_len;
+            memcpy (nalu-&gt;buf, &amp;Buf[nalu-&gt;startcodeprefix_len], nalu-&gt;len);     
+            nalu-&gt;forbidden_bit = nalu-&gt;buf[0] &amp; 0x80; //1 bit
+            nalu-&gt;nal_reference_idc = nalu-&gt;buf[0] &amp; 0x60; // 2 bit
+            nalu-&gt;nal_unit_type = (nalu-&gt;buf[0]) &amp; 0x1f;// 5 bit
+            free(Buf);
+            return pos-1;
+        }
+        // 尝试一个字节一个字节向后读取
+        // 判断是否含有 0x000001 还是 0x00000001
+        Buf[pos++] = fgetc (h264bitstream);
+        info3 = FindStartCode3(&amp;Buf[pos-4]);
+        if(info3 != 1)
+            info2 = FindStartCode2(&amp;Buf[pos-3]);
+        StartCodeFound = (info2 == 1 || info3 == 1);
+    }
+    
+    // pos 相当于 记录了这一次读取的总字节数
+    // nalu-&gt;startcodeprefix_len 中记录了本次 NALU 中起始码的长度
+    // rewind 时记录了下一个 NALU 起始码的长度
+    rewind = (info3 == 1)? -4 : -3;
+
+    // 重置 fread 读取的位置到下一次 NALU 起始码前
+    if (0 != fseek (h264bitstream, rewind, SEEK_CUR)){
+        free(Buf);
+        printf(&quot;GetAnnexbNALU: Cannot fseek in the bit stream file&quot;);
+    }
+
+    nalu-&gt;len = (pos+rewind)-nalu-&gt;startcodeprefix_len;
+    memcpy (nalu-&gt;buf, &amp;Buf[nalu-&gt;startcodeprefix_len], nalu-&gt;len);
+    nalu-&gt;forbidden_bit = nalu-&gt;buf[0] &amp; 0x80; //1 bit
+    nalu-&gt;nal_reference_idc = nalu-&gt;buf[0] &amp; 0x60; // 2 bit
+    nalu-&gt;nal_unit_type = (nalu-&gt;buf[0]) &amp; 0x1f;// 5 bit
+    free(Buf);
+
+    return (pos+rewind);
+}
+
+int simplest_h264_parser(char *url){
+
+    NALU_t *n;
+    int buffersize=100000;
+
+    FILE *myout=stdout;
+
+    h264bitstream=fopen(url, &quot;rb+&quot;);
+    if (h264bitstream==NULL){
+        printf(&quot;Open file error\n&quot;);
+        return 0;
+    }
+
+    n = (NALU_t*)calloc (1, sizeof (NALU_t));
+    if (n == NULL){
+        printf(&quot;Alloc NALU Error\n&quot;);
+        return 0;
+    }
+
+    n-&gt;max_size=buffersize;
+    n-&gt;buf = (char*)calloc (buffersize, sizeof (char));
+    if (n-&gt;buf == NULL){
+        free (n);
+        printf (&quot;AllocNALU: n-&gt;buf&quot;);
+        return 0;
+    }
+
+    int data_offset=0;
+    int nal_num=0;
+    printf(&quot;-----+-------- NALU Table ------+---------+\n&quot;);
+    printf(&quot; NUM |    POS  |    IDC |  TYPE |   LEN   |\n&quot;);
+    printf(&quot;-----+---------+--------+-------+---------+\n&quot;);
+
+    while(!feof(h264bitstream)) 
+    {
+        int data_lenth;
+        data_lenth=GetAnnexbNALU(n);
+
+        char type_str[20]={0};
+        switch(n-&gt;nal_unit_type){
+            case NALU_TYPE_SLICE:sprintf(type_str,&quot;SLICE&quot;);break;
+            case NALU_TYPE_DPA:sprintf(type_str,&quot;DPA&quot;);break;
+            case NALU_TYPE_DPB:sprintf(type_str,&quot;DPB&quot;);break;
+            case NALU_TYPE_DPC:sprintf(type_str,&quot;DPC&quot;);break;
+            case NALU_TYPE_IDR:sprintf(type_str,&quot;IDR&quot;);break;
+            case NALU_TYPE_SEI:sprintf(type_str,&quot;SEI&quot;);break;
+            case NALU_TYPE_SPS:sprintf(type_str,&quot;SPS&quot;);break;
+            case NALU_TYPE_PPS:sprintf(type_str,&quot;PPS&quot;);break;
+            case NALU_TYPE_AUD:sprintf(type_str,&quot;AUD&quot;);break;
+            case NALU_TYPE_EOSEQ:sprintf(type_str,&quot;EOSEQ&quot;);break;
+            case NALU_TYPE_EOSTREAM:sprintf(type_str,&quot;EOSTREAM&quot;);break;
+            case NALU_TYPE_FILL:sprintf(type_str,&quot;FILL&quot;);break;
+        }
+        char idc_str[20]={0};
+        switch(n-&gt;nal_reference_idc&gt;&gt;5){
+            case NALU_PRIORITY_DISPOSABLE:sprintf(idc_str,&quot;DISPOS&quot;);break;
+            case NALU_PRIRITY_LOW:sprintf(idc_str,&quot;LOW&quot;);break;
+            case NALU_PRIORITY_HIGH:sprintf(idc_str,&quot;HIGH&quot;);break;
+            case NALU_PRIORITY_HIGHEST:sprintf(idc_str,&quot;HIGHEST&quot;);break;
+        }
+
+        fprintf(myout,&quot;%5d| %8d| %7s| %6s| %8d|\n&quot;,nal_num,data_offset,idc_str,type_str,n-&gt;len);
+
+        data_offset=data_offset+data_lenth;
+
+        nal_num++;
+    }
+
+    if (n){
+        if (n-&gt;buf){
+            free(n-&gt;buf);
+            n-&gt;buf=NULL;
+        }
+        free (n);
+    }
+    return 0;
+}
+</code></pre>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://catcheroftime.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://catcheroftime.github.io/tags/%E9%9F%B3%E8%A7%86%E9%A2%91" role="button">音视频 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://catcheroftime.github.io/blog/2021-08/%E6%9C%80%E5%B0%8F%E5%8C%96%E5%88%B0%E6%89%98%E7%9B%98%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E5%8A%9F%E8%83%BD/ class="post-meta">
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>最小化到托盘及其相关功能</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://catcheroftime.github.io/blog/2021-08/more-effective-c-%E6%80%BB%E8%A7%88/ class="post-meta">
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>More Effective C&#43;&#43; 总览</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#h-264%e7%ae%80%e4%bb%8b">
+												 H.264简介
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#vcl">
+												 VCL
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%8f%e5%9d%97">
+												 宏块
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%89%87">
+												 片
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%89%87%e7%bb%84">
+												 片组
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#sodb">
+												 SODB
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#nal">
+												 NAL
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#rbsp">
+												 RBSP
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#ebsp">
+												 EBSP
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#nalu-header">
+												 NALU Header
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%a3%b8%e6%b5%81%e8%a7%a3%e6%9e%90">
+												 裸流解析
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="https://github.com/catcheroftime " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+        <a href="mailto:buptzhangwei@foxmail.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://catcheroftime.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://catcheroftime.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://catcheroftime.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://catcheroftime.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

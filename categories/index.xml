@@ -6,10 +6,37 @@
     <description>Recent content in Categories on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Fri, 18 Jun 2021 12:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 14 Aug 2021 21:02:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Dev Book</title>
+      <link>https://catcheroftime.github.io/categories/dev-book/</link>
+      <pubDate>Sat, 14 Aug 2021 21:02:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/categories/dev-book/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>音视频</title>
+      <link>https://catcheroftime.github.io/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/</link>
+      <pubDate>Fri, 06 Aug 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Qt</title>
+      <link>https://catcheroftime.github.io/categories/qt/</link>
+      <pubDate>Sun, 01 Aug 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/categories/qt/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>C&#43;&#43;</title>
@@ -75,29 +102,11 @@
     </item>
     
     <item>
-      <title>Qt</title>
-      <link>https://catcheroftime.github.io/categories/qt/</link>
-      <pubDate>Sun, 30 Aug 2020 20:15:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/categories/qt/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>编译</title>
       <link>https://catcheroftime.github.io/categories/%E7%BC%96%E8%AF%91/</link>
       <pubDate>Wed, 11 Dec 2019 17:10:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/categories/%E7%BC%96%E8%AF%91/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Dev Book</title>
-      <link>https://catcheroftime.github.io/categories/dev-book/</link>
-      <pubDate>Tue, 29 Oct 2019 18:22:00 +0800</pubDate>
-      
-      <guid>https://catcheroftime.github.io/categories/dev-book/</guid>
       <description></description>
     </item>
     

@@ -6,7 +6,7 @@
     <description>Recent content in Tags on 一个懒散的程序猿</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Fri, 18 Jun 2021 12:15:00 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 14 Aug 2021 21:02:00 +0800</lastBuildDate>
     
 	<atom:link href="https://catcheroftime.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,9 +14,27 @@
     <item>
       <title>C&#43;&#43;</title>
       <link>https://catcheroftime.github.io/tags/c&#43;&#43;/</link>
-      <pubDate>Fri, 18 Jun 2021 12:15:00 +0800</pubDate>
+      <pubDate>Sat, 14 Aug 2021 21:02:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/tags/c&#43;&#43;/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>音视频</title>
+      <link>https://catcheroftime.github.io/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/</link>
+      <pubDate>Fri, 06 Aug 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Qt实战</title>
+      <link>https://catcheroftime.github.io/tags/qt%E5%AE%9E%E6%88%98/</link>
+      <pubDate>Sun, 01 Aug 2021 00:15:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/qt%E5%AE%9E%E6%88%98/</guid>
       <description></description>
     </item>
     
@@ -98,6 +116,15 @@
       <pubDate>Sat, 01 Aug 2020 00:15:00 +0800</pubDate>
       
       <guid>https://catcheroftime.github.io/tags/qt%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Centos</title>
+      <link>https://catcheroftime.github.io/tags/centos/</link>
+      <pubDate>Wed, 11 Dec 2019 17:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/tags/centos/</guid>
       <description></description>
     </item>
     

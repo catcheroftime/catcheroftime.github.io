@@ -12,6 +12,28 @@
     
     
     <item>
+      <title>Centos 下 GCC 版本更新</title>
+      <link>https://catcheroftime.github.io/blog/2019-12/centos-%E4%B8%8B-gcc-%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0/</link>
+      <pubDate>Wed, 11 Dec 2019 17:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-12/centos-%E4%B8%8B-gcc-%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0/</guid>
+      <description>&lt;p&gt;最重要的事情提前说:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;为了降低风险，注意备份或者克隆保存虚拟机状态&lt;/p&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    
+    <item>
+      <title>Centos 下 ld 链接器版本更新</title>
+      <link>https://catcheroftime.github.io/blog/2019-12/centos-%E4%B8%8B-ld-%E9%93%BE%E6%8E%A5%E5%99%A8%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0/</link>
+      <pubDate>Wed, 11 Dec 2019 17:10:00 +0800</pubDate>
+      
+      <guid>https://catcheroftime.github.io/blog/2019-12/centos-%E4%B8%8B-ld-%E9%93%BE%E6%8E%A5%E5%99%A8%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0/</guid>
+      <description>&lt;p&gt;最近在编译一个工程的时候, 偶然遇到一个报错&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>windows下通过msys2&#43;mingw编译ffmpeg</title>
       <link>https://catcheroftime.github.io/blog/2019-12/windows%E4%B8%8B%E9%80%9A%E8%BF%87msys2-mingw%E7%BC%96%E8%AF%91ffmpeg/</link>
       <pubDate>Wed, 11 Dec 2019 17:10:00 +0800</pubDate>
